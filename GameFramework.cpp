@@ -13,6 +13,8 @@ CGameFramework::CGameFramework()
 CGameFramework::~CGameFramework()
 {
 	// hello
+
+	// New Branch LHH Create
 }
 
 void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
