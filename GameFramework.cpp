@@ -1,7 +1,7 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-
+// Commit Test
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
