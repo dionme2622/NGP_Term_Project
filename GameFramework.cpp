@@ -12,6 +12,7 @@ CGameFramework::CGameFramework()
 
 CGameFramework::~CGameFramework()
 {
+	// hello
 }
 
 void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
