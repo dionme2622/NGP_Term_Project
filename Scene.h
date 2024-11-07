@@ -10,10 +10,12 @@ struct SButton
 	HBITMAP ButtonImage;
 };
 
+class CGameFramework;
+
 class CScene
 {
 public:
-	CScene();
+	CScene(CGameFramework* GameFramework);
 	~CScene();
 
 
@@ -29,26 +31,30 @@ public:
 
 	void DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop);
 
+public :
+	CGameFramework* GetFramework() { return m_pGameFramework;}
 
 private:
 
 
 protected:
-	HWND			hWnd;
-	HINSTANCE		hInst;
-	RECT			rc;
+	HWND				hWnd;
+	HINSTANCE			hInst;
+	RECT				rc;
 
 
-	HBITMAP			hBit;
-	HDC				MemDC;
-	HDC				MemDCImage;
-	HBITMAP			OldBit[2];
+	HBITMAP				hBit;
+	HDC					MemDC;
+	HDC					MemDCImage;
+	HBITMAP				OldBit[2];
 
-	POINT			cursorPos;
+	POINT				cursorPos;
 
+protected:
+	CGameFramework*		m_pGameFramework;
 
 public:
-	int*			currentscene;
+	int*				currentscene;
 };
 
 

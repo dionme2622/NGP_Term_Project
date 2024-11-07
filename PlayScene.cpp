@@ -1,7 +1,7 @@
 #include "PlayScene.h"
 #include "Windows.h"
 
-CPlayScene::CPlayScene()
+CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 	player = NULL;
 

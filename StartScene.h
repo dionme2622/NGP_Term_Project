@@ -8,7 +8,7 @@
 class CStartScene : public CScene
 {
 public:
-	CStartScene();
+	CStartScene(CGameFramework* GameFramework);
 	~CStartScene();
 
 

@@ -6,7 +6,7 @@
 class CMenuScene : public CScene
 {
 public:
-	CMenuScene();
+	CMenuScene(CGameFramework* GameFramework);
 	~CMenuScene();
 
 

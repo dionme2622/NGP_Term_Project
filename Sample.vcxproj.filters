@@ -25,9 +25,6 @@
     <Filter Include="Scene\Play">
       <UniqueIdentifier>{4d902f67-5861-452b-9f22-864e9d0596cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Scene">
-      <UniqueIdentifier>{01299b0e-123b-4665-9d94-99afe1af6ee7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene\Start">
       <UniqueIdentifier>{9591c560-60ad-4b55-80ef-17b083f817ad}</UniqueIdentifier>
     </Filter>
@@ -69,11 +66,11 @@
     <ClInclude Include="MenuScene.h">
       <Filter>Scene\Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Scene\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="StartScene.h">
       <Filter>Scene\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,11 +101,11 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>Scene\Play</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Scene\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="StartScene.cpp">
       <Filter>Scene\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

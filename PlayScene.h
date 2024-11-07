@@ -4,7 +4,7 @@
 class CPlayScene : public CScene
 {
 public:
-	CPlayScene();
+	CPlayScene(CGameFramework* GameFramework);
 	~CPlayScene();
 
 	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);

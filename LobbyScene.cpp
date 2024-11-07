@@ -1,6 +1,6 @@
 #include "LobbyScene.h"
-
-CLobbyScene::CLobbyScene()
+#include "GameFramework.h"
+CLobbyScene::CLobbyScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 }
 

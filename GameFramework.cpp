@@ -4,37 +4,34 @@
 
 CGameFramework::CGameFramework()
 {
-	scene			= nullptr;
+	m_pScene			= nullptr;
 
-	scenes			= new CScene * [4];		// ¾À 4°³
-	currentscene	= PLAYSCENE;			// SceneÀÇ ÀÎµ¦½º
+	m_ppScenes			= new CScene * [4];		// ¾À 4°³
+	currentscene	= STARTSCENE;			// SceneÀÇ ÀÎµ¦½º
 }
 
 CGameFramework::~CGameFramework()
 {
-	// hello
-
-	// New Branch LHH Create
 }
 
 void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
 	hWnd = hMainWnd;
 	hInst = g_hInst;
-	scenes[0] = new CStartScene();
-	scenes[0]->Initialize(hWnd, hInst);
+	m_ppScenes[0] = new CStartScene(this);
+	m_ppScenes[0]->Initialize(hWnd, hInst);
+	
+	m_ppScenes[1] = new CMenuScene(this);
+	m_ppScenes[1]->Initialize(hWnd, hInst);
 
-	scenes[1] = new CMenuScene();
-	scenes[1]->Initialize(hWnd, hInst);
+	m_ppScenes[2] = new CLobbyScene(this);
+	m_ppScenes[2]->Initialize(hWnd, hInst);
 
-	scenes[2] = new CLobbyScene();
-	scenes[2]->Initialize(hWnd, hInst);
-
-	scenes[3] = new CPlayScene();
-	scenes[3]->Initialize(hWnd, hInst);
+	m_ppScenes[3] = new CPlayScene(this);
+	m_ppScenes[3]->Initialize(hWnd, hInst);
 
 
-	scene = scenes[currentscene];
+	m_pScene = m_ppScenes[currentscene];
 }
 
 void CGameFramework::FrameAdvance()
@@ -49,7 +46,7 @@ void CGameFramework::Update()
 {
 	Tick();
 
-	scene->Update();
+	m_pScene->Update();
 }
 
 void CGameFramework::Tick()
@@ -61,17 +58,17 @@ void CGameFramework::Tick()
 
 void CGameFramework::Render()
 {
-	scene->Render();
+	m_pScene->Render();
 }
 
 void CGameFramework::ProcessInput()
 {
-	scene->ProcessInput();
+	m_pScene->ProcessInput();
 }
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (scene) scene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 
 	/*switch (nMessageID)
 	{
@@ -106,7 +103,6 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		break;
 	}
 	case WM_RBUTTONDOWN:
-		NextScene();
 		break;
 	case WM_LBUTTONUP:
 
@@ -120,8 +116,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	return(0);
 }
 
-void CGameFramework::NextScene()
+void CGameFramework::SetCurScene(int Scene)
 {
-	currentscene = (currentscene + 1) % 4;
-	scene = scenes[currentscene];
+	m_pScene = m_ppScenes[Scene];
 }
+

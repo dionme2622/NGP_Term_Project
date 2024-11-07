@@ -1,5 +1,6 @@
 #include "StartScene.h"
-CStartScene::CStartScene()
+#include "GameFramework.h"
+CStartScene::CStartScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 }
 
@@ -20,8 +21,7 @@ void CStartScene::ProcessInput()
 	GetKeyboardState(pKeysBuffer);
 	if (pKeysBuffer[VK_DOWN] & 0xF0)
 	{
-		/*framework->currentscene = LOBBYSCENE;
-		*framework->scene = framework->scenes[framework->currentscene];*/
+		GetFramework()->SetCurScene(MENUSCENE);
 	}
 	/*if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
 	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;

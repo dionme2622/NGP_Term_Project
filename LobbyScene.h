@@ -5,7 +5,7 @@
 class CLobbyScene : public CScene
 {
 public:
-	CLobbyScene();
+	CLobbyScene(CGameFramework* GameFramework);
 	~CLobbyScene();
 
 	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);

@@ -1,6 +1,7 @@
 #include "MenuScene.h"
+#include "GameFramework.h"
 
-CMenuScene::CMenuScene()
+CMenuScene::CMenuScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 }
 
@@ -72,8 +73,6 @@ void CMenuScene::Render()
     OldBit[1] = (HBITMAP)SelectObject(MemDCImage, backgroundImage); //--- 배경 이미지	
     StretchBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 1220, 950, SRCCOPY);
 
-
-
     // 버튼 세개
     OldBit[1] = (HBITMAP)SelectObject(MemDCImage, Button_Help.ButtonImage);
     DrawImage(MemDC, Button_Help.pos, MemDCImage, Button_Help.size, RGB(255, 0, 255));
@@ -88,7 +87,7 @@ void CMenuScene::Render()
 
 
     if (drawTutorial) {
-        OldBit[1] = (HBITMAP)SelectObject(MemDCImage, tutoralBtm);
+        OldBit[2] = (HBITMAP)SelectObject(MemDCImage, tutoralBtm);
         RECT tutoPos{ rc.right / 2 - 210 , rc.bottom / 2 - 176 , 420, 352 };
         RECT tutoSize{ 0, 0, 320, 252 };
         DrawImage(MemDC, tutoPos, MemDCImage, tutoSize, RGB(255, 0, 255));
@@ -135,7 +134,7 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
         if (IsCursorInButton(Button_Help, cursorPos)) drawTutorial = true;
-        else if (IsCursorInButton(Button_Play, cursorPos)); // 다음 씬 넘어가기 추가해야됨
+        else if (IsCursorInButton(Button_Play, cursorPos)) GetFramework()->SetCurScene(LOBBYSCENE);
         else if (IsCursorInButton(Button_Quit, cursorPos)) exit(0);
         if (drawTutorial && IsCursorInButton(tutoExitButton, cursorPos)) drawTutorial = false;
         break;

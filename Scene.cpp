@@ -1,7 +1,9 @@
 #include "Scene.h"
+#include "GameFramework.h"
 
-CScene::CScene()
+CScene::CScene(CGameFramework* GameFramework)
 {
+	m_pGameFramework = GameFramework;
 }
 
 CScene::~CScene()

@@ -37,14 +37,14 @@ private:
 	CTimer			timer;			// Å¸ÀÌ¸Ó
 
 	int				currentscene;			// SceneÀÇ ÀÎµ¦½º
-	CScene*			scene;			// ¾À
-	CScene**		scenes;			// ¸ðµç ¾À
+	CScene*			m_pScene;			// ¾À
+	CScene**		m_ppScenes;			// ¸ðµç ¾À
 
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
 public:
-	void NextScene();				//µð¹ö±ë¿ë ¾À ³Ñ±â±â
+	void SetCurScene(int Scene);				//µð¹ö±ë¿ë ¾À ³Ñ±â±â
 
 
 
