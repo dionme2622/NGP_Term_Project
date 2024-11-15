@@ -43,6 +43,8 @@ private:
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
+
+
 public:
 	void SetCurScene(int Scene);				//µð¹ö±ë¿ë ¾À ³Ñ±â±â
 
@@ -52,9 +54,7 @@ public:
 
 
 private:
-	
-
-
+	static DWORD __stdcall ClientMain(LPVOID arg);
 
 
 

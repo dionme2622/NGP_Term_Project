@@ -30,8 +30,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[3] = new CPlayScene(this);
 	m_ppScenes[3]->Initialize(hWnd, hInst);
 
-
 	m_pScene = m_ppScenes[currentscene];
+
+	CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
 }
 
 void CGameFramework::FrameAdvance()
@@ -120,4 +121,10 @@ void CGameFramework::SetCurScene(int Scene)
 {
 	m_pScene = m_ppScenes[Scene];
 }
+
+DWORD __stdcall CGameFramework::ClientMain(LPVOID arg)
+{
+	return 0;
+}
+
 

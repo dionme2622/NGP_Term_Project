@@ -24,16 +24,7 @@ void CPlayScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
-	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000); // 키 버퍼 위키저장해놓ㅅ고
-	/*if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
-
-	if (pKeysBuffer['W'] & 0xF0) dwDirection |= DIR_FORWARD;
-	if (pKeysBuffer['S'] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;*/
+	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000); // 키 버퍼 위치저장해놓ㅅ고
 }
 
 void CPlayScene::Update()
