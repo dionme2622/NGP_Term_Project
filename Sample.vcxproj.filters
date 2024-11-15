@@ -40,6 +40,9 @@
     <Filter Include="리소스 파일\Block\Village">
       <UniqueIdentifier>{029f1a81-5a9b-42d6-8442-ddfd9c70f06b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="리소스 파일\Block\Pirate">
+      <UniqueIdentifier>{df970cea-8816-4b7d-9072-8a5dec1d1030}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
@@ -209,6 +212,9 @@
     </Image>
     <Image Include="image\ui\bitmap5.bmp">
       <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Image\tile\Tile_pirate.bmp">
+      <Filter>리소스 파일\Block\Pirate</Filter>
     </Image>
   </ItemGroup>
 </Project>

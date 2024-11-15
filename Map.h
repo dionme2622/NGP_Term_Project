@@ -27,7 +27,7 @@ public :
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 private:
-	HBITMAP TileBitmap1;
+	HBITMAP TileBitmap;
 
 };
 
@@ -41,6 +41,6 @@ public:
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 private:
-
+	HBITMAP TileBitmap;
 
 };

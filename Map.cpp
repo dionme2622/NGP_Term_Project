@@ -65,14 +65,14 @@ void CVillage::Initialize(HINSTANCE _hInst)
 	Board[10][2].SetState(1); Board[10][5].SetState(1); Board[10][9].SetState(1); Board[10][12].SetState(1);
 
 	// Resource
-	TileBitmap1 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
+	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
 
 	printf("Village Initialize\n");
 
 }
 void CVillage::Render(HDC MemDC, HDC MemDCImage)
 {
-	(HBITMAP)SelectObject(MemDCImage, TileBitmap1); //--- 배경 이미지
+	(HBITMAP)SelectObject(MemDCImage, TileBitmap); //--- 배경 이미지
 	for (int i = 0; i < 13; i++)
 	{
 		for (int j = 0; j < 15; j++)
@@ -127,76 +127,39 @@ void CPirate::Initialize(HINSTANCE _hInst)
 	Board[2][13].SetState(2);
 	Board[2][14].SetState(2);
 	// 3줄
-	for (int i = 3; i < 13; i++)
-	{
-		Board[i][0].SetState(2);
-	}
-	for (int i = 7; i < 11; i++)
-	{
-		Board[i][1].SetState(2);
-	}
-	for (int i = 8; i < 10; i++)
-	{
-		Board[i][2].SetState(2);
-	}
-	for (int i = 9; i < 13; i++)
-	{
-		Board[i][3].SetState(2);
-	}
-	for (int i = 10; i < 13; i++)
-	{
-		Board[i][4].SetState(2);
-	}
-	for (int i = 11; i < 13; i++)
-	{
-		Board[i][5].SetState(2);
-	}
-	for (int i = 6; i < 12; i++)
-	{
-		Board[12][i].SetState(2);
-	}
-	for (int i = 9; i < 12; i++)
-	{
-		Board[11][i].SetState(2);
-	}
-	for (int i = 3; i < 13; i++)
-	{
-		Board[i][14].SetState(2);
-	}
+	for (int i = 3; i < 13; i++) Board[i][0].SetState(2);
+	for (int i = 7; i < 11; i++) Board[i][1].SetState(2);
+	
+	for (int i = 8; i < 10; i++) Board[i][2].SetState(2);
+	
+	for (int i = 9; i < 13; i++) Board[i][3].SetState(2);
 
-	for (int i = 10; i < 12; i++)
-	{
-		Board[10][i].SetState(2);
-	}
-	for (int i = 11; i < 14; i++)
-	{
-		Board[9][i].SetState(2);
-	}
-	for (int i = 12; i < 14; i++)
-	{
-		Board[8][i].SetState(2);
-	}
+	for (int i = 10; i < 13; i++) Board[i][4].SetState(2);
+	
+	for (int i = 11; i < 13; i++) Board[i][5].SetState(2);
+	
+	for (int i = 6; i < 12; i++) Board[12][i].SetState(2);
+
+	for (int i = 9; i < 12; i++) Board[11][i].SetState(2);
+
+	for (int i = 3; i < 13; i++) Board[i][14].SetState(2);
+
+	for (int i = 10; i < 12; i++) Board[10][i].SetState(2);
+
+	for (int i = 11; i < 14; i++) Board[9][i].SetState(2);
+	
+	for (int i = 12; i < 14; i++) Board[8][i].SetState(2);
+	
 	Board[7][13].SetState(2);
-	for (int i = 4; i < 11; i++)
-	{
-		Board[3][i].SetState(2);
-	}
-	for (int i = 3; i < 12; i++)
-	{
-		Board[4][i].SetState(2);
-	}
-	for (int i = 4; i < 11; i++)
-	{
-		Board[5][i].SetState(2);
-	}
-	for (int i = 3; i < 6; i++)
-	{
-		Board[6][i].SetState(2);
-	}
-	for (int i = 9; i < 12; i++)
-	{
-		Board[6][i].SetState(2);
-	}
+	for (int i = 4; i < 11; i++) Board[3][i].SetState(2);
+	
+	for (int i = 3; i < 12; i++) Board[4][i].SetState(2);
+	for (int i = 4; i < 11; i++) Board[5][i].SetState(2);
+	
+	for (int i = 3; i < 6; i++) Board[6][i].SetState(2);
+	
+	for (int i = 9; i < 12; i++) Board[6][i].SetState(2);
+	
 	for (int i = 5; i < 10; i++)
 	{
 		Board[7][i].SetState(2);
@@ -214,19 +177,26 @@ void CPirate::Initialize(HINSTANCE _hInst)
 	Board[8][10].SetState(2);
 	Board[9][5].SetState(2);
 	Board[9][9].SetState(2);
-	for (int i = 6; i < 9; i++)
-	{
-		Board[10][i].SetState(2);
-	}
+	for (int i = 6; i < 9; i++) Board[10][i].SetState(2);
 	Board[10][13].SetState(2);
-
-
 	Board[11][1].SetState(3);
 	Board[11][13].SetState(3);
-
 	Board[6][6].SetState(3); Board[6][7].SetState(3); Board[6][8].SetState(3);
+
+
+	// Resource
+	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP12));
+
 }
 void CPirate::Render(HDC MemDC, HDC MemDCImage)
 {
+	(HBITMAP)SelectObject(MemDCImage, TileBitmap); //--- 배경 이미지
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			StretchBlt(MemDC, Board[i][j].x, Board[i][j].y, 60, 60, MemDCImage, 0, 0, 40, 40, SRCCOPY);                  // Tile
+		}
+	}
 }
 

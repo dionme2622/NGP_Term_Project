@@ -171,6 +171,7 @@
     <Image Include="Image\block\Town\TownHouseRed.bmp" />
     <Image Include="Image\block\Town\TownHouseYellow.bmp" />
     <Image Include="Image\block\Town\TownTree.bmp" />
+    <Image Include="Image\tile\Tile_pirate.bmp" />
     <Image Include="Image\tile\Tile_town.bmp" />
     <Image Include="image\ui\bitmap5.bmp" />
     <Image Include="Image\ui\button_Exit.bmp" />
