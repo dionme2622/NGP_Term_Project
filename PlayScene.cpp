@@ -22,6 +22,7 @@ void CPlayScene::Initialize()
 	GetFramework()->GetCurMap()->Initialize();		// 선택된 Map의 Initialize
 
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
+
 }
 
 
