@@ -123,6 +123,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 
 void CLobbyScene::SelectMap()
 {
+	// test
 	if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
 		cursorPos.y > 370 && cursorPos.y < 520) {
 

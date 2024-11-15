@@ -21,7 +21,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
 	
-	GetFramework()->GetCurMap()->Initialize(hInst);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst);		// 선택된 Map의 Initialize
 
 
 	// Resource
