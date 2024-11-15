@@ -9,6 +9,7 @@ CGameFramework::CGameFramework()
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
 	currentscene	= STARTSCENE;				// Scene의 인덱스
+	_tcscpy_s(m_pszFrameRate, _T("("));
 }
 
 CGameFramework::~CGameFramework()
@@ -28,7 +29,7 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 
 
-	m_pScene = m_ppScenes[currentscene];
+	m_pScene = m_ppScenes[currentscene];																									
 
 	m_ppMaps[0] = new CVillage();
 	m_ppMaps[1] = new CPirate();
@@ -38,6 +39,7 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 void CGameFramework::FrameAdvance()
 {
+	Tick();
 	ProcessInput();
 
 	Update();
@@ -46,14 +48,18 @@ void CGameFramework::FrameAdvance()
 
 void CGameFramework::Update()
 {
-	Tick();
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 	m_pScene->Update(fTimeElapsed);
+
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 1, 37);
+	size_t nLength = _tcslen(m_pszFrameRate);
+
+	::SetWindowText(hWnd, m_pszFrameRate);
 }
 
 void CGameFramework::Tick()
 {
-	m_GameTimer.Tick(0.0f);				// fps 제한 없음
+	m_GameTimer.Tick(120.0f);				// fps 제한 없음
 }
 
 

@@ -1,5 +1,8 @@
 #include "StartScene.h"
 #include "GameFramework.h"
+
+static RECT rect = { 50, 50, 200, 150 };
+
 CStartScene::CStartScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
@@ -27,15 +30,15 @@ void CStartScene::ProcessInput()
 void CStartScene::Update(float fTimeElapsed)
 {
 	// TODO : Start Scene Update
+	rect.left += 200 * fTimeElapsed;
+	rect.top += 200 * fTimeElapsed;
+	rect.right += 200 * fTimeElapsed;
+	rect.bottom += 200 * fTimeElapsed;
 }
 
 void CStartScene::Render()
 {
-	static RECT rect = { 50, 50, 200, 150 };
-	rect.left += 1;
-	rect.top += 1;
-	rect.right += 1;
-	rect.bottom += 1;
+
 	//InvalidateRect(hwnd, NULL, TRUE);  // TRUE로 설정해 배경을 지웁니다.
 	HDC hdc = GetDC(hWnd);
 	MemDC = CreateCompatibleDC(hdc); //--- 더블 버퍼로 사용 할 메모리 DC 생성
