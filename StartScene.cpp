@@ -1,6 +1,9 @@
 #include "StartScene.h"
 #include "GameFramework.h"
-CStartScene::CStartScene(CGameFramework* GameFramework) : CScene(GameFramework)
+
+static RECT rect = { 50, 50, 200, 150 };
+
+CStartScene::CStartScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
 
@@ -8,9 +11,8 @@ CStartScene::~CStartScene()
 {
 }
 
-void CStartScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CStartScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
 }
 
 
@@ -23,28 +25,20 @@ void CStartScene::ProcessInput()
 	{
 		GetFramework()->SetCurScene(MENUSCENE);
 	}
-	/*if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
-
-	if (pKeysBuffer['W'] & 0xF0) dwDirection |= DIR_FORWARD;
-	if (pKeysBuffer['S'] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;*/
 }
 
 void CStartScene::Update(float fTimeElapsed)
 {
 	// TODO : Start Scene Update
+	rect.left += 200 * fTimeElapsed;
+	rect.top += 200 * fTimeElapsed;
+	rect.right += 200 * fTimeElapsed;
+	rect.bottom += 200 * fTimeElapsed;
 }
 
 void CStartScene::Render()
 {
-	static RECT rect = { 50, 50, 200, 150 };
-	rect.left += 1;
-	rect.top += 1;
-	rect.right += 1;
-	rect.bottom += 1;
+
 	//InvalidateRect(hwnd, NULL, TRUE);  // TRUE로 설정해 배경을 지웁니다.
 	HDC hdc = GetDC(hWnd);
 	MemDC = CreateCompatibleDC(hdc); //--- 더블 버퍼로 사용 할 메모리 DC 생성

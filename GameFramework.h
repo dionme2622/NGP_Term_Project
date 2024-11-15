@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "Timer.h"
 #include "Scene.h"
 
@@ -6,9 +7,7 @@
 #include "MenuScene.h"
 #include "LobbyScene.h"
 #include "PlayScene.h"
-
-
-#include "stdafx.h"
+#include "Map.h"
 
 class CScene;
 
@@ -42,6 +41,10 @@ private:
 	CScene*			m_pScene;			// ¾À
 	CScene**		m_ppScenes;			// ¸ðµç ¾À
 
+	CMap*			m_pMap;				// Map
+	CMap**			m_ppMaps;			// Map ¹è¿­
+
+
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
@@ -52,14 +55,20 @@ private:
 	std::string		keyData;
 
 public:
-	void SetCurScene(int Scene);				//µð¹ö±ë¿ë ¾À ³Ñ±â±â
 
-
+	void SetCurScene(int Scene);				// Scene Set
+	
+	CMap* GetCurMap() { return m_pMap; }		// Map º¯¼ö¸¦ Get
+	void SetCurMap(int _map);					// Map º¯¼ö¸¦ Set
 
 
 
 
 private:
+	_TCHAR						m_pszFrameRate[70];
+
+
+
 	static DWORD __stdcall ClientMain(LPVOID arg);
 
 

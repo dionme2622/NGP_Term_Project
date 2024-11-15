@@ -6,11 +6,11 @@
 class CMenuScene : public CScene
 {
 public:
-	CMenuScene(CGameFramework* GameFramework);
+	CMenuScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CMenuScene();
 
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 
 	virtual void ProcessInput();
 

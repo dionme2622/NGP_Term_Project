@@ -1,14 +1,13 @@
 #pragma once
 #include "Scene.h"
 
-
 class CLobbyScene : public CScene
 {
 public:
-	CLobbyScene(CGameFramework* GameFramework);
+	CLobbyScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CLobbyScene();
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 
 	virtual void ProcessInput();
 
@@ -17,7 +16,6 @@ public:
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	void SelectMap();
 private:
 	HBITMAP			 backgroundImage;
 

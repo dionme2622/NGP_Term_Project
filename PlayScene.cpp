@@ -1,11 +1,14 @@
 #include "PlayScene.h"
-#include "Windows.h"
+#include "stdafx.h"
+#include "GameFramework.h"
+
+#define MAP GetFramework()->GetCurMap()
 
 enum {
 	UP = 0, DOWN, LEFT, RIGHT
 };
 
-CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
+CPlayScene::CPlayScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 	player = NULL;
 }
@@ -14,11 +17,16 @@ CPlayScene::~CPlayScene()
 {
 }
 
-void CPlayScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CPlayScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
+	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
+	
+	GetFramework()->GetCurMap()->Initialize(hInst);		// 선택된 Map의 Initialize
 
-	backgroundImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
+
+	// Resource
+	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
+
 }
 
 
@@ -56,12 +64,11 @@ void CPlayScene::Render()
 	hBit = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
 	OldBit[0] = (HBITMAP)SelectObject(MemDC, hBit);
 	OldBit[1] = (HBITMAP)SelectObject(MemDCImage, backgroundImage); //--- 배경 이미지	
-
-	//StretchBlt(MemDC, 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, MemDCImage, 0, 0, 810, 650, SRCCOPY);
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 
-	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
+	MAP->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
 
+	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
 	// 자원 해제
 	SelectObject(MemDC, OldBit[0]);
 	DeleteObject(hBit);
@@ -78,7 +85,6 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&cursorPos);
-
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:

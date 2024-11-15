@@ -24,6 +24,18 @@
 #define IDB_PIRATEMAP                   139
 #define IDB_TESTMAP                     140
 #define IDB_VILLAGEMAP                  141
+#define IDB_Village_Tile                145
+#define IDB_Red_Block                   147
+#define IDB_Orange_Block                148
+#define IDB_Box                         150
+#define IDB_Bush                        151
+#define IDB_Bluehouse                   152
+#define IDB_Redhouse                    153
+#define IDB_Yellowhouse                 154
+#define IDB_Tree                        155
+#define IDB_Pirate_Tile                 156
+#define IDB_Pirate_Block                157
+#define IDB_Pirate_Block2               158
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -31,7 +43,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        159
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110

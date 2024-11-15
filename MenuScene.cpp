@@ -1,7 +1,7 @@
 #include "MenuScene.h"
 #include "GameFramework.h"
 
-CMenuScene::CMenuScene(CGameFramework* GameFramework) : CScene(GameFramework)
+CMenuScene::CMenuScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
 
@@ -9,32 +9,32 @@ CMenuScene::~CMenuScene()
 {
 }
 
-void CMenuScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CMenuScene::Initialize()
 {
-    CScene::Initialize(hwnd, g_hInst);
+    
 
     drawTutorial = false;
 
-    backgroundImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_MENU));
+    backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MENU));
 
 
     // 버튼 설정
     Button_Help.pos = { rc.right / 4 - 100, 700, 200, 100 };
     Button_Help.size = { 0, 0, 200, 100 };
-    Button_Help.ButtonImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_HELPBUTTON));
+    Button_Help.ButtonImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_HELPBUTTON));
 
 
     Button_Play = { rc.right / 2 - 100, 700, 200, 100 };
     Button_Play.size = { 0, 0, 200, 100 };
-    Button_Play.ButtonImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_PLAYBUTTON));
+    Button_Play.ButtonImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PLAYBUTTON));
 
 
     Button_Quit = { rc.right / 2 + 200, 700, 200, 100 };
     Button_Quit.size = { 0, 0, 200, 100 };
-    Button_Quit.ButtonImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_QUITBUTTON));
+    Button_Quit.ButtonImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_QUITBUTTON));
 
 
-    tutoralBtm = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_TUTO));
+    tutoralBtm = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_TUTO));
 
     tutoExitButton.pos = { 535, 560, 135, 40 };
     tutoExitButton.size = { 0, 0, 135, 40 };

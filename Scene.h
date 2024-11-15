@@ -15,15 +15,15 @@ class CGameFramework;
 class CScene
 {
 public:
-	CScene(CGameFramework* GameFramework);
+	CScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CScene();
 
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 	virtual void ProcessInput() = 0;
 
 
-	virtual void Update() = 0;
+	virtual void Update(float fTimeElapsed) = 0;
 	virtual void Render() = 0;
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;

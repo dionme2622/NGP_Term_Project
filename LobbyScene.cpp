@@ -1,6 +1,10 @@
 #include "LobbyScene.h"
 #include "GameFramework.h"
-CLobbyScene::CLobbyScene(CGameFramework* GameFramework) : CScene(GameFramework)
+
+enum { VILLAGE = 0, PIRATE = 1 };
+
+
+CLobbyScene::CLobbyScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
 
@@ -8,21 +12,19 @@ CLobbyScene::~CLobbyScene()
 {
 }
 
-void CLobbyScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CLobbyScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
+	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_LOBBY));						// 배경 이미지
 
-	backgroundImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_LOBBY));						// 배경 이미지
-
-	selecMapImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_SELECTMAP));						// 맵 선택 이미지
+	selecMapImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_SELECTMAP));						// 맵 선택 이미지
 
 	mapImage = NULL;
 
 	mapImages = new HBITMAP[3];
 
-	mapImages[0] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
-	mapImages[1] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
-	mapImages[2] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+	mapImages[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+	mapImages[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
+	mapImages[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
 }
 
 
@@ -31,6 +33,11 @@ void CLobbyScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
+
+	// Test
+	if (pKeysBuffer[VK_UP] & 0xF0) GetFramework()->SetCurMap(VILLAGE);			// Village Map Select
+	if (pKeysBuffer[VK_DOWN] & 0xF0) GetFramework()->SetCurMap(PIRATE);			// PIRATE Map Select
+	if (pKeysBuffer[VK_RETURN] & 0xF0) GetFramework()->SetCurScene(PLAYSCENE);			// PlayScene으로 넘어간다.
 }
 
 void CLobbyScene::Update(float fTimeElapsed)
@@ -79,8 +86,22 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		SetCapture(hWnd);
 		GetCursorPos(&cursorPos);
 		ScreenToClient(hWnd, &cursorPos);
-		SelectMap();
-		if (cursorPos.x > 775 && cursorPos.x < 1060 && cursorPos.y > 735 && cursorPos.y < 815) GetFramework()->SetCurScene(PLAYSCENE);
+
+		if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
+							cursorPos.y > 370 && cursorPos.y < 520 ) {
+
+			if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapImage = mapImages[0];
+			else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3) mapImage = mapImages[1];
+			else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapImage = mapImages[2];
+
+			showSelectMap = !showSelectMap;
+		}
+
+		if (cursorPos.x > 975 && cursorPos.x < 1155 &&
+			cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
+
+		// TODO : 맵 선택
+		// GetFrameWork()->SetCurMap(Village);
 		break;
 	case WM_RBUTTONDOWN:
 		break;
@@ -115,4 +136,5 @@ void CLobbyScene::SelectMap()
 	if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 		cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 }
+
 

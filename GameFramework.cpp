@@ -1,13 +1,15 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-// Commit Test
+
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
-	currentscene	= MENUSCENE;			// Scene의 인덱스
+	m_ppMaps			= new CMap * [2];		// Map 4개
+	currentscene	= STARTSCENE;				// Scene의 인덱스
+	_tcscpy_s(m_pszFrameRate, _T("("));
 }
 
 CGameFramework::~CGameFramework()
@@ -18,21 +20,21 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
 	hWnd = hMainWnd;
 	hInst = g_hInst;
-	m_ppScenes[0] = new CStartScene(this);
-	m_ppScenes[0]->Initialize(hWnd, hInst);
-	
-	m_ppScenes[1] = new CMenuScene(this);
-	m_ppScenes[1]->Initialize(hWnd, hInst);
+	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
+	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);
+	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
+	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_ppScenes[2] = new CLobbyScene(this);
-	m_ppScenes[2]->Initialize(hWnd, hInst);
+	m_ppScenes[0]->Initialize();
 
-	m_ppScenes[3] = new CPlayScene(this);
-	m_ppScenes[3]->Initialize(hWnd, hInst);
 
-	m_pScene = m_ppScenes[currentscene];
+
+	m_pScene = m_ppScenes[currentscene];																									
 
 	CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
+
+	m_ppMaps[0] = new CVillage();
+	m_ppMaps[1] = new CPirate();
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -48,13 +50,19 @@ void CGameFramework::FrameAdvance()
 void CGameFramework::Update()
 {
 	Tick();
+
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 	m_pScene->Update(fTimeElapsed);
+
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 1, 37);
+	size_t nLength = _tcslen(m_pszFrameRate);
+
+	::SetWindowText(hWnd, m_pszFrameRate);
 }
 
 void CGameFramework::Tick()
 {
-	m_GameTimer.Tick(0.0f);				// fps 제한 없음
+	m_GameTimer.Tick(120.0f);				// fps 제한
 }
 
 
@@ -109,23 +117,6 @@ std::string CGameFramework::GetPressedKeysAsString()
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
-
-	/*switch (nMessageID)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		::SetCapture(hWnd);
-		::GetCursorPos(&m_ptOldCursorPos);
-		break;
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-		::ReleaseCapture();
-		break;
-	case WM_MOUSEMOVE:
-		break;
-	default:
-		break;
-	}*/
 }
 
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -158,6 +149,13 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 void CGameFramework::SetCurScene(int Scene)
 {
 	m_pScene = m_ppScenes[Scene];
+	m_pScene->Initialize();
+}
+
+
+void CGameFramework::SetCurMap(int Map)
+{
+	m_pMap = m_ppMaps[Map];
 }
 
 DWORD __stdcall CGameFramework::ClientMain(LPVOID arg)
