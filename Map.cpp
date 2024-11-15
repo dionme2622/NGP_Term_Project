@@ -331,7 +331,8 @@ void CPirate::Initialize(HINSTANCE _hInst)
 
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Pirate_Tile));
-
+	block_pirate = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Pirate_Block));
+	obstacle_pirate = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Pirate_Block2));
 }
 void CPirate::Render(HDC MemDC, HDC MemDCImage)
 {
@@ -343,5 +344,145 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 			StretchBlt(MemDC, Board[i][j].x, Board[i][j].y, 60, 60, MemDCImage, 0, 0, 40, 40, SRCCOPY);                  // Tile
 		}
 	}
+
+	(HBITMAP)SelectObject(MemDCImage, block_pirate); // 장애물
+	// 0줄
+	for (int i = 0; i < 4; i++)
+	{
+		if (Board[0][i].GetState() == 2)
+			TransparentBlt(MemDC, Board[0][i].x, Board[0][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[0][7].GetState() == 2) TransparentBlt(MemDC, Board[0][7].x, Board[0][7].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	for (int i = 11; i < 15; i++)
+	{
+		if (Board[0][i].GetState() == 2) TransparentBlt(MemDC, Board[0][i].x, Board[0][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	// 1줄
+	if (Board[1][0].GetState() == 2) TransparentBlt(MemDC, Board[1][0].x, Board[1][0].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[1][1].GetState() == 3)TransparentBlt(MemDC, Board[1][1].x, Board[1][1].y - 60, 60, 120, MemDCImage, 120, 0, 40, 80, RGB(255, 0, 255));
+	if (Board[1][2].GetState() == 2) TransparentBlt(MemDC, Board[1][2].x, Board[1][2].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	for (int i = 4; i < 7; i++)
+	{
+		if (Board[1][i].GetState() == 2) TransparentBlt(MemDC, Board[1][i].x, Board[1][i].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 8; i < 11; i++)
+	{
+		if (Board[1][i].GetState() == 2) TransparentBlt(MemDC, Board[1][i].x, Board[1][i].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[1][12].GetState() == 2) TransparentBlt(MemDC, Board[1][12].x, Board[1][12].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[1][13].GetState() == 3) TransparentBlt(MemDC, Board[1][13].x, Board[1][13].y - 60, 60, 120, MemDCImage, 120, 0, 40, 80, RGB(255, 0, 255));
+	if (Board[1][14].GetState() == 2) TransparentBlt(MemDC, Board[1][14].x, Board[1][14].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	// 2줄
+	if (Board[2][0].GetState() == 2) TransparentBlt(MemDC, Board[2][0].x, Board[2][0].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][1].GetState() == 2) TransparentBlt(MemDC, Board[2][1].x, Board[2][1].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][3].GetState() == 2) TransparentBlt(MemDC, Board[2][3].x, Board[2][3].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][5].GetState() == 2) TransparentBlt(MemDC, Board[2][5].x, Board[2][5].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][7].GetState() == 2) TransparentBlt(MemDC, Board[2][7].x, Board[2][7].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][9].GetState() == 2) TransparentBlt(MemDC, Board[2][9].x, Board[2][9].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][11].GetState() == 2) TransparentBlt(MemDC, Board[2][11].x, Board[2][11].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][13].GetState() == 2) TransparentBlt(MemDC, Board[2][13].x, Board[2][13].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[2][14].GetState() == 2) TransparentBlt(MemDC, Board[2][14].x, Board[2][14].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	// 3줄
+	for (int i = 3; i < 13; i++)
+	{
+		if (Board[i][0].GetState() == 2) TransparentBlt(MemDC, Board[i][0].x, Board[i][0].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 7; i < 11; i++)
+	{
+		if (Board[i][1].GetState() == 2) TransparentBlt(MemDC, Board[i][1].x, Board[i][1].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 8; i < 10; i++)
+	{
+		if (Board[i][2].GetState() == 2) TransparentBlt(MemDC, Board[i][2].x, Board[i][2].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 9; i < 13; i++)
+	{
+		if (Board[i][3].GetState() == 2) TransparentBlt(MemDC, Board[i][3].x, Board[i][3].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 10; i < 13; i++)
+	{
+		if (Board[i][4].GetState() == 2) TransparentBlt(MemDC, Board[i][4].x, Board[i][4].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 11; i < 13; i++)
+	{
+		if (Board[i][5].GetState() == 2) TransparentBlt(MemDC, Board[i][5].x, Board[i][5].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 6; i < 12; i++)
+	{
+		if (Board[12][i].GetState() == 2) TransparentBlt(MemDC, Board[12][i].x, Board[12][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 9; i < 12; i++)
+	{
+		if (Board[11][i].GetState() == 2) TransparentBlt(MemDC, Board[11][i].x, Board[11][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 3; i < 13; i++)
+	{
+		if (Board[i][14].GetState() == 2) TransparentBlt(MemDC, Board[i][14].x, Board[i][14].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+
+	for (int i = 10; i < 12; i++)
+	{
+		if (Board[10][i].GetState() == 2) TransparentBlt(MemDC, Board[10][i].x, Board[10][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 11; i < 14; i++)
+	{
+		if (Board[9][i].GetState() == 2) TransparentBlt(MemDC, Board[9][i].x, Board[9][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 12; i < 14; i++)
+	{
+		if (Board[8][i].GetState() == 2) TransparentBlt(MemDC, Board[8][i].x, Board[8][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[7][13].GetState() == 2) TransparentBlt(MemDC, Board[7][13].x, Board[7][13].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	for (int i = 4; i < 11; i++)
+	{
+		if (Board[3][i].GetState() == 2) TransparentBlt(MemDC, Board[3][i].x, Board[3][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 3; i < 12; i++)
+	{
+		if (Board[4][i].GetState() == 2) TransparentBlt(MemDC, Board[4][i].x, Board[4][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 4; i < 11; i++)
+	{
+		if (Board[5][i].GetState() == 2) TransparentBlt(MemDC, Board[5][i].x, Board[5][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 3; i < 6; i++)
+	{
+		if (Board[6][i].GetState() == 2) TransparentBlt(MemDC, Board[6][i].x, Board[6][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	for (int i = 9; i < 12; i++)
+	{
+		if (Board[6][i].GetState() == 2) TransparentBlt(MemDC, Board[6][i].x, Board[6][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));  /////////////
+	}
+	for (int i = 5; i < 10; i++)
+	{
+		if (Board[7][i].GetState() == 2) TransparentBlt(MemDC, Board[7][i].x, Board[7][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+		if (Board[8][i].GetState() == 2) TransparentBlt(MemDC, Board[8][i].x, Board[8][i].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[9][7].GetState() == 2) TransparentBlt(MemDC, Board[9][7].x, Board[9][7].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+	for (int i = 3; i < 7; i++)
+	{
+		if (Board[i][2].GetState() == 2) TransparentBlt(MemDC, Board[i][2].x, Board[i][2].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+		if (Board[i][12].GetState() == 2) TransparentBlt(MemDC, Board[i][12].x, Board[i][12].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[7][3].GetState() == 2) TransparentBlt(MemDC, Board[7][3].x, Board[7][3].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[7][11].GetState() == 2) TransparentBlt(MemDC, Board[7][11].x, Board[7][11].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[8][4].GetState() == 2) TransparentBlt(MemDC, Board[8][4].x, Board[8][4].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[8][10].GetState() == 2) TransparentBlt(MemDC, Board[8][10].x, Board[8][10].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[9][5].GetState() == 2) TransparentBlt(MemDC, Board[9][5].x, Board[9][5].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	if (Board[9][9].GetState() == 2) TransparentBlt(MemDC, Board[9][9].x, Board[9][9].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	for (int i = 6; i < 9; i++)
+	{
+		if (Board[10][i].GetState() == 2) TransparentBlt(MemDC, Board[10][i].x, Board[10][i].y, 60, 60, MemDCImage, 40, 37, 40, 40, RGB(255, 0, 255));
+	}
+	if (Board[10][13].GetState() == 2) TransparentBlt(MemDC, Board[10][13].x, Board[10][13].y, 60, 60, MemDCImage, 0, 37, 40, 40, RGB(255, 0, 255));
+
+
+	if (Board[11][1].GetState() == 3) TransparentBlt(MemDC, Board[11][1].x, Board[11][1].y - 60, 60, 120, MemDCImage, 120, 0, 40, 80, RGB(255, 0, 255));
+	if (Board[11][13].GetState() == 3) TransparentBlt(MemDC, Board[11][13].x, Board[11][13].y - 60, 60, 120, MemDCImage, 120, 0, 40, 80, RGB(255, 0, 255));
+
+	(HBITMAP)SelectObject(MemDCImage, obstacle_pirate); // 장애물
+	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
+
+
 }
 

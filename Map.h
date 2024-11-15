@@ -42,5 +42,6 @@ public:
 
 private:
 	HBITMAP TileBitmap;
-
+	HBITMAP block_pirate;
+	HBITMAP obstacle_pirate;
 };

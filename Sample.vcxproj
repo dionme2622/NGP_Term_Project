@@ -162,7 +162,7 @@
     <ResourceCompile Include="Sample.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Image\block\block_town.bmp" />
+    <Image Include="Image\block\block_pirate.bmp" />
     <Image Include="Image\block\Town\TownBlockRed.bmp" />
     <Image Include="Image\block\Town\TownBlockYellow.bmp" />
     <Image Include="Image\block\Town\TownBox.bmp" />
@@ -171,9 +171,9 @@
     <Image Include="Image\block\Town\TownHouseRed.bmp" />
     <Image Include="Image\block\Town\TownHouseYellow.bmp" />
     <Image Include="Image\block\Town\TownTree.bmp" />
+    <Image Include="Image\tile\Ship\map_pirate_tile6.bmp" />
     <Image Include="Image\tile\Tile_pirate.bmp" />
     <Image Include="Image\tile\Tile_town.bmp" />
-    <Image Include="image\ui\bitmap5.bmp" />
     <Image Include="Image\ui\button_Exit.bmp" />
     <Image Include="Image\ui\button_help.bmp" />
     <Image Include="Image\ui\button_Play.bmp" />

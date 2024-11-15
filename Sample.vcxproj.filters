@@ -207,14 +207,14 @@
     <Image Include="Image\block\Town\TownTree.bmp">
       <Filter>리소스 파일\Block\Village</Filter>
     </Image>
-    <Image Include="Image\block\block_town.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="image\ui\bitmap5.bmp">
-      <Filter>리소스 파일</Filter>
-    </Image>
     <Image Include="Image\tile\Tile_pirate.bmp">
       <Filter>리소스 파일\Block\Pirate</Filter>
+    </Image>
+    <Image Include="Image\block\block_pirate.bmp">
+      <Filter>리소스 파일\Block\Pirate</Filter>
+    </Image>
+    <Image Include="Image\tile\Ship\map_pirate_tile6.bmp">
+      <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
 </Project>
