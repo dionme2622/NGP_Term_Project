@@ -47,13 +47,13 @@ void CGameFramework::FrameAdvance()
 void CGameFramework::Update()
 {
 	Tick();
-
-	m_pScene->Update();
+	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
+	m_pScene->Update(fTimeElapsed);
 }
 
 void CGameFramework::Tick()
 {
-
+	m_GameTimer.Tick(0.0f);				// fps 제한 없음
 }
 
 
@@ -92,24 +92,23 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 
 	switch (nMessageID)
 	{
 	case WM_ACTIVATE:
-	{
-		/*if (LOWORD(wParam) == WA_INACTIVE)
+	{	
+		if (LOWORD(wParam) == WA_INACTIVE)
 			m_GameTimer.Stop();
 		else
-			m_GameTimer.Start();*/
+			m_GameTimer.Start();
 		break;
 	}
+	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		break;
 	case WM_LBUTTONUP:
-
 	case WM_RBUTTONUP:
 	case WM_MOUSEMOVE:
+		OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
 	case WM_KEYUP:

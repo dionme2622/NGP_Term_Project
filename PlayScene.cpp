@@ -36,8 +36,9 @@ void CPlayScene::ProcessInput()
 	if (pKeysBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;*/
 }
 
-void CPlayScene::Update()
+void CPlayScene::Update(float fTimeElapsed)
 {
+	// TODO : Play Scene Update
 }
 
 void CPlayScene::Render()

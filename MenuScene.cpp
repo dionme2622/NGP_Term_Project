@@ -54,8 +54,9 @@ void CMenuScene::ProcessInput()
 }
 
 
-void CMenuScene::Update()
+void CMenuScene::Update(float fTimeElapsed)
 {
+    // TODO : Menu Scene Update
 
 }
 

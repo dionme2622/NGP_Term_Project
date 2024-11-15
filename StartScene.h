@@ -17,7 +17,7 @@ public:
 
 	virtual void ProcessInput();
 
-	virtual void Update();
+	virtual void Update(float fTimeElapsed);
 	virtual void Render();
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
