@@ -19,8 +19,10 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
 	
-	GetFramework()->GetCurMap()->Initialize();		// 선택된 Map의 Initialize
+	GetFramework()->GetCurMap()->Initialize(hInst);		// 선택된 Map의 Initialize
 
+
+	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
 
 }
@@ -58,12 +60,11 @@ void CPlayScene::Render()
 	hBit = CreateCompatibleBitmap(hdc, rc.right, rc.bottom);
 	OldBit[0] = (HBITMAP)SelectObject(MemDC, hBit);
 	OldBit[1] = (HBITMAP)SelectObject(MemDCImage, backgroundImage); //--- 배경 이미지	
-
-	//StretchBlt(MemDC, 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, MemDCImage, 0, 0, 810, 650, SRCCOPY);
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 
-	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
+	GetFramework()->GetCurMap()->Render(MemDC, MemDCImage);
 
+	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
 	// 자원 해제
 	SelectObject(MemDC, OldBit[0]);
 	DeleteObject(hBit);

@@ -8,9 +8,13 @@ public:
 	CMap() {};
 	~CMap() {};
 
-	virtual void Initialize();
+	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Render(HDC MemDC, HDC MemDCImage) {};
+
 protected:
 	CBoard			Board[13][15];
+
+	HINSTANCE		hInst;
 };
 
 class CVillage : public CMap
@@ -19,9 +23,11 @@ public :
 	CVillage() {};
 	~CVillage() {};
 
-	virtual void Initialize();
-private:
+	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Render(HDC MemDC, HDC MemDCImage);
 
+private:
+	HBITMAP TileBitmap1;
 
 };
 
@@ -31,7 +37,9 @@ public:
 	CPirate() {};
 	~CPirate() {};
 
-	virtual void Initialize();
+	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Render(HDC MemDC, HDC MemDCImage);
+
 private:
 
 

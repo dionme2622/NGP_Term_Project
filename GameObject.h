@@ -66,7 +66,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	void SetPosition(int _x, int _y) { x, y = _x, _y; }
+	void SetPosition(int _x, int _y) { x = _x, y = _y; }
 	void SetState(int _state) { state = _state; }
 private:
 	int state;				// 1이면 일반타일, 2이면 블록, 3이면 장애물, 6: 신발아이템, 7: 물줄기아이템, 8: 물풍선아이템

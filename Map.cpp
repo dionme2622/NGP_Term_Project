@@ -1,7 +1,8 @@
 #include "Map.h"
 
-void CMap::Initialize()
+void CMap::Initialize(HINSTANCE _hInst)
 {
+	hInst = _hInst;
 	for (int i = 0; i < 13; i++)
 	{
 		for (int j = 0; j < 15; j++)
@@ -17,10 +18,10 @@ void CMap::Initialize()
 /// Village Map
 /// </summary>
 
-void CVillage::Initialize()
+void CVillage::Initialize(HINSTANCE _hInst)
 {
 	// TODO : Map이 Village일 때 초기화
-	CMap::Initialize();
+	CMap::Initialize(_hInst);
 	for (int i = 2; i < 13; i++)
 	{
 		Board[0][i].SetState(2);
@@ -63,7 +64,22 @@ void CVillage::Initialize()
 	}
 	Board[10][2].SetState(1); Board[10][5].SetState(1); Board[10][9].SetState(1); Board[10][12].SetState(1);
 
+	// Resource
+	TileBitmap1 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
+
 	printf("Village Initialize\n");
+
+}
+void CVillage::Render(HDC MemDC, HDC MemDCImage)
+{
+	(HBITMAP)SelectObject(MemDCImage, TileBitmap1); //--- 배경 이미지
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			StretchBlt(MemDC, Board[i][j].x, Board[i][j].y, 60, 60, MemDCImage, 0, 0, 40, 40, SRCCOPY);                  // Tile
+		}
+	}
 }
 
 
@@ -71,10 +87,10 @@ void CVillage::Initialize()
 /// Pirate Map
 /// </summary>
 
-void CPirate::Initialize()
+void CPirate::Initialize(HINSTANCE _hInst)
 {
 	// TODO : Map이 Pirate일 때 초기화
-	CMap::Initialize();
+	CMap::Initialize(_hInst);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -210,4 +226,7 @@ void CPirate::Initialize()
 
 	Board[6][6].SetState(3); Board[6][7].SetState(3); Board[6][8].SetState(3);
 }
+void CPirate::Render(HDC MemDC, HDC MemDCImage)
+{
 }
+

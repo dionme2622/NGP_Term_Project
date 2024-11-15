@@ -20,8 +20,8 @@ public:
 
 
 private:
-	HBITMAP			 backgroundImage;
-
+	HBITMAP				backgroundImage;
+	HBITMAP				TileBitmap1;
 
 	CPlayer*			player;			// 플레이어
 };
