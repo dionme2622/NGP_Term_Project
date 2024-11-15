@@ -134,7 +134,7 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
         if (IsCursorInButton(Button_Help, cursorPos)) drawTutorial = true;
-        else if (IsCursorInButton(Button_Play, cursorPos)) GetFramework()->SetCurScene(LOBBYSCENE);
+        else if (IsCursorInButton(Button_Play, cursorPos)) GetFramework()->SetCurScene(LOBBYSCENE);     // 로비 Scene으로 이동
         else if (IsCursorInButton(Button_Quit, cursorPos)) exit(0);
         if (drawTutorial && IsCursorInButton(tutoExitButton, cursorPos)) drawTutorial = false;
         break;

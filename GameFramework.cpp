@@ -7,7 +7,7 @@ CGameFramework::CGameFramework()
 	m_pScene			= nullptr;
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
-	currentscene	= STARTSCENE;			// Scene의 인덱스
+	currentscene	= MENUSCENE;			// Scene의 인덱스
 }
 
 CGameFramework::~CGameFramework()
@@ -32,6 +32,8 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 
 	m_pScene = m_ppScenes[currentscene];
+
+	m_GameTimer.Reset();				// 타이머 초기화
 }
 
 void CGameFramework::FrameAdvance()
