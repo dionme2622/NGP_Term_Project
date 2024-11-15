@@ -4,7 +4,6 @@
 CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 	player = NULL;
-
 }
 
 CPlayScene::~CPlayScene()

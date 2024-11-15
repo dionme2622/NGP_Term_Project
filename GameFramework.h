@@ -27,6 +27,8 @@ public:
 	void Render();
 
 	void ProcessInput();
+	std::string GetPressedKeysAsString();
+	std::vector<char> GetPressedKeys();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -43,7 +45,11 @@ private:
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
+	// 서버 통신 관련
+	static SOCKET sock;
 
+
+	std::string		keyData;
 
 public:
 	void SetCurScene(int Scene);				//디버깅용 씬 넘기기

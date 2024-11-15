@@ -65,6 +65,43 @@ void CGameFramework::Render()
 void CGameFramework::ProcessInput()
 {
 	m_pScene->ProcessInput();
+
+	// 현재 눌린 키들을 문자열로 가져오기
+	std::string pressedKeys = GetPressedKeysAsString();
+
+	if (!pressedKeys.empty()) {
+		keyData = pressedKeys.c_str();
+	}
+}
+
+std::vector<char> CGameFramework::GetPressedKeys()
+{
+	std::vector<char> pressedKeys;
+
+	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+	for (int key = 0x01; key <= 0xFE; ++key) {
+		// 키가 눌려 있는지 확인
+		if (GetAsyncKeyState(key) & 0x8000) {
+			pressedKeys.push_back(key); // 눌린 키를 추가
+		}
+	}
+
+	return pressedKeys;
+}
+
+std::string CGameFramework::GetPressedKeysAsString()
+{
+	std::string keys;
+
+	// 눌려 있는 키 목록을 가져옴
+	std::vector<char> pressedKeys = GetPressedKeys();
+
+	// 각 키를 문자열로 변환하여 추가
+	for (int key : pressedKeys) {
+		keys += std::to_string(key) + " ";
+	}
+
+	return keys;
 }
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -96,13 +133,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	switch (nMessageID)
 	{
 	case WM_ACTIVATE:
-	{
-		/*if (LOWORD(wParam) == WA_INACTIVE)
-			m_GameTimer.Stop();
-		else
-			m_GameTimer.Start();*/
 		break;
-	}
 	case WM_RBUTTONDOWN:
 		break;
 	case WM_LBUTTONUP:
@@ -124,6 +155,24 @@ void CGameFramework::SetCurScene(int Scene)
 
 DWORD __stdcall CGameFramework::ClientMain(LPVOID arg)
 {
+	//int retval;
+
+	//// 데이터 전송
+	//char buf[BUFSIZE];
+
+	//// 입력 데이터 전송
+	//retval = send(sock, buf, retval, 0);
+
+	//int totalSent = 0;
+	//int filesize = 0;		// 조정해야됨
+
+	//while (1) {
+	//	int bytes = send(sock, buf, retval, 0);
+
+	//	if (totalSent == filesize) {
+	//		break;
+	//	}
+	//}
 	return 0;
 }
 

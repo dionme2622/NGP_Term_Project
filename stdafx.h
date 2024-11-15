@@ -2,6 +2,8 @@
 
 #include <istream>
 #include <windows.h>
+#include <vector>
+#include <string>
 
 #include "Resource.h"
 
@@ -24,3 +26,9 @@
 #define BUTTON_HELP 200
 #define BUTTON_PLAY 201
 #define BUTTON_START 202
+
+
+
+// 서버 통신
+#define SERVERPORT 9000
+#define BUFSIZE 50
