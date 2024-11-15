@@ -12,7 +12,7 @@ public:
 	virtual void Render() = 0;
 
 
-private:
+public:
 	int x, y;		// 좌표
 
 	// 이미지 담을 무언가의 변수
@@ -66,8 +66,10 @@ public:
 	virtual void Update();
 	virtual void Render();
 
+	void SetPosition(int _x, int _y) { x, y = _x, _y; }
+	void SetState(int _state) { state = _state; }
 private:
-	int type;				// 1이면 일반타일, 2이면 블록, 3이면 장애물, 6: 신발아이템, 7: 물줄기아이템, 8: 물풍선아이템
+	int state;				// 1이면 일반타일, 2이면 블록, 3이면 장애물, 6: 신발아이템, 7: 물줄기아이템, 8: 물풍선아이템
 	int block;				// 뭔지 모름
 
 	RECT		boundingBox;

@@ -19,7 +19,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
 	
-	GetFramework()->GetCurMap()->Initialize();
+	GetFramework()->GetCurMap()->Initialize();		// 선택된 Map의 Initialize
 
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
 }

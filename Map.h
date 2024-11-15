@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "GameObject.h"
 
 class CMap
 {
@@ -8,8 +9,8 @@ public:
 	~CMap() {};
 
 	virtual void Initialize();
-private:
-
+protected:
+	CBoard			Board[13][15];
 };
 
 class CVillage : public CMap
