@@ -17,7 +17,7 @@ public:
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	HBITMAP* SelectMap();
+	void SelectMap();
 private:
 	HBITMAP			 backgroundImage;
 

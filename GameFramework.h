@@ -34,7 +34,7 @@ private:
 	HWND			hWnd;
 	HINSTANCE		hInst;
 
-	CTimer			timer;			// 타이머
+	//CTimer			timer;			// 타이머
 
 	int				currentscene;			// Scene의 인덱스
 	CScene*			m_pScene;			// 씬

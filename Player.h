@@ -18,8 +18,8 @@ private:
 	int			direction;			// 캐릭터 시선
 	int			state;				// 캐릭터 상태
 
-
-
+public:
+	char* ID;					// ID
 
 
 	//이건 뭐지

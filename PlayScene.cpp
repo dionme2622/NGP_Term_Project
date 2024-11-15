@@ -24,7 +24,7 @@ void CPlayScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
-	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000);
+	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000); // 키 버퍼 위키저장해놓ㅅ고
 	/*if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
 	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
 	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
@@ -38,6 +38,7 @@ void CPlayScene::ProcessInput()
 
 void CPlayScene::Update()
 {
+	// 서버로 키 입력 버퍼 데이터들을 보낸다
 }
 
 void CPlayScene::Render()
