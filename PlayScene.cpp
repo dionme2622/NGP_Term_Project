@@ -1,6 +1,10 @@
 #include "PlayScene.h"
 #include "Windows.h"
 
+enum {
+	UP = 0, DOWN, LEFT, RIGHT
+};
+
 CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 	player = NULL;
@@ -26,8 +30,11 @@ void CPlayScene::ProcessInput()
 	GetKeyboardState(pKeysBuffer);
 
 	// TODO : Player의 방향 벡터를 설정한다.
-	if (pKeysBuffer[VK_UP] & 0xF0) ;
-	
+	if (pKeysBuffer[VK_UP] & 0xF0) player->SetDirection(UP);
+	if (pKeysBuffer[VK_DOWN] & 0xF0) player->SetDirection(DOWN);
+	if (pKeysBuffer[VK_LEFT] & 0xF0) player->SetDirection(LEFT);
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) player->SetDirection(RIGHT);
+
 }
 
 void CPlayScene::Update(float fTimeElapsed)
