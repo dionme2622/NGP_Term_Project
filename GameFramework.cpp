@@ -39,7 +39,6 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 void CGameFramework::FrameAdvance()
 {
-	Tick();
 	ProcessInput();
 
 	Update();
@@ -48,6 +47,8 @@ void CGameFramework::FrameAdvance()
 
 void CGameFramework::Update()
 {
+	Tick();
+
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 	m_pScene->Update(fTimeElapsed);
 
@@ -59,7 +60,7 @@ void CGameFramework::Update()
 
 void CGameFramework::Tick()
 {
-	m_GameTimer.Tick(120.0f);				// fps 제한 없음
+	m_GameTimer.Tick(120.0f);				// fps 제한
 }
 
 

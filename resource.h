@@ -24,18 +24,16 @@
 #define IDB_PIRATEMAP                   139
 #define IDB_TESTMAP                     140
 #define IDB_VILLAGEMAP                  141
-#define IDB_BITMAP1                     145
-#define IDB_BITMAP2                     146
-#define IDB_BITMAP3                     147
-#define IDB_BITMAP4                     148
-#define IDB_BITMAP5                     149
-#define IDB_BITMAP6                     150
-#define IDB_BITMAP7                     151
-#define IDB_BITMAP8                     152
-#define IDB_BITMAP9                     153
-#define IDB_BITMAP10                    154
-#define IDB_BITMAP11                    155
-#define IDB_BITMAP12                    156
+#define IDB_Village_Tile                145
+#define IDB_Red_Block                   147
+#define IDB_Orange_Block                148
+#define IDB_Box                         150
+#define IDB_Bush                        151
+#define IDB_Bluehouse                   152
+#define IDB_Redhouse                    153
+#define IDB_Yellowhouse                 154
+#define IDB_Tree                        155
+#define IDB_Pirate_Tile                 156
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

@@ -66,6 +66,8 @@ public:
 	virtual void Update();
 	virtual void Render();
 
+	int GetState() { return state; }
+
 	void SetPosition(int _x, int _y) { x = _x, y = _y; }
 	void SetState(int _state) { state = _state; }
 private:

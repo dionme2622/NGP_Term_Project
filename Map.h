@@ -28,7 +28,7 @@ public :
 
 private:
 	HBITMAP TileBitmap;
-
+	HBITMAP Block[7];
 };
 
 class CPirate : public CMap
