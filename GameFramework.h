@@ -7,7 +7,7 @@
 #include "MenuScene.h"
 #include "LobbyScene.h"
 #include "PlayScene.h"
-
+#include "Map.h"
 
 class CScene;
 
@@ -39,13 +39,19 @@ private:
 	CScene*			m_pScene;			// ¾À
 	CScene**		m_ppScenes;			// ¸ðµç ¾À
 
+	CMap*			m_pMap;				// Map
+	CMap**			m_ppMaps;			// Map ¹è¿­
+
+
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
 public:
-	void SetCurScene(int Scene);				//µð¹ö±ë¿ë ¾À ³Ñ±â±â
 
-
+	void SetCurScene(int Scene);				// Scene Set
+	
+	CMap* GetCurMap() { return m_pMap; }		// Map º¯¼ö¸¦ Get
+	void SetCurMap(int _map);					// Map º¯¼ö¸¦ Set
 
 
 

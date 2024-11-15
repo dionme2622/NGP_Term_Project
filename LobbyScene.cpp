@@ -1,5 +1,9 @@
 #include "LobbyScene.h"
 #include "GameFramework.h"
+
+enum { VILLAGE = 0, PIRATE = 1 };
+
+
 CLobbyScene::CLobbyScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
@@ -10,7 +14,6 @@ CLobbyScene::~CLobbyScene()
 
 void CLobbyScene::Initialize()
 {
-
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_LOBBY));						// 배경 이미지
 
 	selecMapImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_SELECTMAP));						// 맵 선택 이미지
@@ -30,6 +33,11 @@ void CLobbyScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
+
+	// Test
+	if (pKeysBuffer[VK_UP] & 0xF0) GetFramework()->SetCurMap(VILLAGE);			// Village Map Select
+	if (pKeysBuffer[VK_DOWN] & 0xF0) GetFramework()->SetCurMap(PIRATE);			// PIRATE Map Select
+	if (pKeysBuffer[VK_RETURN] & 0xF0) GetFramework()->SetCurScene(PLAYSCENE);			// PlayScene으로 넘어간다.
 }
 
 void CLobbyScene::Update(float fTimeElapsed)
@@ -92,6 +100,8 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 			cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 
+		// TODO : 맵 선택
+		// GetFrameWork()->SetCurMap(Village);
 		break;
 	case WM_RBUTTONDOWN:
 		break;
@@ -110,4 +120,5 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		break;
 	}
 }
+
 

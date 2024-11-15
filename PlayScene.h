@@ -23,6 +23,5 @@ private:
 	HBITMAP			 backgroundImage;
 
 
-	CPlayer* player;			// 플레이어
-
+	CPlayer*			player;			// 플레이어
 };

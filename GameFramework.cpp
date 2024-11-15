@@ -1,14 +1,14 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-// Commit Test
+
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
-	currentscene	= STARTSCENE;			// Scene의 인덱스
-
+	m_ppMaps			= new CMap * [2];		// Map 4개
+	currentscene	= STARTSCENE;				// Scene의 인덱스
 }
 
 CGameFramework::~CGameFramework()
@@ -26,7 +26,12 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	m_ppScenes[0]->Initialize();
 
+
+
 	m_pScene = m_ppScenes[currentscene];
+
+	m_ppMaps[0] = new CVillage();
+	m_ppMaps[1] = new CPirate();
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -99,6 +104,11 @@ void CGameFramework::SetCurScene(int Scene)
 {
 	m_pScene = m_ppScenes[Scene];
 	m_pScene->Initialize();
+}
 
+
+void CGameFramework::SetCurMap(int Map)
+{
+	m_pMap = m_ppMaps[Map];
 }
 

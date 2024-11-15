@@ -1,6 +1,6 @@
 #include "PlayScene.h"
-#include "Windows.h"
-
+#include "stdafx.h"
+#include "GameFramework.h"
 enum {
 	UP = 0, DOWN, LEFT, RIGHT
 };
@@ -17,6 +17,10 @@ CPlayScene::~CPlayScene()
 
 void CPlayScene::Initialize()
 {
+	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
+	
+	GetFramework()->GetCurMap()->Initialize();
+
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
 }
 

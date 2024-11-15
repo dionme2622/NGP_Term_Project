@@ -16,9 +16,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Scene\Lobby">
-      <UniqueIdentifier>{85794e74-9dda-4424-8201-d0f5d5a509f2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene\Menu">
       <UniqueIdentifier>{a0402b57-6a29-4cbb-82f8-8bce0f4bea6f}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,9 @@
     </Filter>
     <Filter Include="Map">
       <UniqueIdentifier>{7c0d6b63-94f2-40e1-bf3c-16756da81666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Lobby">
+      <UniqueIdentifier>{85794e74-9dda-4424-8201-d0f5d5a509f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

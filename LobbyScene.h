@@ -1,7 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-
 class CLobbyScene : public CScene
 {
 public:
@@ -17,7 +16,6 @@ public:
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	HBITMAP* SelectMap();
 private:
 	HBITMAP			 backgroundImage;
 
