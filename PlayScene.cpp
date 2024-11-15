@@ -24,21 +24,18 @@ void CPlayScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
-	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000);
-	/*if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
-	if (pKeysBuffer['W'] & 0xF0) dwDirection |= DIR_FORWARD;
-	if (pKeysBuffer['S'] & 0xF0) dwDirection |= DIR_BACKWARD;
-	if (pKeysBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;*/
+	// TODO : Player의 방향 벡터를 설정한다.
+	if (pKeysBuffer[VK_UP] & 0xF0) ;
+	
 }
 
 void CPlayScene::Update(float fTimeElapsed)
 {
 	// TODO : Play Scene Update
+
+	// 1. Player의 방향벡터에 따라 움직인다.
+	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
 }
 
 void CPlayScene::Render()
