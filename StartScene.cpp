@@ -1,6 +1,6 @@
 #include "StartScene.h"
 #include "GameFramework.h"
-CStartScene::CStartScene(CGameFramework* GameFramework) : CScene(GameFramework)
+CStartScene::CStartScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
 
@@ -8,9 +8,8 @@ CStartScene::~CStartScene()
 {
 }
 
-void CStartScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CStartScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
 }
 
 

@@ -5,7 +5,7 @@ enum {
 	UP = 0, DOWN, LEFT, RIGHT
 };
 
-CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
+CPlayScene::CPlayScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 	player = NULL;
 
@@ -15,11 +15,9 @@ CPlayScene::~CPlayScene()
 {
 }
 
-void CPlayScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CPlayScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
-
-	backgroundImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
+	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
 }
 
 

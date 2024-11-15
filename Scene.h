@@ -15,11 +15,11 @@ class CGameFramework;
 class CScene
 {
 public:
-	CScene(CGameFramework* GameFramework);
+	CScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CScene();
 
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 	virtual void ProcessInput() = 0;
 
 

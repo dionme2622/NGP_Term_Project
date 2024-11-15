@@ -5,10 +5,10 @@
 class CLobbyScene : public CScene
 {
 public:
-	CLobbyScene(CGameFramework* GameFramework);
+	CLobbyScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CLobbyScene();
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 
 	virtual void ProcessInput();
 

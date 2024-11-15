@@ -7,7 +7,8 @@ CGameFramework::CGameFramework()
 	m_pScene			= nullptr;
 
 	m_ppScenes			= new CScene * [4];		// ¾À 4°³
-	currentscene	= MENUSCENE;			// SceneÀÇ ÀÎµ¦½º
+	currentscene	= STARTSCENE;			// SceneÀÇ ÀÎµ¦½º
+
 }
 
 CGameFramework::~CGameFramework()
@@ -18,18 +19,12 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
 	hWnd = hMainWnd;
 	hInst = g_hInst;
-	m_ppScenes[0] = new CStartScene(this);
-	m_ppScenes[0]->Initialize(hWnd, hInst);
-	
-	m_ppScenes[1] = new CMenuScene(this);
-	m_ppScenes[1]->Initialize(hWnd, hInst);
+	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
+	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);
+	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
+	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_ppScenes[2] = new CLobbyScene(this);
-	m_ppScenes[2]->Initialize(hWnd, hInst);
-
-	m_ppScenes[3] = new CPlayScene(this);
-	m_ppScenes[3]->Initialize(hWnd, hInst);
-
+	m_ppScenes[0]->Initialize();
 
 	m_pScene = m_ppScenes[currentscene];
 
@@ -103,5 +98,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 void CGameFramework::SetCurScene(int Scene)
 {
 	m_pScene = m_ppScenes[Scene];
+	m_pScene->Initialize();
+
 }
 

@@ -1,6 +1,6 @@
 #include "LobbyScene.h"
 #include "GameFramework.h"
-CLobbyScene::CLobbyScene(CGameFramework* GameFramework) : CScene(GameFramework)
+CLobbyScene::CLobbyScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
 
@@ -8,21 +8,20 @@ CLobbyScene::~CLobbyScene()
 {
 }
 
-void CLobbyScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CLobbyScene::Initialize()
 {
-	CScene::Initialize(hwnd, g_hInst);
 
-	backgroundImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_LOBBY));						// 배경 이미지
+	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_LOBBY));						// 배경 이미지
 
-	selecMapImage = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_SELECTMAP));						// 맵 선택 이미지
+	selecMapImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_SELECTMAP));						// 맵 선택 이미지
 
 	mapImage = NULL;
 
 	mapImages = new HBITMAP[3];
 
-	mapImages[0] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
-	mapImages[1] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
-	mapImages[2] = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+	mapImages[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+	mapImages[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
+	mapImages[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
 }
 
 

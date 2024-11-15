@@ -4,10 +4,10 @@
 class CPlayScene : public CScene
 {
 public:
-	CPlayScene(CGameFramework* GameFramework);
+	CPlayScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CPlayScene();
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 
 	virtual void ProcessInput();
 

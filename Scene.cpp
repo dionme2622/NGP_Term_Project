@@ -1,8 +1,11 @@
 #include "Scene.h"
 #include "GameFramework.h"
 
-CScene::CScene(CGameFramework* GameFramework)
+CScene::CScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework)
 {
+	hWnd = _hWnd;
+	hInst = _hInst;
+	GetClientRect(hWnd, &rc);
 	m_pGameFramework = GameFramework;
 }
 
@@ -10,11 +13,9 @@ CScene::~CScene()
 {
 }
 
-void CScene::Initialize(HWND hwnd, HINSTANCE g_hInst)
+void CScene::Initialize()
 {
-	hWnd = hwnd;
-	hInst = g_hInst;
-	GetClientRect(hWnd, &rc);
+	
 
 }
 

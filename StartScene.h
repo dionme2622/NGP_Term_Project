@@ -8,12 +8,12 @@
 class CStartScene : public CScene
 {
 public:
-	CStartScene(CGameFramework* GameFramework);
+	CStartScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework);
 	~CStartScene();
 
 
 
-	virtual void Initialize(HWND hwnd, HINSTANCE g_hInst);
+	virtual void Initialize();
 
 	virtual void ProcessInput();
 
