@@ -1,6 +1,10 @@
 #include "PlayScene.h"
 #include "Windows.h"
 
+enum {
+	UP = 0, DOWN, LEFT, RIGHT
+};
+
 CPlayScene::CPlayScene(CGameFramework* GameFramework) : CScene(GameFramework)
 {
 	player = NULL;
@@ -24,10 +28,21 @@ void CPlayScene::ProcessInput()
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
 	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000); // 키 버퍼 위치저장해놓ㅅ고
+
+	// TODO : Player의 방향 벡터를 설정한다.
+	if (pKeysBuffer[VK_UP] & 0xF0) player->SetDirection(UP);
+	if (pKeysBuffer[VK_DOWN] & 0xF0) player->SetDirection(DOWN);
+	if (pKeysBuffer[VK_LEFT] & 0xF0) player->SetDirection(LEFT);
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) player->SetDirection(RIGHT);
+
 }
 
-void CPlayScene::Update()
+void CPlayScene::Update(float fTimeElapsed)
 {
+	// TODO : Play Scene Update
+
+	// 1. Player의 방향벡터에 따라 움직인다.
+	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
 	// 서버로 키 입력 버퍼 데이터들을 보낸다
 }
 

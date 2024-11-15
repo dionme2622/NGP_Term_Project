@@ -36,9 +36,9 @@ private:
 	HWND			hWnd;
 	HINSTANCE		hInst;
 
-	//CTimer			timer;			// ≈∏¿Ã∏”
+	CGameTimer		m_GameTimer;		// ≈∏¿Ã∏”
 
-	int				currentscene;			// Scene¿« ¿Œµ¶Ω∫
+	int				currentscene;		// Scene¿« ¿Œµ¶Ω∫
 	CScene*			m_pScene;			// æ¿
 	CScene**		m_ppScenes;			// ∏µÁ æ¿
 

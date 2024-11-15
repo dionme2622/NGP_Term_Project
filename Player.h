@@ -19,6 +19,9 @@ private:
 	int			state;				// 캐릭터 상태
 
 public:
+	void SetDirection(int);			// Player의 방향벡터를 설정하는 함수
+
+public:
 	char* ID;					// ID
 
 

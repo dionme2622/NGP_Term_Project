@@ -33,9 +33,9 @@ void CLobbyScene::ProcessInput()
 	GetKeyboardState(pKeysBuffer);
 }
 
-void CLobbyScene::Update()
+void CLobbyScene::Update(float fTimeElapsed)
 {
-	
+	// TODO : Lobby Scene Update
 }
 
 void CLobbyScene::Render()

@@ -33,8 +33,9 @@ void CStartScene::ProcessInput()
 	if (pKeysBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;*/
 }
 
-void CStartScene::Update()
+void CStartScene::Update(float fTimeElapsed)
 {
+	// TODO : Start Scene Update
 }
 
 void CStartScene::Render()
