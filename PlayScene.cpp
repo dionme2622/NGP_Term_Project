@@ -1,6 +1,9 @@
 #include "PlayScene.h"
 #include "stdafx.h"
 #include "GameFramework.h"
+
+#define MAP GetFramework()->GetCurMap()
+
 enum {
 	UP = 0, DOWN, LEFT, RIGHT
 };
@@ -62,7 +65,7 @@ void CPlayScene::Render()
 	OldBit[1] = (HBITMAP)SelectObject(MemDCImage, backgroundImage); //--- 배경 이미지	
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 
-	GetFramework()->GetCurMap()->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
+	MAP->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
 	// 자원 해제
@@ -81,7 +84,6 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&cursorPos);
-
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
