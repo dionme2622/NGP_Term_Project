@@ -2,7 +2,7 @@
 
 #include <istream>
 #include <windows.h>
-
+#include "tchar.h"
 #include "Resource.h"
 
 #pragma comment (lib, "msimg32.lib")

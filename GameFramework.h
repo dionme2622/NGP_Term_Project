@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "Timer.h"
 #include "Scene.h"
 
@@ -7,8 +8,6 @@
 #include "LobbyScene.h"
 #include "PlayScene.h"
 
-
-#include "stdafx.h"
 
 class CScene;
 

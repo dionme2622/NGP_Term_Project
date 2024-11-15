@@ -23,7 +23,7 @@ public:
 	virtual void ProcessInput() = 0;
 
 
-	virtual void Update() = 0;
+	virtual void Update(float fTimeElapsed) = 0;
 	virtual void Render() = 0;
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
