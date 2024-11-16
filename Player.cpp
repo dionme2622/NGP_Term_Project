@@ -16,8 +16,9 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 
 	state = LIVE;
+	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
-	speed = 1;
+	speed = 150;
 }
 
 CPlayer::~CPlayer()
@@ -27,24 +28,33 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	if (!GetStop())
-	{
-		if (direction == DIR_DOWN || direction == DIR_UP)
-		{
-			xPos += 64;
-			if (xPos >= 512)
-				xPos = 0;
+	if (!GetStop()) {
+		float frameSpeed = 64.0f * 20 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
+
+		if (direction == DIR_DOWN || direction == DIR_UP) {
+			xPosF += frameSpeed;  // 부동소수점 좌표 업데이트
+			while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
+				xPosF -= 64.0f;  // 64만큼 넘으면 빼고
+				xPos += 64;       // xPos는 64씩 증가
+				if (xPos >= 512)   // 한 주기를 넘어가면 초기화
+					xPos = 0;
+			}
 		}
-		if (direction == DIR_LEFT || direction == DIR_RIGHT)
-		{
-			xPos += 64;
-			if (xPos >= 384)
-				xPos = 0;
+
+		if (direction == DIR_LEFT || direction == DIR_RIGHT) {
+			xPosF += frameSpeed;
+			while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
+				xPosF -= 64.0f;
+				xPos += 64;
+				if (xPos >= 384)  // 한 주기를 넘어가면 초기화
+					xPos = 0;
+			}
 		}
 	}
-	else
+	else {
+		xPosF = 0.0f;
 		xPos = 0;
-
+	}
 	Move(fTimeElapsed);
 	printf("Player stop : %d\n", stop);
 
@@ -113,22 +123,24 @@ void CPlayer::SetDirection(int _direction)
 	direction = _direction;
 }
 
-void CPlayer::SetPosition(int _x, int _y)
-{
-	x = _x, y = _y;
+
+void CPlayer::SetPosition(float _fx, float _fy) {
+	fx = _fx;
+	fy = _fy;
+	x = static_cast<int>(fx);  // 부동소수점 좌표를 정수로 변환
+	y = static_cast<int>(fy);
 }
 
 void CPlayer::Move(float fTimeElapsed)
 {
 	if (!GetStop())
 	{
-		if (direction == DIR_DOWN) SetPosition(x, (y + speed));
+		if (direction == DIR_DOWN) fy += speed * fTimeElapsed;
+		else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;
+		else if (direction == DIR_UP) fy -= speed * fTimeElapsed;
+		else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;
 
-		else if (direction == DIR_LEFT) SetPosition(x - speed, y);
-
-		else if (direction == DIR_UP) SetPosition(x, y - speed);
-
-		else if (direction == DIR_RIGHT) SetPosition(x + speed, y);
+		SetPosition(fx, fy);
 	}
 
 }
