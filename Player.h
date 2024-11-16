@@ -29,8 +29,9 @@ private:
 public:
 	void SetDirection(int);			// Player의 방향벡터를 설정하는 함수
 	void SetPosition(float _fx, float _fy);
-
+	void SetState(int _state) { state = _state; }
 	void SetStop(bool _stop) { stop = _stop; }
+
 	bool GetStop() { return stop; }
 
 	void Move(float fTimeElapsed);

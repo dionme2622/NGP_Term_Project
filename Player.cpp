@@ -15,9 +15,10 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[6] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_ESCAPE));        // 캐릭터 탈출
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 
-	state = LIVE;
+	state = ESCAPE;
 	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
+	xPosF = 0.0f, yPosF = 0.0f;
 	speed = 150;
 }
 
@@ -28,37 +29,69 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	if (!GetStop()) {
-		float frameSpeed = 64.0f * 20 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
+	if (state == LIVE)
+	{
+		if (!GetStop()) {
+			float frameSpeed = 64.0f * 20 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
 
-		if (direction == DIR_DOWN || direction == DIR_UP) {
-			xPosF += frameSpeed;  // 부동소수점 좌표 업데이트
-			while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
-				xPosF -= 64.0f;  // 64만큼 넘으면 빼고
-				xPos += 64;       // xPos는 64씩 증가
-				if (xPos >= 512)   // 한 주기를 넘어가면 초기화
-					xPos = 0;
+			if (direction == DIR_DOWN || direction == DIR_UP) {
+				xPosF += frameSpeed;  // 부동소수점 좌표 업데이트
+				while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
+					xPosF -= 64.0f;  // 64만큼 넘으면 빼고
+					xPos += 64;       // xPos는 64씩 증가
+					if (xPos >= 512)   // 한 주기를 넘어가면 초기화
+						xPos = 0;
+				}
+			}
+
+			if (direction == DIR_LEFT || direction == DIR_RIGHT) {
+				xPosF += frameSpeed;
+				while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
+					xPosF -= 64.0f;
+					xPos += 64;
+					if (xPos >= 384)  // 한 주기를 넘어가면 초기화
+						xPos = 0;
+				}
 			}
 		}
-
-		if (direction == DIR_LEFT || direction == DIR_RIGHT) {
-			xPosF += frameSpeed;
-			while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
-				xPosF -= 64.0f;
-				xPos += 64;
-				if (xPos >= 384)  // 한 주기를 넘어가면 초기화
-					xPos = 0;
-			}
+		else {
+			xPosF = 0.0f;
+			xPos = 0;
 		}
 	}
-	else {
-		xPosF = 0.0f;
-		xPos = 0;
+	else if (state == DAMAGE) 
+	{
+		xPosF += 88.0f * 5.0f * fTimeElapsed;
+		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
+			xPosF -= 88.0f;  // 64만큼 넘으면 빼고
+			xPos += 88;       // xPos는 64씩 증가
+			if (xPos >= 1232)   // 한 주기를 넘어가면 초기화
+				xPos = 0;
+		}
+	}
+	else if (state == DEAD) 
+	{
+		xPosF += 88.0f * 5.0f * fTimeElapsed;
+		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
+			xPosF -= 88.0f;  // 64만큼 넘으면 빼고
+			xPos += 88;       // xPos는 64씩 증가
+			if (xPos >= 968)   // 한 주기를 넘어가면 초기화
+				xPos = 0;
+		}
+	}
+	else if (state == ESCAPE) 
+	{
+		xPosF += 88.0f * 10.0f * fTimeElapsed;
+		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
+			xPosF -= 88.0f;  // 64만큼 넘으면 빼고
+			xPos += 88;       // xPos는 64씩 증가
+			if (xPos >= 616) xPos = 0;
+		}
 	}
 	Move(fTimeElapsed);
-	printf("Player stop : %d\n", stop);
+	//printf("Player stop : %d\n", stop);	// DEBUG
 
-	printf("Player x : %d, y : %d\n", x, y);
+	//printf("Player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage)
@@ -98,24 +131,23 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage)
 				TransparentBlt(MemDC, x, y, 60, 60, MemDCImage, 0, yPos, 64, 76, RGB(255, 0, 255));
 		}
 	}
-	/*else if (state == DAMAGE)
+	else if (state == DAMAGE)
 	{
-		speed = 5;
+		speed = 50;
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[4]);
-		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, dead_xPos, dead_yPos, 88, 144, RGB(255, 0, 255));
+		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 	else if (state == DEAD)
 	{
 		speed = 0;
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[5]);
-		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, dead_xPos, dead_yPos, 88, 144, RGB(255, 0, 255));
+		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 	else if (state == ESCAPE)
 	{
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[6]);
-		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, dead_xPos, dead_yPos, 88, 144, RGB(255, 0, 255));
-	}*/
-	//printf("Cur Direction: %d\n", direction);
+		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
+	}
 }
 
 void CPlayer::SetDirection(int _direction)
