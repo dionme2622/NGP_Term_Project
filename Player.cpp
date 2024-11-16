@@ -15,7 +15,7 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[6] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_ESCAPE));        // 캐릭터 탈출
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 
-	state = ESCAPE;
+	state = DAMAGE;
 	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
 	xPosF = 0.0f, yPosF = 0.0f;
@@ -59,14 +59,43 @@ void CPlayer::Update(float fTimeElapsed)
 			xPos = 0;
 		}
 	}
-	else if (state == DAMAGE) 
+	else if (state == DAMAGE)
 	{
 		xPosF += 88.0f * 5.0f * fTimeElapsed;
-		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
-			xPosF -= 88.0f;  // 64만큼 넘으면 빼고
-			xPos += 88;       // xPos는 64씩 증가
-			if (xPos >= 1232)   // 한 주기를 넘어가면 초기화
+		while (xPosF >= 88.0f) {  // 88보다 크면 한 칸씩 이동
+			if (xPos >= 1144) {
+				break;  // xPos가 1232 이상이면 이동을 멈추고 while 루프를 종료
+			}
+
+			xPosF -= 88.0f;  // 88만큼 넘으면 빼고
+			xPos += 88;       // xPos는 88씩 증가
+
+			if (xPos >= 1144) {
+				xPos = 1144;  // xPos가 1232 이상이 되면 1232로 고정
+				break; // xPos가 1232 이상이면 더 이상 이동하지 않음
+			}
+		}
+
+		if (xPos == 1144) {
+			// xPos가 1232에 도달하면 3초 타이머 시작
+			static float stateChangeTime = 0.0f;  // 타이머 변수 (static으로 설정하여 값 유지)
+			static bool bDeadStateTriggered = false; // 상태 변경 트리거 상태
+
+			// 타이머 초기화는 한번만 하고 이후에는 계속 누적됨
+			if (!bDeadStateTriggered) {
+				bDeadStateTriggered = true;  // 상태 변경 트리거
+			}
+
+			// 경과한 시간을 확인하여 3초가 지나면 DEAD 상태로 전환
+			stateChangeTime += fTimeElapsed;  // 경과 시간 추가
+			printf("%f\n", stateChangeTime);
+
+			if (stateChangeTime >= 2.0f) {  // 3초가 지나면
+				xPosF = 0.0f;
 				xPos = 0;
+				state = DEAD;  // 상태를 DEAD로 변경
+				bDeadStateTriggered = false; // 상태 변경 트리거 초기화
+			}
 		}
 	}
 	else if (state == DEAD) 
