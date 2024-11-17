@@ -8,13 +8,15 @@ public:
 	CGameObject();
 	~CGameObject();
 
-	virtual void Update() = 0;
+	virtual void Update(float fTimeElapsed) = 0;
 	virtual void Render(HDC MemDC, HDC MemDCImage) = 0;
 
 
 public:
 	int x, y;		// 좌표
 
+	int xPos, yPos;
+	float xPosF, yPosF;
 	
 
 	// 이미지 담을 무언가의 변수
@@ -24,11 +26,15 @@ public:
 class CBallon : public CGameObject
 {
 public:
-	CBallon();
+	CBallon() {};
+	CBallon(HINSTANCE hInst);
 	~CBallon();
 
-	virtual void Update();
+	virtual void Update(float fTimeElapsed);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
+
+private:
+	HBITMAP MainBitmap[2];			// 0 : Bubble, 1 : Explosion
 
 private:
 	int			state;   //			0가지고 있는거      1 처음 설치할떄			 2 펑!
@@ -46,7 +52,7 @@ public:
 	CBoard();
 	~CBoard();
 
-	virtual void Update();
+	virtual void Update(float fTimeElapsed);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 	int GetState() { return state; }
@@ -70,7 +76,7 @@ public:
 	CItem();
 	~CItem();
 
-	virtual void Update();
+	virtual void Update(float fTimeElapsed);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 public:

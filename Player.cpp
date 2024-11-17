@@ -16,6 +16,7 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 	MainBitmap[8] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_Arrow));         // 캐릭터 머리 위 화살표
 
+	direction = DIR_DOWN;
 	state = LIVE;
 	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
@@ -119,8 +120,9 @@ void CPlayer::Update(float fTimeElapsed)
 		}
 	}
 	Move(fTimeElapsed);
-	//printf("Player stop : %d\n", stop);	// DEBUG
 
+	for (int i = 0; i < ballon_num; i++) ballon[i].Update(fTimeElapsed);		// Player의 ballon Update
+	
 	printf("Player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
@@ -183,6 +185,9 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage)
 
 	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- Player1 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
+
+	for (int i = 0; i < ballon_num; i++) ballon[i].Render(MemDC, MemDCImage);		// Player의 ballon Render
+
 }
 
 void CPlayer::SetDirection(int _direction)
@@ -196,6 +201,23 @@ void CPlayer::SetPosition(float _fx, float _fy) {
 	fy = _fy;
 	x = static_cast<int>(fx);  // 부동소수점 좌표를 정수로 변환
 	y = static_cast<int>(fy);
+}
+
+void CPlayer::SetBallon()
+{
+	/*for (int i = 0; i < ballon_num; i++)
+	{
+		if (ballon[i].state == 0)
+		{
+			ballon[i].x = (x + 30 - 30) / 60 * 60;
+			ballon[i].y = (y + 30 - 65) / 60 * 60;
+			if (Board[ballon[i].y / 60][ballon[i].x / 60].state == 1)
+			{
+				ballon[i].state = 1;
+				Board[ballon[i].y / 60][ballon[i].x / 60].state = 4;
+			}
+		}
+	}*/
 }
 
 void CPlayer::Move(float fTimeElapsed)

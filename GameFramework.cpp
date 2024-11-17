@@ -8,7 +8,7 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// æ¿ 4∞≥
 	m_ppMaps			= new CMap * [2];		// Map 4∞≥
-	currentscene	= PLAYSCENE;				// Scene¿« ¿Œµ¶Ω∫
+	currentscene	= STARTSCENE;				// Scene¿« ¿Œµ¶Ω∫
 	_tcscpy_s(m_pszFrameRate, _T("("));
 }
 
@@ -23,7 +23,7 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	m_ppMaps[0] = new CVillage();
 	m_ppMaps[1] = new CPirate();
-	m_pMap = m_ppMaps[1];
+	//m_pMap = m_ppMaps[1];
 
 	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
 	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);

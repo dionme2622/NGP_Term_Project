@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
+#include "Player.h"
 
 class CMap
 {
@@ -10,10 +11,12 @@ public:
 
 	virtual void Initialize(HINSTANCE _hInst);
 	virtual void Render(HDC MemDC, HDC MemDCImage) {};
-
+	virtual void Update(float fTimeElapsed) = 0;
+	
+	CPlayer* GetPlayer() { return player; }
 protected:
 	CBoard			Board[13][15];
-
+	CPlayer*		player;
 	HINSTANCE		hInst;
 };
 
@@ -25,6 +28,7 @@ public :
 
 	virtual void Initialize(HINSTANCE _hInst);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
+	virtual void Update(float fTimeElapsed);
 
 private:
 	HBITMAP TileBitmap;
@@ -39,6 +43,7 @@ public:
 
 	virtual void Initialize(HINSTANCE _hInst);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
+	virtual void Update(float fTimeElapsed);
 
 private:
 	HBITMAP TileBitmap;
