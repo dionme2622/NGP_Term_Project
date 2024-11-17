@@ -22,6 +22,7 @@ void CPlayScene::Initialize()
 
 	player = new CPlayer(hInst);
 	player->SetPosition(100, 100);
+	player->SetDirection(DIR_DOWN);
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
 
@@ -76,6 +77,7 @@ void CPlayScene::Render()
 	DeleteDC(MemDC);
 	DeleteDC(MemDCImage);
 	ReleaseDC(hWnd, hdc);
+
 }
 
 void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
