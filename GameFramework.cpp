@@ -8,7 +8,7 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
-	currentscene	= STARTSCENE;				// Scene의 인덱스
+	currentscene	= PLAYSCENE;				// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
 }
 
@@ -20,19 +20,20 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
 	hWnd = hMainWnd;
 	hInst = g_hInst;
+
+	m_ppMaps[0] = new CVillage();
+	m_ppMaps[1] = new CPirate();
+	m_pMap = m_ppMaps[1];
+
 	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
 	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_ppScenes[0]->Initialize();
-
-
-
+	m_ppScenes[currentscene]->Initialize();
 	m_pScene = m_ppScenes[currentscene];																									
 
-	m_ppMaps[0] = new CVillage();
-	m_ppMaps[1] = new CPirate();
+
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }

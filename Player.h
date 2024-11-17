@@ -25,7 +25,7 @@ private:
 	int			xPos, yPos;		// 이미지 x, y 좌표
 	float		xPosF, yPosF;
 private:
-	HBITMAP MainBitmap[8];
+	HBITMAP MainBitmap[9];
 public:
 	void SetDirection(int);			// Player의 방향벡터를 설정하는 함수
 	void SetPosition(float _fx, float _fy);

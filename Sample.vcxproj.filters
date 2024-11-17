@@ -243,5 +243,8 @@
     <Image Include="Image\character\bazzi\bazzi_win.bmp">
       <Filter>Resource\Character</Filter>
     </Image>
+    <Image Include="Image\effect\solo_player.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
   </ItemGroup>
 </Project>
