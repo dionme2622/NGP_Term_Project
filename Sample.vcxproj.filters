@@ -12,10 +12,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Scene\Lobby">
       <UniqueIdentifier>{85794e74-9dda-4424-8201-d0f5d5a509f2}</UniqueIdentifier>
     </Filter>
@@ -31,17 +27,24 @@
     <Filter Include="Map">
       <UniqueIdentifier>{7c0d6b63-94f2-40e1-bf3c-16756da81666}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일\UI">
+    <Filter Include="Resource">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource\UI">
       <UniqueIdentifier>{010406f2-341f-4cce-afcd-1f02dfa712bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일\Block">
+    <Filter Include="Resource\Block">
       <UniqueIdentifier>{f2c60779-86db-47f7-84fa-b52d7eadf9b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일\Block\Village">
+    <Filter Include="Resource\Block\Village">
       <UniqueIdentifier>{029f1a81-5a9b-42d6-8442-ddfd9c70f06b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일\Block\Pirate">
+    <Filter Include="Resource\Block\Pirate">
       <UniqueIdentifier>{df970cea-8816-4b7d-9072-8a5dec1d1030}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Character">
+      <UniqueIdentifier>{7f023413-f905-4630-971c-64a3820e2891}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -131,90 +134,117 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Sample.rc">
-      <Filter>리소스 파일</Filter>
+      <Filter>Resource</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
-      <Filter>리소스 파일</Filter>
+      <Filter>Resource</Filter>
     </Image>
     <Image Include="Sample.ico">
-      <Filter>리소스 파일</Filter>
+      <Filter>Resource</Filter>
     </Image>
     <Image Include="Image\ui\button_Exit.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\button_help.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\button_Play.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\button_select_map.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\login.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\map_pirate.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\map_select.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\map_select_button.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\map_test.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\map_village.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\room.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\pop_up_help.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\ui\StageFrame.bmp">
-      <Filter>리소스 파일\UI</Filter>
+      <Filter>Resource\UI</Filter>
     </Image>
     <Image Include="Image\tile\Tile_town.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownBlockRed.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownBlockYellow.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownBox.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownBush.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownHouseRed.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownHouseBlue.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownHouseYellow.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\block\Town\TownTree.bmp">
-      <Filter>리소스 파일\Block\Village</Filter>
+      <Filter>Resource\Block\Village</Filter>
     </Image>
     <Image Include="Image\tile\Tile_pirate.bmp">
-      <Filter>리소스 파일\Block\Pirate</Filter>
+      <Filter>Resource\Block\Pirate</Filter>
     </Image>
     <Image Include="Image\block\block_pirate.bmp">
-      <Filter>리소스 파일\Block\Pirate</Filter>
+      <Filter>Resource\Block\Pirate</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_up.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_down.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_left.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_right.bmp">
+      <Filter>Resource\Character</Filter>
     </Image>
     <Image Include="Image\tile\Ship\map_pirate_tile6.bmp">
-      <Filter>리소스 파일</Filter>
+      <Filter>Resource\Block\Pirate</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_die.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_live.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_trap.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_win.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\effect\solo_player.bmp">
+      <Filter>Resource\Character</Filter>
     </Image>
   </ItemGroup>
 </Project>

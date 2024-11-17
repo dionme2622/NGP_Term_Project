@@ -20,7 +20,7 @@ void CBoard::Update()
 {
 }
 
-void CBoard::Render()
+void CBoard::Render(HDC MemDC, HDC MemDCImage)
 {
 }
 
@@ -36,7 +36,7 @@ void CBallon::Update()
 {
 }
 
-void CBallon::Render()
+void CBallon::Render(HDC MemDC, HDC MemDCImage)
 {
 }
 
@@ -52,6 +52,6 @@ void CItem::Update()
 {
 }
 
-void CItem::Render()
+void CItem::Render(HDC MemDC, HDC MemDCImage)
 {
 }

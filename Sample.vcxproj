@@ -171,6 +171,15 @@
     <Image Include="Image\block\Town\TownHouseRed.bmp" />
     <Image Include="Image\block\Town\TownHouseYellow.bmp" />
     <Image Include="Image\block\Town\TownTree.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_die.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_down.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_left.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_live.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_right.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_trap.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_up.bmp" />
+    <Image Include="Image\character\bazzi\bazzi_win.bmp" />
+    <Image Include="Image\effect\solo_player.bmp" />
     <Image Include="Image\tile\Ship\map_pirate_tile6.bmp" />
     <Image Include="Image\tile\Tile_pirate.bmp" />
     <Image Include="Image\tile\Tile_town.bmp" />

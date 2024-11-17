@@ -9,11 +9,13 @@ public:
 	~CGameObject();
 
 	virtual void Update() = 0;
-	virtual void Render() = 0;
+	virtual void Render(HDC MemDC, HDC MemDCImage) = 0;
 
 
 public:
 	int x, y;		// 좌표
+
+	
 
 	// 이미지 담을 무언가의 변수
 
@@ -26,7 +28,7 @@ public:
 	~CBallon();
 
 	virtual void Update();
-	virtual void Render();
+	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 private:
 	int			state;   //			0가지고 있는거      1 처음 설치할떄			 2 펑!
@@ -37,25 +39,6 @@ private:
 
 };
 
-class CCharacter : public CGameObject
-{
-public:
-	CCharacter() = default;
-	~CCharacter() = default;
-
-private:
-	int			speed;			// 캐릭터의 이동속도
-	int			ballon_length;	// 물풍선의 길이
-	int			ballon_num;		// 물풍선의 개수
-	int			direction;		// 캐릭터의 방향
-	int			state;			// 캐릭터의 상태
-	bool		stop;			// 캐릭터 정지 유무
-	int			count;			// 뭔지 모름
-	CBallon		ballon[6];		// 물풍선
-
-	RECT		boundingBox;
-};
-
 
 class CBoard : public CGameObject
 {
@@ -64,7 +47,7 @@ public:
 	~CBoard();
 
 	virtual void Update();
-	virtual void Render();
+	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 	int GetState() { return state; }
 
@@ -88,7 +71,7 @@ public:
 	~CItem();
 
 	virtual void Update();
-	virtual void Render();
+	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 public:
 	RECT		boundingBox;
