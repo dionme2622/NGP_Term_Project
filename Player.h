@@ -1,7 +1,6 @@
 #pragma once
 #include "GameObject.h"
 
-
 class CPlayer : public CCharacter
 {
 public:

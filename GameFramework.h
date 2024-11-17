@@ -49,8 +49,9 @@ private:
 	PAINTSTRUCT ps;
 
 	// 서버 통신 관련
-	static SOCKET sock;
-
+	WSADATA wsa;
+	SOCKET sock;
+	sockaddr_in remoteAddr;
 
 	std::string		keyData;
 

@@ -2,6 +2,8 @@
 #include "stdafx.h"
 
 
+
+
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
@@ -10,6 +12,25 @@ CGameFramework::CGameFramework()
 	m_ppMaps			= new CMap * [2];		// Map 4개
 	currentscene	= STARTSCENE;				// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
+
+
+
+	//서버 통신 관련 변수 초기화
+	//윈속 초기화
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return;
+
+	// 소켓 생성
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock == INVALID_SOCKET) {
+		printf("socket err");
+	}
+
+	// 소켓 주소 구조체 초기화
+	memset(&remoteAddr, 0, sizeof(remoteAddr));
+	remoteAddr.sin_family = AF_INET;
+	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
+	remoteAddr.sin_port = htons(SERVERPORT);
 }
 
 CGameFramework::~CGameFramework()
@@ -26,8 +47,6 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
 	m_ppScenes[0]->Initialize();
-
-
 
 	m_pScene = m_ppScenes[currentscene];																									
 
