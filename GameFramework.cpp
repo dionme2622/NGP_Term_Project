@@ -8,7 +8,7 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// ¾À 4°³
 	m_ppMaps			= new CMap * [2];		// Map 4°³
-	currentscene	= STARTSCENE;				// SceneÀÇ ÀÎµ¦½º
+	currentscene	= PLAYSCENE;				// SceneÀÇ ÀÎµ¦½º
 	_tcscpy_s(m_pszFrameRate, _T("("));
 }
 
@@ -25,11 +25,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_ppScenes[0]->Initialize();
-
-
-
+	m_ppScenes[currentscene]->Initialize();
 	m_pScene = m_ppScenes[currentscene];																									
+
 
 	CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
 
