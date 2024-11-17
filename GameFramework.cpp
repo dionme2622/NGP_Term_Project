@@ -1,9 +1,6 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-
-
-
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
@@ -31,6 +28,8 @@ CGameFramework::CGameFramework()
 	remoteAddr.sin_family = AF_INET;
 	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
 	remoteAddr.sin_port = htons(SERVERPORT);
+	retval = connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr));
+	if (retval == SOCKET_ERROR) printf("connect() err");
 }
 
 CGameFramework::~CGameFramework()

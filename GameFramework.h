@@ -52,6 +52,8 @@ private:
 	WSADATA wsa;
 	SOCKET sock;
 	sockaddr_in remoteAddr;
+	int retval;
+
 
 	std::string		keyData;
 
