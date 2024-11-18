@@ -1,7 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
-#include "Player.h"
+#include "player.h"
+
 
 class CMap
 {
@@ -10,15 +11,29 @@ public:
 	~CMap() {};
 
 	virtual void Initialize(HINSTANCE _hInst);
-	virtual void Render(HDC MemDC, HDC MemDCImage) {};
-	virtual void Update(float fTimeElapsed) = 0;
+	virtual void Render(HDC MemDC, HDC MemDCImage);
+	virtual void Update(float fTimeElapsed);
 	
-	CPlayer* GetPlayer() { return player; }
+	Cplayer* Getplayer() { return player; }
 	CBoard GetBoard(int i, int j) { return Board[i][j]; }
+
+	void SetBallon();
+
+	void BallonBoom(Cplayer* player, int num);
+
 protected:
 	CBoard			Board[13][15];
-	CPlayer*		player;
+	Cplayer*		player;
 	HINSTANCE		hInst;
+
+private:
+	// Attribute
+	int xPos, yPos;
+	float xPosF, yPosF;
+
+
+	// Resource
+	HBITMAP BallonBitmap[2];
 };
 
 class CVillage : public CMap

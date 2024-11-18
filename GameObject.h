@@ -37,9 +37,9 @@ public:
 private:
 	HBITMAP MainBitmap[2];			// 0 : Bubble, 1 : Explosion
 
-private:
+public:
 	int			state;   //			0가지고 있는거      1 처음 설치할떄			 2 펑!
-	int			beforeboomcouont;
+	int			beforeboomcount;
 	int			startboomcount;
 
 	RECT		boundingBox;

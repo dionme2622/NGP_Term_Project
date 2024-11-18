@@ -1,11 +1,9 @@
-#include "Player.h"
+#include "player.h"
 #include "Map.h"
 
-enum {
-LIVE = 0, DAMAGE, DEAD, ESCAPE
-};
 
-CPlayer::CPlayer(HINSTANCE _hInst)
+
+Cplayer::Cplayer(HINSTANCE _hInst)
 {
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
 	MainBitmap[1] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_LEFT));			// 캐릭터 왼쪽 모습
@@ -18,14 +16,14 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[8] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_Arrow));         // 캐릭터 머리 위 화살표
 
 
-	// Player Initialize
+	// player Initialize
 	direction = DIR_DOWN;
 	state = LIVE;
 	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
 	xPosF = 0.0f, yPosF = 0.0f;
 	speed = 150;
-	ballon_num = 1;
+	ballon_num = 3;
 	ballon_length = 5;
 	stop = TRUE;
 
@@ -33,12 +31,12 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 
 }
 
-CPlayer::~CPlayer()
+Cplayer::~Cplayer()
 {
 	// TODO : 비트맵 제거
 }
 
-void CPlayer::Update(float fTimeElapsed)
+void Cplayer::Update(float fTimeElapsed)
 {
 	if (state == LIVE)
 	{
@@ -134,12 +132,12 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	Move(fTimeElapsed);
 
-	for (int i = 0; i < ballon_num; i++) ballon[i]->Update(fTimeElapsed);		// Player의 ballon Update
+	for (int i = 0; i < ballon_num; i++) ballon[i]->Update(fTimeElapsed);		// player의 ballon Update
 	
-	//printf("Player x : %d, y : %d\n", x, y);	// DEBUG
+	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
-void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
+void Cplayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 {
 	if (state == LIVE)
 	{
@@ -192,27 +190,27 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 
-	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- Player1 화살표
+	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- player1 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
 
-	for (int i = 0; i < ballon_num; i++) ballon[i]->Render(MemDC, MemDCImage, Map);		// Player의 ballon Render
+	for (int i = 0; i < ballon_num; i++) ballon[i]->Render(MemDC, MemDCImage, Map);		// player의 ballon Render
 
 }
 
-void CPlayer::SetDirection(int _direction)
+void Cplayer::SetDirection(int _direction)
 {
 	direction = _direction;
 }
 
 
-void CPlayer::SetPosition(float _fx, float _fy) {
+void Cplayer::SetPosition(float _fx, float _fy) {
 	fx = _fx;
 	fy = _fy;
 	x = static_cast<int>(fx);  // 부동소수점 좌표를 정수로 변환
 	y = static_cast<int>(fy);
 }
 
-void CPlayer::SetBallon(CMap* Map)
+void Cplayer::SetBallon(CMap* Map)
 {
 	for (int i = 0; i < ballon_num; i++)
 	{
@@ -237,7 +235,7 @@ void CPlayer::SetBallon(CMap* Map)
 	}
 }
 
-void CPlayer::Move(float fTimeElapsed)
+void Cplayer::Move(float fTimeElapsed)
 {
 	if (!GetStop())
 	{

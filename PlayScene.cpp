@@ -15,7 +15,7 @@ CPlayScene::~CPlayScene()
 
 void CPlayScene::Initialize()
 {
-	// TODO : Bitmap, Map, Player의 데이터를 Initialize 한다.
+	// TODO : Bitmap, Map, player의 데이터를 Initialize 한다.
 	
 	GetFramework()->GetCurMap()->Initialize(hInst);		// 선택된 Map의 Initialize
 
@@ -32,20 +32,20 @@ void CPlayScene::ProcessInput()
 	GetKeyboardState(pKeysBuffer);
 
 	bool stop = true;
-	// TODO : Player의 방향 벡터를 설정한다.
-	if (pKeysBuffer[VK_UP] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_UP), stop = false;
-	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_DOWN), stop = false;
-	if (pKeysBuffer[VK_LEFT] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_LEFT), stop = false;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_RIGHT), stop = false;
-	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->GetPlayer()->SetBallon(MAP);	// TODO : Player 물풍선 설치
+	// TODO : player의 방향 벡터를 설정한다.
+	if (pKeysBuffer[VK_UP] & 0xF0) MAP->Getplayer()->SetDirection(DIR_UP), stop = false;
+	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->Getplayer()->SetDirection(DIR_DOWN), stop = false;
+	if (pKeysBuffer[VK_LEFT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_LEFT), stop = false;
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_RIGHT), stop = false;
+	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : player 물풍선 설치
 
-	MAP->GetPlayer()->SetStop(stop);
+	MAP->Getplayer()->SetStop(stop);
 }
 
 void CPlayScene::Update(float fTimeElapsed)
 {
 	// TODO : Play Scene Update
-	// 1. Player의 방향벡터에 따라 움직인다.
+	// 1. player의 방향벡터에 따라 움직인다.
 	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
 	MAP->Update(fTimeElapsed);
 
@@ -64,7 +64,7 @@ void CPlayScene::Render()
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 
 	MAP->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
-	//player->Render(MemDC, MemDCImage);		// Player Render
+	//player->Render(MemDC, MemDCImage);		// player Render
 
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
