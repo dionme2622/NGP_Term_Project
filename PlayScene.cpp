@@ -37,7 +37,7 @@ void CPlayScene::ProcessInput()
 	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_DOWN), stop = false;
 	if (pKeysBuffer[VK_LEFT] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_LEFT), stop = false;
 	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->GetPlayer()->SetDirection(DIR_RIGHT), stop = false;
-	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->GetPlayer()->SetBallon();	// TODO : Player ¹°Ç³¼± ¼³Ä¡
+	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->GetPlayer()->SetBallon(MAP);	// TODO : Player ¹°Ç³¼± ¼³Ä¡
 
 	MAP->GetPlayer()->SetStop(stop);
 }

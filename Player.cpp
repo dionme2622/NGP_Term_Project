@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Map.h"
 
 enum {
 LIVE = 0, DAMAGE, DEAD, ESCAPE
@@ -16,12 +17,20 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 	MainBitmap[8] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_Arrow));         // 캐릭터 머리 위 화살표
 
+
+	// Player Initialize
 	direction = DIR_DOWN;
 	state = LIVE;
 	fx = 0.0f, fy = 0.0f;
 	xPos = 0, yPos = 0;
 	xPosF = 0.0f, yPosF = 0.0f;
 	speed = 150;
+	ballon_num = 1;
+	ballon_length = 5;
+	stop = TRUE;
+
+	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
+
 }
 
 CPlayer::~CPlayer()
@@ -33,6 +42,7 @@ void CPlayer::Update(float fTimeElapsed)
 {
 	if (state == LIVE)
 	{
+		speed = 150;
 		if (!GetStop()) {
 			float frameSpeed = 64.0f * 15 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
 
@@ -63,6 +73,7 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == DAMAGE)
 	{
+		speed = 50;
 		xPosF += 88.0f * 5.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  // 88보다 크면 한 칸씩 이동
 			if (xPos >= 1144) {
@@ -102,6 +113,7 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == DEAD) 
 	{
+		speed = 0;
 		xPosF += 88.0f * 5.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
 			xPosF = 0.0f;  // 64만큼 넘으면 빼고
@@ -112,6 +124,7 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == ESCAPE) 
 	{
+		speed = 0;
 		xPosF += 88.0f * 10.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
 			xPosF = 0.0f;  // 64만큼 넘으면 빼고
@@ -121,16 +134,15 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	Move(fTimeElapsed);
 
-	for (int i = 0; i < ballon_num; i++) ballon[i].Update(fTimeElapsed);		// Player의 ballon Update
+	for (int i = 0; i < ballon_num; i++) ballon[i]->Update(fTimeElapsed);		// Player의 ballon Update
 	
-	printf("Player x : %d, y : %d\n", x, y);	// DEBUG
+	//printf("Player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
-void CPlayer::Render(HDC MemDC, HDC MemDCImage)
+void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 {
 	if (state == LIVE)
 	{
-		speed = 150;
 		if (direction == DIR_DOWN)
 		{
 			(HBITMAP)SelectObject(MemDCImage, MainBitmap[0]); //--- 아래
@@ -166,19 +178,16 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage)
 	}
 	else if (state == DAMAGE)
 	{
-		speed = 50;
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[4]);
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 	else if (state == DEAD)
 	{
-		speed = 0;
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[5]);
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 	else if (state == ESCAPE)
 	{
-		speed = 0;
 		(HBITMAP)SelectObject(MemDCImage, MainBitmap[6]);
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
@@ -186,7 +195,7 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage)
 	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- Player1 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
 
-	for (int i = 0; i < ballon_num; i++) ballon[i].Render(MemDC, MemDCImage);		// Player의 ballon Render
+	for (int i = 0; i < ballon_num; i++) ballon[i]->Render(MemDC, MemDCImage, Map);		// Player의 ballon Render
 
 }
 
@@ -203,21 +212,29 @@ void CPlayer::SetPosition(float _fx, float _fy) {
 	y = static_cast<int>(fy);
 }
 
-void CPlayer::SetBallon()
+void CPlayer::SetBallon(CMap* Map)
 {
-	/*for (int i = 0; i < ballon_num; i++)
+	for (int i = 0; i < ballon_num; i++)
 	{
-		if (ballon[i].state == 0)
+		if (ballon[i]->GetState() == 0)
 		{
-			ballon[i].x = (x + 30 - 30) / 60 * 60;
-			ballon[i].y = (y + 30 - 65) / 60 * 60;
-			if (Board[ballon[i].y / 60][ballon[i].x / 60].state == 1)
+
+			ballon[i]->x = (x + 30 - 30) / 60 * 60;
+			ballon[i]->y = (y + 30 - 65) / 60 * 60;
+			printf("물풍선 설치! x: %d, y: %d\n", ballon[i]->x / 60, ballon[i]->y / 60);		// DEBUG
+
+			if (Map->GetBoard((ballon[i]->y / 60), (ballon[i]->x / 60)).GetState() == 1)
 			{
-				ballon[i].state = 1;
-				Board[ballon[i].y / 60][ballon[i].x / 60].state = 4;
+				printf("전 %d \n", Map->GetBoard((ballon[i]->y / 60) - 1, (ballon[i]->x / 60) - 1).GetState());		// DEBUG
+
+				ballon[i]->SetState(1);
+				Map->GetBoard(11, 13).SetState(4);
+				printf("후 %d \n", Map->GetBoard(11,13).GetState());		// DEBUG
+				if(Map->GetBoard(11, 13).GetState() == 4) printf("%d\n", ballon[0]->GetState());
+
 			}
 		}
-	}*/
+	}
 }
 
 void CPlayer::Move(float fTimeElapsed)

@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
+class CMap;
 
 class CGameObject
 {
@@ -9,7 +10,7 @@ public:
 	~CGameObject();
 
 	virtual void Update(float fTimeElapsed) = 0;
-	virtual void Render(HDC MemDC, HDC MemDCImage) = 0;
+	virtual void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 
 public:
@@ -31,7 +32,7 @@ public:
 	~CBallon();
 
 	virtual void Update(float fTimeElapsed);
-	virtual void Render(HDC MemDC, HDC MemDCImage);
+	virtual void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 private:
 	HBITMAP MainBitmap[2];			// 0 : Bubble, 1 : Explosion
@@ -43,6 +44,9 @@ private:
 
 	RECT		boundingBox;
 
+public :
+	int GetState() { return state; }
+	void SetState(int _state) { state = _state; }
 };
 
 
@@ -53,7 +57,6 @@ public:
 	~CBoard();
 
 	virtual void Update(float fTimeElapsed);
-	virtual void Render(HDC MemDC, HDC MemDCImage);
 
 	int GetState() { return state; }
 
@@ -77,7 +80,7 @@ public:
 	~CItem();
 
 	virtual void Update(float fTimeElapsed);
-	virtual void Render(HDC MemDC, HDC MemDCImage);
+	virtual void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 public:
 	RECT		boundingBox;

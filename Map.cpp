@@ -12,6 +12,9 @@ void CMap::Initialize(HINSTANCE _hInst)
 		}
 	}
 	player = new CPlayer(_hInst);
+
+	// Resource
+	
 }
 
 
@@ -68,6 +71,7 @@ void CVillage::Initialize(HINSTANCE _hInst)
 	}
 	Board[10][2].SetState(1); Board[10][5].SetState(1); Board[10][9].SetState(1); Board[10][12].SetState(1);
 
+
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Village_Tile));
 	Block[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Red_Block));
@@ -84,6 +88,15 @@ void CVillage::Initialize(HINSTANCE _hInst)
 }
 void CVillage::Render(HDC MemDC, HDC MemDCImage)
 {
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			//printf("%d \n", Board[i][j].GetState());
+		//	if (Board[i][j].GetState() == 4) printf("4444\n");
+		}
+	}
+
 	(HBITMAP)SelectObject(MemDCImage, TileBitmap); //--- 배경 이미지
 	for (int i = 0; i < 13; i++)
 	{
@@ -229,7 +242,7 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 	if (Board[10][9].GetState() == 1) TransparentBlt(MemDC, Board[10][9].x, Board[10][9].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 	if (Board[10][12].GetState() == 1) TransparentBlt(MemDC, Board[10][12].x, Board[10][12].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 
-	player->Render(MemDC, MemDCImage);
+	player->Render(MemDC, MemDCImage, this);
 
 }
 
@@ -496,7 +509,7 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	(HBITMAP)SelectObject(MemDCImage, obstacle_pirate); // 장애물
 	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
 
-	player->Render(MemDC, MemDCImage);
+	player->Render(MemDC, MemDCImage, this);
 }
 
 void CPirate::Update(float fTimeElapsed)

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
+class CMap;
 
 class CPlayer
 {
@@ -9,7 +10,7 @@ public:
 	~CPlayer();
 
 	void Update(float fTimeElapsed);
-	void Render(HDC MemDC, HDC MemDCImage);
+	void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 private:
 	int			x, y;			// 캐릭터 x, y 좌표
 	float		fx, fy;
@@ -20,7 +21,7 @@ private:
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
 	int			count;			// 뭔지 모름
-	CBallon		ballon[6];		// 물풍선
+	CBallon*	ballon[6];		// 물풍선
 
 	int			xPos, yPos;		// 이미지 x, y 좌표
 	float		xPosF, yPosF;
@@ -32,9 +33,10 @@ public:
 	void SetPosition(float _fx, float _fy);
 	void SetState(int _state) { state = _state; }
 	void SetStop(bool _stop) { stop = _stop; }
-	void SetBallon();
+	void SetBallon(CMap* Map);
 
 	bool GetStop() { return stop; }
+
 
 	void Move(float fTimeElapsed);
 	//이건 뭐지

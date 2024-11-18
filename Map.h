@@ -14,6 +14,7 @@ public:
 	virtual void Update(float fTimeElapsed) = 0;
 	
 	CPlayer* GetPlayer() { return player; }
+	CBoard GetBoard(int i, int j) { return Board[i][j]; }
 protected:
 	CBoard			Board[13][15];
 	CPlayer*		player;
