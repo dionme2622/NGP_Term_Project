@@ -104,7 +104,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 	}
 	else if (player->GetBallon(num)->GetState() == 2)
 	{
-		if (player->GetBallon(num)->startboomcount < 10)
+		if (player->GetBallon(num)->startboomcount < 50)
 		{
 			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
 			for (int j = 1; j < player->GetBallonLength(); j++)
@@ -160,7 +160,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 			player->GetBallon(num)->startboomcount++;
 		}
 
-		if (player->GetBallon(num)->startboomcount >= 10)
+		if (player->GetBallon(num)->startboomcount >= 50)
 		{
 			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
 			for (int j = 1; j < player->GetBallonLength(); j++)
