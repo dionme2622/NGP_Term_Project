@@ -13,7 +13,10 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+DWORD __stdcall SendData(LPVOID arg);
+
 CGameFramework GameFramework;
+SOCKET sock;
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -38,6 +41,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SAMPLE));
 
     MSG msg;
+
+
+    // 윈속 초기화
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        printf("윈속 초기화 실패");
+        return 1;
+    }
+
+    CreateThread(NULL, 0, SendData, NULL, 0, NULL);
+
 
     while (1)
     {
@@ -197,3 +211,34 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+#define _CRT_SECURE_NO_WARNINGS 
+
+DWORD __stdcall SendData(LPVOID arg)
+{
+    // 소켓 생성
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET) {
+        printf("소켓 생성 실패");
+        WSACleanup();
+        return 1;
+    }
+
+    // 서버 주소 설정
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "192.168.43.41", &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+
+    // 서버 연결
+    if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
+        printf("서버 연결 실패");
+        closesocket(sock);
+        WSACleanup();
+        exit(0);
+    }
+
+    printf("서버 연결 성공");
+
+    return 0;
+}

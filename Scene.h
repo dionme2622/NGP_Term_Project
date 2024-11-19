@@ -34,8 +34,6 @@ public:
 public :
 	CGameFramework* GetFramework() { return m_pGameFramework;}
 
-	CPlayer*			player;
-private:
 
 protected:
 	HWND				hWnd;
