@@ -18,8 +18,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
     // 방향키 값 수신
     char buf[BUFSIZE];
+    int dir;
     while (1) {
-        retval = recv(client_sock, buf, BUFSIZE - 1, 0); // 방향키 데이터 수신
+        retval = recv(client_sock, (char*)&dir, sizeof(int), MSG_WAITALL); // 방향키 데이터 수신
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
             break;
@@ -29,7 +30,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         }
 
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("[TCP/%s:%d] 방향키 입력값: %s\n", addr, ntohs(clientaddr.sin_port), buf);
+        printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
 
         // "exit" 입력 시 연결 종료
         if (strcmp(buf, "exit") == 0) {
