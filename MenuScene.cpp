@@ -151,3 +151,8 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
     }
 }
 
+void CMenuScene::Login()
+{
+    //player->ID = "TestId";
+}
+

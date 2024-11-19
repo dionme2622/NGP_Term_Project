@@ -1,6 +1,9 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
+SOCKET CGameFramework::sock = INVALID_SOCKET;  
+int CGameFramework::retval = 0;                
+std::string CGameFramework::keyData = "";      
 
 CGameFramework::CGameFramework()
 {
@@ -8,8 +11,32 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
-	currentscene	= PLAYSCENE;				// Scene의 인덱스
+	currentscene	= STARTSCENE;				// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
+
+
+
+	//서버 통신 관련 변수 초기화
+	//윈속 초기화
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return;
+
+	// 소켓 생성
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock == INVALID_SOCKET) {
+		printf("socket err");
+	}
+
+	// 소켓 주소 구조체 초기화
+	memset(&remoteAddr, 0, sizeof(remoteAddr));
+	remoteAddr.sin_family = AF_INET;
+	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
+	remoteAddr.sin_port = htons(SERVERPORT);
+	retval = connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr));
+	if (retval == SOCKET_ERROR) {
+		printf("connect() err");
+		exit(0);
+	}
 }
 
 CGameFramework::~CGameFramework()
@@ -34,6 +61,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_pScene = m_ppScenes[currentscene];																									
 
 
+	CreateThread(NULL, 0, SendData, NULL, 0, NULL);
+
+	
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -74,6 +104,43 @@ void CGameFramework::Render()
 void CGameFramework::ProcessInput()
 {
 	m_pScene->ProcessInput();
+
+	// 현재 눌린 키들을 문자열로 가져오기
+	std::string pressedKeys = GetPressedKeysAsString();
+
+	if (!pressedKeys.empty()) {
+		keyData = pressedKeys.c_str();
+	}
+}
+
+std::vector<char> CGameFramework::GetPressedKeys()
+{
+	std::vector<char> pressedKeys;
+
+	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+	for (int key = 0x01; key <= 0xFE; ++key) {
+		// 키가 눌려 있는지 확인
+		if (GetAsyncKeyState(key) & 0x8000) {
+			pressedKeys.push_back(key); // 눌린 키를 추가
+		}
+	}
+
+	return pressedKeys;
+}
+
+std::string CGameFramework::GetPressedKeysAsString()
+{
+	std::string keys;
+
+	// 눌려 있는 키 목록을 가져옴
+	std::vector<char> pressedKeys = GetPressedKeys();
+
+	// 각 키를 문자열로 변환하여 추가
+	for (int key : pressedKeys) {
+		keys += std::to_string(key) + " ";
+	}
+
+	return keys;
 }
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -119,4 +186,15 @@ void CGameFramework::SetCurMap(int Map)
 {
 	m_pMap = m_ppMaps[Map];
 }
+
+DWORD WINAPI CGameFramework::SendData(LPVOID arg)
+{
+	while (1){
+		retval = send(sock, keyData.c_str(), keyData.size(), 0);
+		printf("%d\n", retval);
+	}
+	
+	return 0;
+}
+
 

@@ -99,7 +99,6 @@ void Cplayer::Update(float fTimeElapsed)
 
 			// 경과한 시간을 확인하여 3초가 지나면 DEAD 상태로 전환
 			stateChangeTime += fTimeElapsed;  // 경과 시간 추가
-			printf("%f\n", stateChangeTime);
 
 			if (stateChangeTime >= 2.0f) {  // 3초가 지나면
 				xPosF = 0.0f;
