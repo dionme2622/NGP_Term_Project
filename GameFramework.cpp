@@ -50,6 +50,7 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	m_ppMaps[0] = new CVillage();
 	m_ppMaps[1] = new CPirate();
+	m_pMap = m_ppMaps[0];
 
 	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
 	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);

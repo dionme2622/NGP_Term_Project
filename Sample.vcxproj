@@ -179,6 +179,8 @@
     <Image Include="Image\character\bazzi\bazzi_trap.bmp" />
     <Image Include="Image\character\bazzi\bazzi_up.bmp" />
     <Image Include="Image\character\bazzi\bazzi_win.bmp" />
+    <Image Include="Image\effect\bubble.bmp" />
+    <Image Include="Image\effect\Explosion.bmp" />
     <Image Include="Image\effect\solo_player.bmp" />
     <Image Include="Image\tile\Ship\map_pirate_tile6.bmp" />
     <Image Include="Image\tile\Tile_pirate.bmp" />

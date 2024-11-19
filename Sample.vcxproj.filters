@@ -246,5 +246,11 @@
     <Image Include="Image\effect\solo_player.bmp">
       <Filter>Resource\Character</Filter>
     </Image>
+    <Image Include="Image\effect\bubble.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
+    <Image Include="Image\effect\Explosion.bmp">
+      <Filter>Resource\Character</Filter>
+    </Image>
   </ItemGroup>
 </Project>
