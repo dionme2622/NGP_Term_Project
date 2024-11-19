@@ -35,7 +35,7 @@ public:
 	virtual void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 private:
-	HBITMAP MainBitmap[2];			// 0 : Bubble, 1 : Explosion
+	//HBITMAP MainBitmap[2];			// 0 : Bubble, 1 : Explosion
 
 public:
 	int			state;   //			0가지고 있는거      1 처음 설치할떄			 2 펑!

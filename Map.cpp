@@ -107,7 +107,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 		if (player->GetBallon(num)->startboomcount < 50)
 		{
 			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
-			for (int j = 1; j < player->GetBallonLength(); j++)
+			for (int j = 1; j < player->GetBallonLength(); j++) // right
 			{
 				int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
 				int y = (player->GetBallon(num)->y) / 60;
@@ -120,7 +120,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				else if (Board[y][x].GetState() == 3)
 					break;
 			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
+			for (int j = 1; j < player->GetBallonLength(); j++)	// left
 			{
 				int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
 				int y = (player->GetBallon(num)->y) / 60;
@@ -133,7 +133,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				else if (Board[y][x].GetState() == 3)
 					break;
 			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
+			for (int j = 1; j < player->GetBallonLength(); j++)	// up
 			{
 				int x = (player->GetBallon(num)->x) / 60;
 				int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
@@ -144,7 +144,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				else if (Board[y][x].GetState() == 3)
 					break;
 			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
+			for (int j = 1; j < player->GetBallonLength(); j++) // down
 			{
 				int x = (player->GetBallon(num)->x) / 60;
 				int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
@@ -160,7 +160,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 			player->GetBallon(num)->startboomcount++;
 		}
 
-		if (player->GetBallon(num)->startboomcount >= 50)
+		if (player->GetBallon(num)->startboomcount >= 50) // TODO : 잔상이 남는부분 고쳐야 함
 		{
 			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
 			for (int j = 1; j < player->GetBallonLength(); j++)

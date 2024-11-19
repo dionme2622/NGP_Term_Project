@@ -24,7 +24,7 @@ Cplayer::Cplayer(HINSTANCE _hInst)
 	xPosF = 0.0f, yPosF = 0.0f;
 	speed = 150;
 	ballon_num = 3;
-	ballon_length = 5;
+	ballon_length = 2;
 	stop = TRUE;
 
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);

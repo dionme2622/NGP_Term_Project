@@ -28,8 +28,8 @@ void CBoard::Update(float fTimeElapsed)
 
 CBallon::CBallon(HINSTANCE hInst)
 {
-	MainBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
-	MainBitmap[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Explosion));
+	/*MainBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
+	MainBitmap[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Explosion));*/
 
 	state = 0;
 	beforeboomcount = 0;
