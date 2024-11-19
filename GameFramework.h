@@ -48,14 +48,17 @@ private:
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
+
 	// 서버 통신 관련
 	WSADATA wsa;
-	SOCKET sock;
+	static SOCKET sock;
 	sockaddr_in remoteAddr;
-	int retval;
 
 
-	std::string		keyData;
+	static int retval;
+
+
+	static std::string keyData;
 
 public:
 
@@ -72,7 +75,7 @@ private:
 
 
 
-	static DWORD __stdcall ClientMain(LPVOID arg);
+	static DWORD SendData(LPVOID arg);
 
 
 

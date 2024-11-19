@@ -1,13 +1,17 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
+SOCKET CGameFramework::sock = INVALID_SOCKET;  
+int CGameFramework::retval = 0;                
+std::string CGameFramework::keyData = "";      
+
 CGameFramework::CGameFramework()
 {
 	m_pScene			= nullptr;
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
-	currentscene	= PLAYSCENE;				// Scene의 인덱스
+	currentscene	= STARTSCENE;				// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
 
 
@@ -29,7 +33,10 @@ CGameFramework::CGameFramework()
 	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
 	remoteAddr.sin_port = htons(SERVERPORT);
 	retval = connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr));
-	if (retval == SOCKET_ERROR) printf("connect() err");
+	if (retval == SOCKET_ERROR) {
+		printf("connect() err");
+		exit(0);
+	}
 }
 
 CGameFramework::~CGameFramework()
@@ -40,6 +47,10 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
 	hWnd = hMainWnd;
 	hInst = g_hInst;
+
+	m_ppMaps[0] = new CVillage();
+	m_ppMaps[1] = new CPirate();
+
 	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
 	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
@@ -49,10 +60,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_pScene = m_ppScenes[currentscene];																									
 
 
-	CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
+	CreateThread(NULL, 0, SendData, NULL, 0, NULL);
 
-	m_ppMaps[0] = new CVillage();
-	m_ppMaps[1] = new CPirate();
+	
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -176,26 +186,13 @@ void CGameFramework::SetCurMap(int Map)
 	m_pMap = m_ppMaps[Map];
 }
 
-DWORD __stdcall CGameFramework::ClientMain(LPVOID arg)
+DWORD WINAPI CGameFramework::SendData(LPVOID arg)
 {
-	//int retval;
-
-	//// 데이터 전송
-	//char buf[BUFSIZE];
-
-	//// 입력 데이터 전송
-	//retval = send(sock, buf, retval, 0);
-
-	//int totalSent = 0;
-	//int filesize = 0;		// 조정해야됨
-
-	//while (1) {
-	//	int bytes = send(sock, buf, retval, 0);
-
-	//	if (totalSent == filesize) {
-	//		break;
-	//	}
-	//}
+	while (1){
+		retval = send(sock, keyData.c_str(), keyData.size(), 0);
+		printf("%d\n", retval);
+	}
+	
 	return 0;
 }
 

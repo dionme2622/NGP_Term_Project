@@ -24,7 +24,6 @@ void CPlayScene::Initialize()
 	player->SetDirection(DIR_DOWN);
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
-
 }
 
 
@@ -33,7 +32,6 @@ void CPlayScene::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
-	if (pKeysBuffer[VK_UP] & 0xF0) Beep(100, 1000); // 키 버퍼 위치저장해놓ㅅ고
 
 	bool stop = true;
 	// TODO : Player의 방향 벡터를 설정한다.
@@ -78,7 +76,6 @@ void CPlayScene::Render()
 	DeleteDC(MemDC);
 	DeleteDC(MemDCImage);
 	ReleaseDC(hWnd, hdc);
-
 }
 
 void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)

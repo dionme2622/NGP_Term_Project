@@ -113,7 +113,6 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		SetCapture(hWnd);
 		GetCursorPos(&cursorPos);
 		ScreenToClient(hWnd, &cursorPos);
-		printf("%d,, %d\n", cursorPos.x, cursorPos.y);
 
 		break;
 	default:
