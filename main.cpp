@@ -14,6 +14,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 DWORD __stdcall SendData(LPVOID arg);
+DWORD __stdcall ReceiveData(LPVOID arg);
 
 CGameFramework GameFramework;
 SOCKET sock;
@@ -51,8 +52,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 1;
     }
 
-    CreateThread(NULL, 0, SendData, NULL, 0, NULL);
+    // 소켓 생성
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET) {
+        printf("소켓 생성 실패");
+        WSACleanup();
+        return 1;
+    }
 
+    // 서버 주소 설정
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+
+    // 서버 연결
+    if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
+        printf("서버 연결 실패");
+        closesocket(sock);
+        WSACleanup();
+        exit(0);
+    }
+
+    printf("서버 연결 성공");
+
+    CreateThread(NULL, 0, SendData, NULL, 0, NULL);
+    CreateThread(NULL, 0, ReceiveData, NULL, 0, NULL);
 
     while (1)
     {
@@ -255,38 +281,23 @@ char GetPressedKeysAsString()
 
 DWORD __stdcall SendData(LPVOID arg)
 {
-    // 소켓 생성
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == INVALID_SOCKET) {
-        printf("소켓 생성 실패");
-        WSACleanup();
-        return 1;
-    }
-
-    // 서버 주소 설정
-    struct sockaddr_in serveraddr;
-    memset(&serveraddr, 0, sizeof(serveraddr));
-    serveraddr.sin_family = AF_INET;
-    inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
-    serveraddr.sin_port = htons(SERVERPORT);
-
-    // 서버 연결
-    if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
-        printf("서버 연결 실패");
-        closesocket(sock);
-        WSACleanup();
-        exit(0);
-    }
-
-    printf("서버 연결 성공");
+    
 
     int retval;
 
-    while (1){
-    	retval = send(sock, (char*)&keyData, sizeof(keyData), 0);
-    	printf("%d\r", keyData);
+    while (1) {
+        if (keyData != '0') {
+            retval = send(sock, (char*)&keyData, sizeof(keyData), 0);
+            printf("%d\r", keyData);
+        }
     }
 
 
+    return 0;
+}
+
+
+DWORD __stdcall ReceiveData(LPVOID arg)
+{
     return 0;
 }
