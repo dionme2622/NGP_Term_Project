@@ -1,6 +1,9 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
+/*SOCKET CGameFramework::sock = INVALID_SOCKET;  
+int CGameFramework::retval = 0;
+std::string CGameFramework::keyData = "";    */  
 
 CGameFramework::CGameFramework()
 {
@@ -10,6 +13,32 @@ CGameFramework::CGameFramework()
 	m_ppMaps			= new CMap * [2];		// Map 4개
 	currentscene	= PLAYSCENE;				// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
+
+
+
+	////서버 통신 관련 변수 초기화
+	////윈속 초기화
+	//if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+	//	return;
+
+	//// 소켓 생성
+	//sock = socket(AF_INET, SOCK_DGRAM, 0);
+	//if (sock == INVALID_SOCKET) {
+	//	printf("socket err");
+	//}
+
+	//// 소켓 주소 구조체 초기화
+	//memset(&remoteAddr, 0, sizeof(remoteAddr));
+	//remoteAddr.sin_family = AF_INET;
+	//inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
+	//remoteAddr.sin_port = htons(SERVERPORT);
+	//// 서버 연결
+	//if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
+	//	printf("서버 연결 실패");
+	//	closesocket(sock);
+	//	WSACleanup();
+	//	exit(0);
+	//}
 }
 
 CGameFramework::~CGameFramework()
@@ -34,10 +63,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_pScene = m_ppScenes[currentscene];																									
 
 
-	CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
+	//CreateThread(NULL, 0, SendData, NULL, 0, NULL);
 
-	m_ppMaps[0] = new CVillage();
-	m_ppMaps[1] = new CPirate();
+	
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -80,11 +108,11 @@ void CGameFramework::ProcessInput()
 	m_pScene->ProcessInput();
 
 	// 현재 눌린 키들을 문자열로 가져오기
-	std::string pressedKeys = GetPressedKeysAsString();
+	/*std::string pressedKeys = GetPressedKeysAsString();
 
 	if (!pressedKeys.empty()) {
 		keyData = pressedKeys.c_str();
-	}
+	}*/
 }
 
 std::vector<char> CGameFramework::GetPressedKeys()
@@ -161,26 +189,13 @@ void CGameFramework::SetCurMap(int Map)
 	m_pMap = m_ppMaps[Map];
 }
 
-DWORD __stdcall CGameFramework::ClientMain(LPVOID arg)
+DWORD WINAPI CGameFramework::SendData(LPVOID arg)
 {
-	//int retval;
-
-	//// 데이터 전송
-	//char buf[BUFSIZE];
-
-	//// 입력 데이터 전송
-	//retval = send(sock, buf, retval, 0);
-
-	//int totalSent = 0;
-	//int filesize = 0;		// 조정해야됨
-
-	//while (1) {
-	//	int bytes = send(sock, buf, retval, 0);
-
-	//	if (totalSent == filesize) {
-	//		break;
-	//	}
+	//while (1){
+	//	retval = send(sock, keyData.c_str(), keyData.size(), 0);
+	//	//printf("%d\n", retval);
 	//}
+	
 	return 0;
 }
 

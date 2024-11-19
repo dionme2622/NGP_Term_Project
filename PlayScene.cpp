@@ -17,11 +17,10 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, player의 데이터를 Initialize 한다.
 	
-	GetFramework()->GetCurMap()->Initialize(hInst);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst);		// 선택된 Map의 Initialize
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
-
 }
 
 
@@ -75,7 +74,6 @@ void CPlayScene::Render()
 	DeleteDC(MemDC);
 	DeleteDC(MemDCImage);
 	ReleaseDC(hWnd, hdc);
-
 }
 
 void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)

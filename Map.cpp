@@ -68,7 +68,7 @@ void CMap::Update(float fTimeElapsed)
 	BallonBoom(player, 3);
 	BallonBoom(player, 4);
 
-	printf("beforecount: %d\n", player->GetBallon(0)->beforeboomcount);
+	//printf("beforecount: %d\n", player->GetBallon(0)->beforeboomcount);
 }
 
 void CMap::SetBallon()

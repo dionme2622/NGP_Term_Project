@@ -99,7 +99,6 @@ void Cplayer::Update(float fTimeElapsed)
 
 			// 경과한 시간을 확인하여 3초가 지나면 DEAD 상태로 전환
 			stateChangeTime += fTimeElapsed;  // 경과 시간 추가
-			printf("%f\n", stateChangeTime);
 
 			if (stateChangeTime >= 2.0f) {  // 3초가 지나면
 				xPosF = 0.0f;
@@ -219,15 +218,15 @@ void Cplayer::SetBallon(CMap* Map)
 
 			ballon[i]->x = (x + 30 - 30) / 60 * 60;
 			ballon[i]->y = (y + 30 - 65) / 60 * 60;
-			printf("물풍선 설치! x: %d, y: %d\n", ballon[i]->x / 60, ballon[i]->y / 60);		// DEBUG
+			//printf("물풍선 설치! x: %d, y: %d\n", ballon[i]->x / 60, ballon[i]->y / 60);		// DEBUG
 
 			if (Map->GetBoard((ballon[i]->y / 60), (ballon[i]->x / 60)).GetState() == 1)
 			{
-				printf("전 %d \n", Map->GetBoard((ballon[i]->y / 60) - 1, (ballon[i]->x / 60) - 1).GetState());		// DEBUG
+				//printf("전 %d \n", Map->GetBoard((ballon[i]->y / 60) - 1, (ballon[i]->x / 60) - 1).GetState());		// DEBUG
 
 				ballon[i]->SetState(1);
 				Map->GetBoard(11, 13).SetState(4);
-				printf("후 %d \n", Map->GetBoard(11,13).GetState());		// DEBUG
+				//printf("후 %d \n", Map->GetBoard(11,13).GetState());		// DEBUG
 				if(Map->GetBoard(11, 13).GetState() == 4) printf("%d\n", ballon[0]->GetState());
 
 			}
