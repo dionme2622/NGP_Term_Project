@@ -17,6 +17,8 @@
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #pragma comment(lib, "Ws2_32.lib")  // Winsock 라이브러리 추가
 
+#define _CRT_SECURE_NO_WARNINGS // 구형 C 함수 사용 시 경고 끄기
+
 
 #define FRAME_BUFFER_WIDTH		1220
 #define FRAME_BUFFER_HEIGHT		950
