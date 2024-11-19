@@ -18,6 +18,7 @@ DWORD __stdcall SendData(LPVOID arg);
 CGameFramework GameFramework;
 SOCKET sock;
 
+void ProcessInput();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -66,6 +67,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
+            ProcessInput();
             GameFramework.FrameAdvance();
         }
     }
@@ -213,6 +215,49 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 #define _CRT_SECURE_NO_WARNINGS 
 
+std::string keyData;
+
+std::string GetPressedKeysAsString();
+void ProcessInput()
+{
+    // 현재 눌린 키들을 문자열로 가져오기
+    std::string pressedKeys = GetPressedKeysAsString();
+
+    if (!pressedKeys.empty()) {
+        keyData = pressedKeys.c_str();
+    }
+}
+
+std::vector<char> GetPressedKeys()
+{
+    std::vector<char> pressedKeys;
+
+    // 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+    for (int key = 0x01; key <= 0xFE; ++key) {
+        // 키가 눌려 있는지 확인
+        if (GetAsyncKeyState(key) & 0x8000) {
+            pressedKeys.push_back(key); // 눌린 키를 추가
+        }
+    }
+
+    return pressedKeys;
+}
+
+std::string GetPressedKeysAsString()
+{
+    std::string keys;
+
+    // 눌려 있는 키 목록을 가져옴
+    std::vector<char> pressedKeys = GetPressedKeys();
+
+    // 각 키를 문자열로 변환하여 추가
+    for (int key : pressedKeys) {
+        keys += std::to_string(key) + " ";
+    }
+
+    return keys;
+}
+
 DWORD __stdcall SendData(LPVOID arg)
 {
     // 소켓 생성
@@ -227,7 +272,7 @@ DWORD __stdcall SendData(LPVOID arg)
     struct sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
-    inet_pton(AF_INET, "192.168.43.41", &serveraddr.sin_addr);
+    inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
     serveraddr.sin_port = htons(SERVERPORT);
 
     // 서버 연결
@@ -239,6 +284,14 @@ DWORD __stdcall SendData(LPVOID arg)
     }
 
     printf("서버 연결 성공");
+
+    int retval;
+
+    while (1){
+    	retval = send(sock, keyData.c_str(), keyData.size(), 0);
+    	printf("%s\n", keyData.c_str());
+    }
+
 
     return 0;
 }
