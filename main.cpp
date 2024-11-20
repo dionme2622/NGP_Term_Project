@@ -300,7 +300,6 @@ DWORD __stdcall SendData(LPVOID arg)
         }
     }
 
-
     return 0;
 }
 
@@ -309,12 +308,17 @@ DWORD __stdcall ReceiveData(LPVOID arg)
 {
     int retval;
 
-    // 데이터 받기
-   /* retval = recv(sock, buf, retval, MSG_WAITALL);
-    if (retval == SOCKET_ERROR) {
-        printf("recv()");
-    }*/
+    //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
 
+    char dir;
+
+    //데이터 받기
+    while (1) {
+        retval = recv(sock, (char*)&dir, sizeof(dir), MSG_WAITALL);
+        if (retval == SOCKET_ERROR) {
+            printf("%d", dir);
+        }
+    }
 
     return 0;
 }
