@@ -86,7 +86,7 @@ void CMap::SetBallon()
 				Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].SetState(4);
 			}
 		}
-		printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
+		//printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
 	}
 	
 }

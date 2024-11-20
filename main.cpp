@@ -227,7 +227,7 @@ DWORD __stdcall SendData(LPVOID arg)
     struct sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
-    inet_pton(AF_INET, "192.168.43.41", &serveraddr.sin_addr);
+    inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
     serveraddr.sin_port = htons(SERVERPORT);
 
     // 서버 연결
