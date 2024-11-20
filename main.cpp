@@ -19,6 +19,8 @@ DWORD __stdcall ReceiveData(LPVOID arg);
 CGameFramework GameFramework;
 SOCKET sock;
 
+HANDLE hSelectEvent;
+
 void ProcessInput();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -60,6 +62,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 1;
     }
 
+    hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
     // 서버 주소 설정
     struct sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
@@ -77,8 +81,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     printf("서버 연결 성공");
 
+
     CreateThread(NULL, 0, SendData, NULL, 0, NULL);
     CreateThread(NULL, 0, ReceiveData, NULL, 0, NULL);
+
+    CloseHandle(hSelectEvent);
+
 
     while (1)
     {
@@ -281,9 +289,9 @@ char GetPressedKeysAsString()
 
 DWORD __stdcall SendData(LPVOID arg)
 {
-    
-
     int retval;
+
+    WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
 
     while (1) {
         if (keyData != '0') {
@@ -299,5 +307,14 @@ DWORD __stdcall SendData(LPVOID arg)
 
 DWORD __stdcall ReceiveData(LPVOID arg)
 {
+    int retval;
+
+    // 데이터 받기
+   /* retval = recv(sock, buf, retval, MSG_WAITALL);
+    if (retval == SOCKET_ERROR) {
+        printf("recv()");
+    }*/
+
+
     return 0;
 }
