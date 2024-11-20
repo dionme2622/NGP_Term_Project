@@ -291,12 +291,14 @@ DWORD __stdcall SendData(LPVOID arg)
 {
     int retval;
 
-    WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
+    //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
+    int tempData = 0;
 
     while (1) {
-        if (keyData != '0') {
-            retval = send(sock, (char*)&keyData, sizeof(keyData), 0);
-            printf("%d\r", keyData);
+        if (tempData != keyData) {
+            tempData = keyData;
+            retval = send(sock, (char*)&tempData, sizeof(tempData), 0);
+            printf("보낸 데이터 : %d\r", tempData);
         }
     }
 
@@ -310,14 +312,14 @@ DWORD __stdcall ReceiveData(LPVOID arg)
 
     //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
 
-    char dir;
+    int dir;
 
-    //데이터 받기
     while (1) {
         retval = recv(sock, (char*)&dir, sizeof(dir), MSG_WAITALL);
         if (retval == SOCKET_ERROR) {
-            printf("%d", dir);
+            printf("recv 실패");
         }
+        printf("서버로부터 받은 데이터 : %d\n ", dir);
     }
 
     return 0;

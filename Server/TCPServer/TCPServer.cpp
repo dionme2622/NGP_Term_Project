@@ -16,25 +16,33 @@ DWORD WINAPI ProcessClient(LPVOID arg)
     inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
     printf("[TCP/%s:%d] 클라이언트 처리 시작\n", addr, ntohs(clientaddr.sin_port));
 
+    int tempData = 0;
+
     // 방향키 값 수신
     char buf[BUFSIZE];
     int dir;
     while (1) {
-        retval = recv(client_sock, (char*)&dir, sizeof(dir), MSG_WAITALL); // 방향키 데이터 수신
-        //if (retval == SOCKET_ERROR) {
-        //    err_display("recv()");
-        //    break;
-        //}
-        //else if (retval == 0) {
-        //    break; // 연결 종료
-        //}
-
-        //buf[retval] = '\0'; // 수신한 문자열 종료 처리
+        retval = recv(client_sock, (char*)&dir, sizeof(dir), 0); // 방향키 데이터 수신
+        if (retval == SOCKET_ERROR) {
+            err_display("recv()");
+            break;
+        }
+        else if (retval == 0) {
+            break; // 연결 종료
+        }
+        //system("cls");
+        buf[retval] = '\0'; // 수신한 문자열 종료 처리
+        printf("받은 데이터 : %d\n", dir);
         //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
 
-        retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
+        if (tempData != dir) {
+            tempData = dir;
+            retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
+            printf("데이터 전송 성공: %d\n", dir);
+        }
         if (retval == SOCKET_ERROR) {
             err_display("send()");
+            printf("ssss");
             break;
         }
     }
