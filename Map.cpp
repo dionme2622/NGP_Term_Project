@@ -9,7 +9,7 @@ int ObstacleBreak[13][15];
 void CMap::Initialize(HINSTANCE _hInst)
 {
 	hInst = _hInst;
-	for (int i = 0; i < 13; i++)
+	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다.
 	{
 		for (int j = 0; j < 15; j++)
 		{
@@ -17,7 +17,7 @@ void CMap::Initialize(HINSTANCE _hInst)
 			Board[i][j].SetState(1);
 		}
 	}
-	player = new Cplayer(_hInst);
+	player = new Cplayer(_hInst);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));

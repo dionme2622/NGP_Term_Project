@@ -1,6 +1,22 @@
 #include "Common.h"
+#include "Player.h"
 #define SERVERPORT 9000
 #define BUFSIZE    50
+
+typedef struct CS_PlayerInputPacket {
+    int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
+    int keyState;           // 입력한 Key 의 값
+} CS_PlayerInputPacket;
+
+
+typedef struct SC_PlayersInfoPacket {
+    CPlayer player1;           // 클라이언트에게 Player의 데이터를 보낸다. TODO : Player2의 정보도 추후에 같이 보내야 함
+    // TODO : 보드와 풍선에 대한 정보도 보내야 한다
+    // Board Info
+    // Ballon Info
+} SC_PlayersInfoPacket;
+
+CPlayer *player1 = new CPlayer();
 
 // 클라이언트의 방향키 값 처리 함수
 DWORD WINAPI ProcessClient(LPVOID arg)
@@ -45,6 +61,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
             printf("ssss");
             break;
         }
+
+        // TODO : dir에 따라서 Player 좌표 이동
+        player1->Move(dir, 0.03f);
     }
 
     // 소켓 닫기
