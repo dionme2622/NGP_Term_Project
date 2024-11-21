@@ -8,7 +8,7 @@ class CPlayer
 {
 public:
 	CPlayer() {};
-	CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket);
+	CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int playerID);
 	~CPlayer();
 
 	void Update(float fTimeElapsed);

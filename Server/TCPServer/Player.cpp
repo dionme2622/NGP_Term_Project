@@ -44,5 +44,5 @@ void CPlayer::Move(int dir, float fTimeElapsed)
 		SetPosition(fx, fy);
 	}
 
-	printf("플레이어 위치 X: %d, Y: %d\n", x, y);
+	//printf("플레이어 위치 X: %d, Y: %d\n", x, y);
 }

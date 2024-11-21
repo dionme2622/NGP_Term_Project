@@ -2,22 +2,29 @@
 #include "Map.h"
 #include "Packet.h"
 
-CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket)
+CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int playerID)
 {
 	// Player Initialize
-	SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
-	direction = PlayersInfoPacket.player1.direction;
-	state = PlayersInfoPacket.player1.state;
-	speed = PlayersInfoPacket.player1.speed;
-	ballon_num = PlayersInfoPacket.player1.ballon_num;
-	ballon_length = PlayersInfoPacket.player1.ballon_length;
-	stop = PlayersInfoPacket.player1.stop;
-
+	if (playerID == 0)
+	{
+		SetPosition(_PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);
+		direction = _PlayersInfoPacket.player1.direction;
+		state = _PlayersInfoPacket.player1.state;
+		speed = _PlayersInfoPacket.player1.speed;
+		ballon_num = _PlayersInfoPacket.player1.ballon_num;
+		ballon_length = _PlayersInfoPacket.player1.ballon_length;
+		stop = _PlayersInfoPacket.player1.stop;
+	}
+	else
+	{
+		// TODO : 다른 Player 초기화
+	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
 	xPos = 0, yPos = 0;
 	xPosF = 0.0f, yPosF = 0.0f;
 	/*--------------------------------------*/
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
+	printf("초기화! %d %d\n", _PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);  // DEBUG
 
 	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
@@ -29,8 +36,6 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket)
 	MainBitmap[6] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_ESCAPE));        // 캐릭터 탈출
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 	MainBitmap[8] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_Arrow));         // 캐릭터 머리 위 화살표
-
-	printf("초기화 성공! speed: %d\n", speed);
 }
 
 CPlayer::~CPlayer()
@@ -126,9 +131,16 @@ void CPlayer::Update(float fTimeElapsed)
 			if (xPos >= 616) xPos = 0;
 		}
 	}
-	//Move(fTimeElapsed);
 	SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
-	SetDirection(PlayersInfoPacket.player1.direction);
+	direction = PlayersInfoPacket.player1.direction;
+	printf("dircetion : %d\n", direction);
+	state = PlayersInfoPacket.player1.state;
+	speed = PlayersInfoPacket.player1.speed;
+	ballon_num = PlayersInfoPacket.player1.ballon_num;
+	ballon_length = PlayersInfoPacket.player1.ballon_length;
+	stop = PlayersInfoPacket.player1.stop;
+	//SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
+	//SetDirection(PlayersInfoPacket.player1.direction);
 	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
 }
 

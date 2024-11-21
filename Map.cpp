@@ -26,7 +26,8 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)	
 			Board[i][j].SetState(1);
 		}
 	}
-	player = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[0] = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[1] = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
@@ -71,32 +72,32 @@ void CMap::Update(float fTimeElapsed)
 			xPos = 0;
 	}
 
-	BallonBoom(player, 0);
+	/*BallonBoom(player, 0);
 	BallonBoom(player, 1);
 	BallonBoom(player, 2);
 	BallonBoom(player, 3);
-	BallonBoom(player, 4);
+	BallonBoom(player, 4);*/
 
 	//printf("beforecount: %d\n", player->GetBallon(0)->beforeboomcount);
 }
 
 void CMap::SetBallon()
 {
-	if (player->GetState() == DAMAGE) return;
-	for (int i = 0; i < player->GetBallonNum(); i++)
-	{
-		if (player->GetBallon(i)->GetState() == 0)
-		{
-			player->GetBallon(i)->x = (player->x + 30 - 30) / 60 * 60;
-			player->GetBallon(i)->y = (player->y + 30 - 65) / 60 * 60;
-			if (Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].GetState() == 1)
-			{
-				player->GetBallon(i)->SetState(1);
-				Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].SetState(4);
-			}
-		}
-		//printf("물풍선 설치! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
-	}
+	//if (player->GetState() == DAMAGE) return;
+	//for (int i = 0; i < player->GetBallonNum(); i++)
+	//{
+	//	if (player->GetBallon(i)->GetState() == 0)
+	//	{
+	//		player->GetBallon(i)->x = (player->x + 30 - 30) / 60 * 60;
+	//		player->GetBallon(i)->y = (player->y + 30 - 65) / 60 * 60;
+	//		if (Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].GetState() == 1)
+	//		{
+	//			player->GetBallon(i)->SetState(1);
+	//			Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].SetState(4);
+	//		}
+	//	}
+	//	//printf("물풍선 설치! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
+	//}
 	
 }
 
@@ -316,7 +317,6 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPack
 	// TODO : Map이 Village일 때 초기화
 	CMap::Initialize(_hInst, PlayersInfoPacket);
 
-	player->SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.x);
 
 	//printf("player x: %d, y: %d\n", player->x, player->y);
 	//player->SetPosition((Board[11][13].x), (Board[11][13].y));
@@ -535,7 +535,7 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 	if (Board[10][9].GetState() == 1) TransparentBlt(MemDC, Board[10][9].x, Board[10][9].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 	if (Board[10][12].GetState() == 1) TransparentBlt(MemDC, Board[10][12].x, Board[10][12].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 
-	player->Render(MemDC, MemDCImage, this);
+	for(int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 	CMap::Render(MemDC, MemDCImage);
 
 }
@@ -543,7 +543,7 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 void CVillage::Update(float fTimeElapsed)
 {
 	CMap::Update(fTimeElapsed);
-	player->Update(fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(fTimeElapsed);
 }
 
 
@@ -556,7 +556,6 @@ void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacke
 	// TODO : Map이 Pirate일 때 초기화
 	CMap::Initialize(_hInst, PlayersInfoPacket);
 
-	player->SetPosition((Board[11][12].x), (Board[11][12].y));
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -804,11 +803,11 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	(HBITMAP)SelectObject(MemDCImage, obstacle_pirate); // 장애물
 	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
 
-	player->Render(MemDC, MemDCImage, this);
+	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 }
 
 void CPirate::Update(float fTimeElapsed)
 {
-	player->Update(fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(fTimeElapsed);
 }
 

@@ -154,6 +154,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    CloseHandle(hSelectEvent);
 
+   CreateThread(NULL, 0, SendData, NULL, 0, NULL);
+   CreateThread(NULL, 0, ReceiveData, NULL, 0, NULL);
+   
    GameFramework.Initialize(hWnd, hInst);
 
 
@@ -279,17 +282,17 @@ char GetPressedKeysAsString()
     // 눌려 있는 키 목록을 가져옴
     char pressedKeys = GetPressedKeys();
 
-    if (!pressedKeys) pressedKeys = '0';
+    //if (!pressedKeys) pressedKeys = '0';
 
     return pressedKeys;
 }
-
+int tempData = 0;
 DWORD __stdcall SendData(LPVOID arg)
 {
     int retval;
 
     //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
-    int tempData = 0;
+    
 
     while (1) {
         if (tempData != keyData) {
@@ -308,16 +311,12 @@ DWORD __stdcall ReceiveData(LPVOID arg)
     int retval;
 
     //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
-    printf("서버로부터 Player 데이터를 받아왔다\n");
-    exit(0);
     // TODO : 서버로부터 Player 데이터를 받아야 한다.
     while (1) {
         retval = recv(sock, (char*)&PlayersInfoPacket, sizeof(SC_PlayersInfoPacket), 0);
         if (retval > 0) {
             // 수신한 데이터로 처리      
-            printf("%d %d\n", PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);  // DEBUG
-           
-
+            printf("데이터 받아옴 %d %d\n", PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);  // DEBUG
         }
     }
     return 0;
