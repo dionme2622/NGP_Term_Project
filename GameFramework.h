@@ -50,15 +50,11 @@ private:
 
 
 	// 서버 통신 관련
-	WSADATA wsa;
+	/*WSADATA wsa;
 	static SOCKET sock;
-	sockaddr_in remoteAddr;
-
-
-	static int retval;
-
-
-	static std::string keyData;
+	sockaddr_in remoteAddr;*/
+	/*static int retval;
+	static std::string keyData;*/
 
 public:
 

@@ -65,7 +65,30 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	//CreateThread(NULL, 0, SendData, NULL, 0, NULL);
 
-	
+	// 소켓 생성
+	//sock = socket(AF_INET, SOCK_STREAM, 0);
+	//if (sock == INVALID_SOCKET) {
+	//	printf("소켓 생성 실패");
+	//	WSACleanup();
+	//	return;
+	//}
+
+	//// 서버 주소 설정
+	//struct sockaddr_in serveraddr;
+	//memset(&serveraddr, 0, sizeof(serveraddr));
+	//serveraddr.sin_family = AF_INET;
+	//inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
+	//serveraddr.sin_port = htons(SERVERPORT);
+
+	//// 서버 연결
+	//if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
+	//	printf("서버 연결 실패");
+	//	closesocket(sock);
+	//	WSACleanup();
+	//	exit(0);
+	//}
+
+	//printf("서버 연결 성공");
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }

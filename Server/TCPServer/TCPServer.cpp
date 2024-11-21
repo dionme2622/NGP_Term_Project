@@ -1,6 +1,23 @@
 #include "Common.h"
+#include "Player.h"
+#include "Timer.h"
 #define SERVERPORT 9000
 #define BUFSIZE    50
+
+typedef struct CS_PlayerInputPacket {
+    int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
+    int keyState;           // 입력한 Key 의 값
+} CS_PlayerInputPacket;
+
+
+typedef struct SC_PlayersInfoPacket {
+    CPlayer player1;           // 클라이언트에게 Player의 데이터를 보낸다. TODO : Player2의 정보도 추후에 같이 보내야 함
+    // TODO : 보드와 풍선에 대한 정보도 보내야 한다
+    // Board Info
+    // Ballon Info
+} SC_PlayersInfoPacket;
+
+CPlayer *player1 = new CPlayer();
 
 // 클라이언트의 방향키 값 처리 함수
 DWORD WINAPI ProcessClient(LPVOID arg)
@@ -16,10 +33,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
     inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
     printf("[TCP/%s:%d] 클라이언트 처리 시작\n", addr, ntohs(clientaddr.sin_port));
 
+    int tempData = 0;
+
     // 방향키 값 수신
     char buf[BUFSIZE];
+    int dir;
     while (1) {
-        retval = recv(client_sock, buf, BUFSIZE - 1, 0); // 방향키 데이터 수신
+        retval = recv(client_sock, (char*)&dir, sizeof(dir), 0); // 방향키 데이터 수신
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
             break;
@@ -27,15 +47,34 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         else if (retval == 0) {
             break; // 연결 종료
         }
-
+        //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("[TCP/%s:%d] 방향키 입력값: %s\n", addr, ntohs(clientaddr.sin_port), buf);
+        printf("받은 데이터 : %d\n", dir);
 
-        // "exit" 입력 시 연결 종료
-        if (strcmp(buf, "exit") == 0) {
-            printf("[TCP/%s:%d] 클라이언트 연결 종료 요청\n", addr, ntohs(clientaddr.sin_port));
+        // TODO : dir에 따라서 Player 좌표 이동
+        player1->Move(dir, 0.03f);
+
+        //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
+
+        // 패킷 데이터 생성
+        SC_PlayersInfoPacket packet;
+        memcpy(&packet.player1, player1, sizeof(CPlayer));
+        retval = send(client_sock, (char*)&packet, sizeof(SC_PlayersInfoPacket), 0);
+
+
+
+        if (tempData != dir) {
+            tempData = dir;
+            retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
+            printf("데이터 전송 성공: %d\n", dir);
+        }
+        if (retval == SOCKET_ERROR) {
+            err_display("send()");
+            printf("ssss");
             break;
         }
+
+
     }
 
     // 소켓 닫기
