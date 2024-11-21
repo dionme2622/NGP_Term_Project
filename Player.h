@@ -3,11 +3,12 @@
 
 class CMap;
 
-class Cplayer
+class CPlayer
 {
 public:
-	Cplayer(HINSTANCE _hInst);
-	~Cplayer();
+	CPlayer() {};
+	CPlayer(HINSTANCE _hInst);
+	~CPlayer();
 
 	void Update(float fTimeElapsed);
 	void Render(HDC MemDC, HDC MemDCImage, CMap* Map);

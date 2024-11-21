@@ -1,9 +1,10 @@
 #include "player.h"
 #include "Map.h"
+#include "Packet.h"
 
+extern SC_PlayersInfoPacket receivedPacket;
 
-
-Cplayer::Cplayer(HINSTANCE _hInst)
+CPlayer::CPlayer(HINSTANCE _hInst)
 {
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
 	MainBitmap[1] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_LEFT));			// 캐릭터 왼쪽 모습
@@ -19,7 +20,8 @@ Cplayer::Cplayer(HINSTANCE _hInst)
 	// player Initialize
 	direction = DIR_DOWN;
 	state = LIVE;
-	fx = 0.0f, fy = 0.0f;
+	x = receivedPacket.player1.x, y = receivedPacket.player1.y;
+	fx = receivedPacket.player1.fx, fy = receivedPacket.player1.fy;
 	xPos = 0, yPos = 0;
 	xPosF = 0.0f, yPosF = 0.0f;
 	speed = 150;
@@ -31,12 +33,12 @@ Cplayer::Cplayer(HINSTANCE _hInst)
 
 }
 
-Cplayer::~Cplayer()
+CPlayer::~CPlayer()
 {
 	// TODO : 비트맵 제거
 }
 
-void Cplayer::Update(float fTimeElapsed)
+void CPlayer::Update(float fTimeElapsed)
 {
 	if (state == LIVE)
 	{
@@ -136,7 +138,7 @@ void Cplayer::Update(float fTimeElapsed)
 	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
-void Cplayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
+void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 {
 	if (state == LIVE)
 	{
@@ -196,20 +198,20 @@ void Cplayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 
 }
 
-void Cplayer::SetDirection(int _direction)
+void CPlayer::SetDirection(int _direction)
 {
 	direction = _direction;
 }
 
 
-void Cplayer::SetPosition(float _fx, float _fy) {
+void CPlayer::SetPosition(float _fx, float _fy) {
 	fx = _fx;
 	fy = _fy;
 	x = static_cast<int>(fx);  // 부동소수점 좌표를 정수로 변환
 	y = static_cast<int>(fy);
 }
 
-void Cplayer::SetBallon(CMap* Map)
+void CPlayer::SetBallon(CMap* Map)
 {
 	for (int i = 0; i < ballon_num; i++)
 	{
@@ -234,7 +236,7 @@ void Cplayer::SetBallon(CMap* Map)
 	}
 }
 
-void Cplayer::Move(float fTimeElapsed)
+void CPlayer::Move(float fTimeElapsed)
 {
 	if (!GetStop())
 	{

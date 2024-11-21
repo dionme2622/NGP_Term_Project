@@ -1,4 +1,8 @@
 #include "Map.h"
+#include "Packet.h"
+
+extern SC_PlayersInfoPacket receivedPacket;
+
 
 std::default_random_engine dre;
 std::uniform_int_distribution<int> uid{ 1,9 };
@@ -17,7 +21,7 @@ void CMap::Initialize(HINSTANCE _hInst)
 			Board[i][j].SetState(1);
 		}
 	}
-	player = new Cplayer(_hInst);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player = new CPlayer(_hInst);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
@@ -91,7 +95,7 @@ void CMap::SetBallon()
 	
 }
 
-void CMap::BallonBoom(Cplayer* player, int num)
+void CMap::BallonBoom(CPlayer* player, int num)
 {
 	if (player->GetBallon(num)->GetState() == 1)
 	{
@@ -307,7 +311,10 @@ void CVillage::Initialize(HINSTANCE _hInst)
 	// TODO : Map이 Village일 때 초기화
 	CMap::Initialize(_hInst);
 
-	player->SetPosition((Board[11][13].x), (Board[11][13].y));
+	player->SetPosition(receivedPacket.player1.x, receivedPacket.player1.x);
+
+	printf("player x: %d, y: %d\n", player->x, player->y);
+	//player->SetPosition((Board[11][13].x), (Board[11][13].y));
 
 	for (int i = 2; i < 13; i++)
 	{

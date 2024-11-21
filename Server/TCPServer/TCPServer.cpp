@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "Player.h"
+#include "Timer.h"
 #define SERVERPORT 9000
 #define BUFSIZE    50
 
@@ -49,7 +50,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
         printf("받은 데이터 : %d\n", dir);
+
+        // TODO : dir에 따라서 Player 좌표 이동
+        player1->Move(dir, 0.03f);
+
         //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
+
+        // 패킷 데이터 생성
+        SC_PlayersInfoPacket packet;
+        memcpy(&packet.player1, player1, sizeof(CPlayer));
+        retval = send(client_sock, (char*)&packet, sizeof(SC_PlayersInfoPacket), 0);
+
+
 
         if (tempData != dir) {
             tempData = dir;
@@ -62,8 +74,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
             break;
         }
 
-        // TODO : dir에 따라서 Player 좌표 이동
-        player1->Move(dir, 0.03f);
+
     }
 
     // 소켓 닫기

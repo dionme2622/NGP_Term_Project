@@ -1,6 +1,6 @@
-﻿
-#include "main.h"
+﻿#include "main.h"
 #include "GameFramework.h"
+#include "Packet.h"
 #define MAX_LOADSTRING 100
 // test
 // 전역 변수:
@@ -20,6 +20,9 @@ CGameFramework GameFramework;
 SOCKET sock;
 
 HANDLE hSelectEvent;
+
+SC_PlayersInfoPacket receivedPacket;
+
 
 void ProcessInput();
 
@@ -312,15 +315,19 @@ DWORD __stdcall ReceiveData(LPVOID arg)
 
     //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
 
-    int dir;
-
+    // TODO : 서버로부터 Player 데이터를 받아야 한다.
     while (1) {
-        retval = recv(sock, (char*)&dir, sizeof(dir), MSG_WAITALL);
-        if (retval == SOCKET_ERROR) {
-            printf("recv 실패");
+        retval = recv(sock, (char*)&receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
+        if (retval > 0) {
+            // 수신한 데이터로 처리      
+            printf("Player 데이터 수신 성공: X=%d, Y=%d, State = %d\n",        // DEBUG
+                receivedPacket.player1.x,
+                receivedPacket.player1.y,
+                receivedPacket.player1.GetState());
         }
-        printf("서버로부터 받은 데이터 : %d\n ", dir);
     }
 
+
+    
     return 0;
 }
