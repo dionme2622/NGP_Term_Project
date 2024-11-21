@@ -8,6 +8,7 @@
 #include "LobbyScene.h"
 #include "PlayScene.h"
 #include "Map.h"
+#include "Packet.h"
 
 class CScene;
 
@@ -26,11 +27,17 @@ public:
 	void Render();
 
 	void ProcessInput();
-	std::string GetPressedKeysAsString();
-	std::vector<char> GetPressedKeys();
+	int GetPressedKeysAsString();
+	int GetPressedKeys();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
+
+	void InitializeCriticalSection();
+	static DWORD __stdcall SendData(LPVOID arg);
+	static DWORD __stdcall ReceiveData(LPVOID arg);
+
 private:
 	HWND			hWnd;
 	HINSTANCE		hInst;
@@ -50,12 +57,17 @@ private:
 
 
 	// 서버 통신 관련
-	/*WSADATA wsa;
-	static SOCKET sock;
-	sockaddr_in remoteAddr;*/
-	/*static int retval;
-	static std::string keyData;*/
+	WSADATA wsa;
+	SOCKET sock;
+	sockaddr_in remoteAddr;
+	int retval;
 
+	HANDLE hSelectEvent;
+
+	CS_PlayerInputPacket sendPacket;  // 정적 대신 멤버 변수로 변경
+	SC_PlayersInfoPacket receivedPacket; // 정적 대신 멤버 변수로 변경
+
+	CRITICAL_SECTION cs;
 public:
 
 	void SetCurScene(int Scene);				// Scene Set
@@ -68,12 +80,6 @@ public:
 
 private:
 	_TCHAR						m_pszFrameRate[70];
-
-
-
-	static DWORD SendData(LPVOID arg);
-
-
 
 };
 

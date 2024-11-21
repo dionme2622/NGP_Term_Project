@@ -2,7 +2,6 @@
 #include "Map.h"
 #include "Packet.h"
 
-extern SC_PlayersInfoPacket receivedPacket;
 
 CPlayer::CPlayer(HINSTANCE _hInst)
 {

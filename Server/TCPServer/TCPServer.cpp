@@ -19,6 +19,8 @@ typedef struct SC_PlayersInfoPacket {
 
 CPlayer *player1 = new CPlayer();
 
+CS_PlayerInputPacket recvPacket;
+
 // 클라이언트의 방향키 값 처리 함수
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
@@ -39,7 +41,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
     char buf[BUFSIZE];
     int dir;
     while (1) {
-        retval = recv(client_sock, (char*)&dir, sizeof(dir), 0); // 방향키 데이터 수신
+        retval = recv(client_sock, (char*)&recvPacket, sizeof(recvPacket), 0); // 방향키 데이터 수신
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
             break;
@@ -49,28 +51,20 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         }
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("받은 데이터 : %d\n", dir);
+        printf("ID : %d, Key : %d\n", recvPacket.playerID, recvPacket.keyState);
 
         // TODO : dir에 따라서 Player 좌표 이동
-        player1->Move(dir, 0.03f);
+        //player1->Move(dir, 0.03f);
 
-        //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
 
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
         memcpy(&packet.player1, player1, sizeof(CPlayer));
         retval = send(client_sock, (char*)&packet, sizeof(SC_PlayersInfoPacket), 0);
 
-
-
-        if (tempData != dir) {
-            tempData = dir;
-            retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
-            printf("데이터 전송 성공: %d\n", dir);
-        }
+        
         if (retval == SOCKET_ERROR) {
             err_display("send()");
-            printf("ssss");
             break;
         }
 
@@ -125,6 +119,10 @@ int main(int argc, char* argv[])
             err_display("accept()");
             break;
         }
+
+        static int ID;
+        retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
+        ++ID;
 
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
