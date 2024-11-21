@@ -19,7 +19,9 @@ public:
 	CPlayer();
 	~CPlayer();
 	
-	void SetDirection(int);			// player의 방향벡터를 설정하는 함수
+	void Update(float fTimeElapsed);
+
+	void SetDirection(int dir) { direction = dir; }			// player의 방향벡터를 설정하는 함수
 	void SetPosition(int _x, int _y) { x = _x, y = _y, fx = (float)x, fy = (float)y; }
 	void SetPosition(float _fx, float _fy);
 	void SetState(int _state) { state = _state; }

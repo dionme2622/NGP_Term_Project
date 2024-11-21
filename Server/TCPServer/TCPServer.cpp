@@ -4,6 +4,8 @@
 #define SERVERPORT 9000
 #define BUFSIZE    50
 
+CGameTimer m_GameTimer;
+
 typedef struct CS_PlayerInputPacket {
     int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState;           // 입력한 Key 의 값
@@ -51,28 +53,31 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
         printf("받은 데이터 : %d\n", dir);
 
-        // TODO : dir에 따라서 Player 좌표 이동
-        player1->Move(dir, 0.03f);
-
+        // TODO : dir에 따라서 Player 좌표 이동 (별도의 스레드 함수로 빼야 한다.)
+        player1->SetDirection(dir);
+        player1->Update(0.03f);
+  
         //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
 
-        // 패킷 데이터 생성
+        // 클라이언트에게 데이터 send
         SC_PlayersInfoPacket packet;
         memcpy(&packet.player1, player1, sizeof(CPlayer));
         retval = send(client_sock, (char*)&packet, sizeof(SC_PlayersInfoPacket), 0);
 
+        if (retval == SOCKET_ERROR) {
+            err_display("send()");
+            break;
+        }
 
-
-        if (tempData != dir) {
+        /*if (tempData != dir) {
             tempData = dir;
             retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
             printf("데이터 전송 성공: %d\n", dir);
         }
         if (retval == SOCKET_ERROR) {
             err_display("send()");
-            printf("ssss");
             break;
-        }
+        }*/
 
 
     }
@@ -85,6 +90,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 int main(int argc, char* argv[])
 {
+    //m_GameTimer.Reset();				// 타이머 초기화
     int retval;
 
     // 윈속 초기화

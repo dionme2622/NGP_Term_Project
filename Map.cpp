@@ -37,7 +37,7 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 		{
 			if (Board[i][j].GetState() == 4 || Board[i][j].GetState() == 40)
 			{
-				printf("Ç³¼± »ý¼º!\n");
+				//printf("Ç³¼± »ý¼º!\n");
 				TransparentBlt(MemDC, j * 60 + 30, i * 60 + 65, 60, 60, MemDCImage, xPos, 0, 44, 41, RGB(255, 0, 255));   // ¹°Ç³¼± ¼³Ä¡
 			}
 		}
@@ -90,7 +90,7 @@ void CMap::SetBallon()
 				Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].SetState(4);
 			}
 		}
-		printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
+		//printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
 	}
 	
 }
@@ -313,7 +313,7 @@ void CVillage::Initialize(HINSTANCE _hInst)
 
 	player->SetPosition(receivedPacket.player1.x, receivedPacket.player1.x);
 
-	printf("player x: %d, y: %d\n", player->x, player->y);
+	//printf("player x: %d, y: %d\n", player->x, player->y);
 	//player->SetPosition((Board[11][13].x), (Board[11][13].y));
 
 	for (int i = 2; i < 13; i++)

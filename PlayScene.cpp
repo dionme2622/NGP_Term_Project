@@ -32,10 +32,10 @@ void CPlayScene::ProcessInput()
 
 	bool stop = true;
 	// TODO : player의 방향 벡터를 설정한다.
-	if (pKeysBuffer[VK_UP] & 0xF0) MAP->Getplayer()->SetDirection(DIR_UP), stop = false;
+	/*if (pKeysBuffer[VK_UP] & 0xF0) MAP->Getplayer()->SetDirection(DIR_UP), stop = false;
 	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->Getplayer()->SetDirection(DIR_DOWN), stop = false;
 	if (pKeysBuffer[VK_LEFT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_LEFT), stop = false;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_RIGHT), stop = false;
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_RIGHT), stop = false;*/
 	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : player 물풍선 설치
 
 	MAP->Getplayer()->SetStop(stop);

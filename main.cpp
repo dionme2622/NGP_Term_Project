@@ -22,6 +22,7 @@ SOCKET sock;
 HANDLE hSelectEvent;
 
 SC_PlayersInfoPacket receivedPacket;
+int test = 10;
 
 
 void ProcessInput();
@@ -320,14 +321,9 @@ DWORD __stdcall ReceiveData(LPVOID arg)
         retval = recv(sock, (char*)&receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
         if (retval > 0) {
             // 수신한 데이터로 처리      
-            printf("Player 데이터 수신 성공: X=%d, Y=%d, State = %d\n",        // DEBUG
-                receivedPacket.player1.x,
-                receivedPacket.player1.y,
-                receivedPacket.player1.GetState());
+            printf("%d %d\n", receivedPacket.player1.x, receivedPacket.player1.y);  // DEBUG
         }
     }
 
-
-    
     return 0;
 }

@@ -2,20 +2,24 @@
 
 CPlayer::CPlayer()
 {
-	x = 50, y = 50;
-	fx = 50.0f, fy = 50.0f;
+	SetPosition(200, 200);
+	direction = DIR_DOWN;
 	stop = true;
 	speed = 150;
 	state = LIVE;
+	ballon_length = 2;
+	ballon_num = 1;
 }
 
 CPlayer::~CPlayer()
 {
 }
 
-void CPlayer::SetDirection(int)
+void CPlayer::Update(float fTimeElapsed)
 {
+	Move(direction, fTimeElapsed);
 }
+
 
 void CPlayer::SetPosition(float _fx, float _fy)
 {
