@@ -212,14 +212,6 @@ void CGameFramework::SetCurMap(int Map)
 	m_pMap = m_ppMaps[Map];
 }
 
-DWORD WINAPI CGameFramework::SendData(LPVOID arg)
-{
-	//while (1){
-	//	retval = send(sock, keyData.c_str(), keyData.size(), 0);
-	//	//printf("%d\n", retval);
-	//}
-	
-	return 0;
-}
+
 
 

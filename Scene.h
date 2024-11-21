@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "GameObject.h"
 #include "player.h"
+#include "Packet.h"
 
 struct SButton
 {

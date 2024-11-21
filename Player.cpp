@@ -2,8 +2,24 @@
 #include "Map.h"
 #include "Packet.h"
 
-CPlayer::CPlayer(HINSTANCE _hInst)
+CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket)
 {
+	// Player Initialize
+	SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
+	direction = PlayersInfoPacket.player1.direction;
+	state = PlayersInfoPacket.player1.state;
+	speed = PlayersInfoPacket.player1.speed;
+	ballon_num = PlayersInfoPacket.player1.ballon_num;
+	ballon_length = PlayersInfoPacket.player1.ballon_length;
+	stop = PlayersInfoPacket.player1.stop;
+
+	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
+	xPos = 0, yPos = 0;
+	xPosF = 0.0f, yPosF = 0.0f;
+	/*--------------------------------------*/
+	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
+
+	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
 	MainBitmap[1] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_LEFT));			// 캐릭터 왼쪽 모습
 	MainBitmap[2] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_RIGHT));         // 캐릭터 오른쪽 모습
@@ -14,21 +30,7 @@ CPlayer::CPlayer(HINSTANCE _hInst)
 	MainBitmap[7] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_WIN));           // 캐릭터 승리
 	MainBitmap[8] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_Arrow));         // 캐릭터 머리 위 화살표
 
-	printf("test = %d\n", test); // DEBUG
-	printf("%d %d\n", receivedPacket.player1.x, receivedPacket.player1.y);	// DEBUG
-	// player Initialize
-	direction = DIR_DOWN;
-	state = LIVE;
-	SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-	xPos = 0, yPos = 0;
-	xPosF = 0.0f, yPosF = 0.0f;
-	speed = 150;
-	ballon_num = 3;
-	ballon_length = 2;
-	stop = FALSE;
-
-	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
-
+	printf("초기화 성공! speed: %d\n", speed);
 }
 
 CPlayer::~CPlayer()
@@ -40,10 +42,8 @@ void CPlayer::Update(float fTimeElapsed)
 {
 	if (state == LIVE)
 	{
-		speed = 150;
-		if (GetStop()) {
-			float frameSpeed = 64.0f * 15 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
-
+		float frameSpeed = 64.0f * 15 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
+		if (!GetStop()) {
 			if (direction == DIR_DOWN || direction == DIR_UP) {
 				xPosF += frameSpeed;  // 부동소수점 좌표 업데이트
 				while (xPosF >= 64.0f) {  // 64보다 크면 한 칸씩 이동
@@ -71,7 +71,6 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == DAMAGE)
 	{
-		speed = 50;
 		xPosF += 88.0f * 5.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  // 88보다 크면 한 칸씩 이동
 			if (xPos >= 1144) {
@@ -110,7 +109,6 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == DEAD)
 	{
-		speed = 0;
 		xPosF += 88.0f * 5.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
 			xPosF = 0.0f;  // 64만큼 넘으면 빼고
@@ -121,7 +119,6 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	else if (state == ESCAPE)
 	{
-		speed = 0;
 		xPosF += 88.0f * 10.0f * fTimeElapsed;
 		while (xPosF >= 88.0f) {  //88보다 크면 한 칸씩 이동
 			xPosF = 0.0f;  // 64만큼 넘으면 빼고
@@ -129,13 +126,16 @@ void CPlayer::Update(float fTimeElapsed)
 			if (xPos >= 616) xPos = 0;
 		}
 	}
+	//Move(fTimeElapsed);
+	SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
+	SetDirection(PlayersInfoPacket.player1.direction);
+	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 {
 	if (state == LIVE)
 	{
-		printf("xPos: %d\n", xPos);
 		if (direction == DIR_DOWN)
 		{
 			(HBITMAP)SelectObject(MemDCImage, MainBitmap[0]); //--- 아래
@@ -188,7 +188,6 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- player1 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
 
-	for (int i = 0; i < ballon_num; i++) ballon[i]->Render(MemDC, MemDCImage, Map);		// player의 ballon Render
 
 }
 

@@ -14,6 +14,9 @@ class CScene;
 class CGameFramework
 {
 public:
+	//static DWORD WINAPI SendData(LPVOID lpParam);  // 정적 함수로 선언
+	//static DWORD WINAPI ReceiveData(LPVOID lpParam); // 정적 함수로 선언
+public:
 	CGameFramework();
 	~CGameFramework();
 
@@ -55,7 +58,6 @@ private:
 	sockaddr_in remoteAddr;*/
 	/*static int retval;
 	static std::string keyData;*/
-
 public:
 
 	void SetCurScene(int Scene);				// Scene Set
@@ -71,7 +73,7 @@ private:
 
 
 
-	static DWORD SendData(LPVOID arg);
+	//static DWORD SendData(LPVOID arg);
 
 
 

@@ -1,8 +1,4 @@
 #include "Map.h"
-#include "Packet.h"
-
-extern SC_PlayersInfoPacket receivedPacket;
-
 
 std::default_random_engine dre;
 std::uniform_int_distribution<int> uid{ 1,9 };
@@ -10,10 +6,19 @@ std::uniform_int_distribution<int> uid{ 1,9 };
 int ObstacleBreak[13][15];
 
 
-void CMap::Initialize(HINSTANCE _hInst)
+void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다.
+
+	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
+	//for (int i = 0; i < 13; i++) {
+	//	for (int j = 0; j < 15; j++) {
+	//		Board[i][j].SetPosition((j * 60 + 30), (i * 60 + 65));
+	//		Board[i][j].SetState(initPacket->mapState[i][j]);  // 서버 데이터 적용
+	//	}
+	//}
+
+	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다. 
 	{
 		for (int j = 0; j < 15; j++)
 		{
@@ -21,7 +26,7 @@ void CMap::Initialize(HINSTANCE _hInst)
 			Board[i][j].SetState(1);
 		}
 	}
-	player = new CPlayer(_hInst);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
@@ -306,12 +311,12 @@ void CMap::BallonBoom(CPlayer* player, int num)
 /// Village Map
 /// </summary>
 
-void CVillage::Initialize(HINSTANCE _hInst)
+void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)
 {
 	// TODO : Map이 Village일 때 초기화
-	CMap::Initialize(_hInst);
+	CMap::Initialize(_hInst, PlayersInfoPacket);
 
-	player->SetPosition(receivedPacket.player1.x, receivedPacket.player1.x);
+	player->SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.x);
 
 	//printf("player x: %d, y: %d\n", player->x, player->y);
 	//player->SetPosition((Board[11][13].x), (Board[11][13].y));
@@ -546,10 +551,10 @@ void CVillage::Update(float fTimeElapsed)
 /// Pirate Map
 /// </summary>
 
-void CPirate::Initialize(HINSTANCE _hInst)
+void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)
 {
 	// TODO : Map이 Pirate일 때 초기화
-	CMap::Initialize(_hInst);
+	CMap::Initialize(_hInst, PlayersInfoPacket);
 
 	player->SetPosition((Board[11][12].x), (Board[11][12].y));
 

@@ -14,5 +14,5 @@ typedef struct SC_PlayersInfoPacket {
     // Ballon Info
 } SC_PlayersInfoPacket;
 
-extern SC_PlayersInfoPacket receivedPacket;
+extern SC_PlayersInfoPacket PlayersInfoPacket;
 extern int test;

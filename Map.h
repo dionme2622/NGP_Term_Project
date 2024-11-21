@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "GameObject.h"
 #include "player.h"
-
+#include "Packet.h"
 
 class CMap
 {
@@ -10,7 +10,7 @@ public:
 	CMap() {};
 	~CMap() {};
 
-	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(float fTimeElapsed);
 	
@@ -42,7 +42,7 @@ public :
 	CVillage() {};
 	~CVillage() {};
 
-	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(float fTimeElapsed);
 
@@ -57,7 +57,7 @@ public:
 	CPirate() {};
 	~CPirate() {};
 
-	virtual void Initialize(HINSTANCE _hInst);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(float fTimeElapsed);
 

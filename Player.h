@@ -1,13 +1,14 @@
 #pragma once
 #include "GameObject.h"
 
+struct SC_PlayersInfoPacket;
 class CMap;
 
 class CPlayer
 {
 public:
 	CPlayer() {};
-	CPlayer(HINSTANCE _hInst);
+	CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket);
 	~CPlayer();
 
 	void Update(float fTimeElapsed);

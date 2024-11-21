@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "Packet.h"
 
 #define MAP GetFramework()->GetCurMap()
 
@@ -17,7 +18,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, player의 데이터를 Initialize 한다.
 	
-	MAP->Initialize(hInst);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst, PlayersInfoPacket);		// 선택된 Map의 Initialize
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
@@ -30,7 +31,7 @@ void CPlayScene::ProcessInput()
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
 
-	bool stop = true;
+	//bool stop = true;
 	// TODO : player의 방향 벡터를 설정한다.
 	/*if (pKeysBuffer[VK_UP] & 0xF0) MAP->Getplayer()->SetDirection(DIR_UP), stop = false;
 	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->Getplayer()->SetDirection(DIR_DOWN), stop = false;
@@ -38,7 +39,7 @@ void CPlayScene::ProcessInput()
 	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_RIGHT), stop = false;*/
 	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : player 물풍선 설치
 
-	MAP->Getplayer()->SetStop(stop);
+	//MAP->Getplayer()->SetStop(stop);
 }
 
 void CPlayScene::Update(float fTimeElapsed)
