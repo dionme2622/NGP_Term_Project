@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
             Sleep(10);
             // TODO : dir에 따라서 Player 좌표 이동 (별도의 스레드 함수로 빼야 한다.)
             player1->SetDirection(dir);
-            player1->Update(0.03f);
+            player1->Update(0.003f);
 
             //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
 

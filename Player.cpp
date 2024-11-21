@@ -4,8 +4,9 @@
 
 CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int playerID)
 {
+	ID = playerID;
 	// Player Initialize
-	if (playerID == 0)
+	if (ID == 0)
 	{
 		SetPosition(_PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);
 		direction = _PlayersInfoPacket.player1.direction;
@@ -14,14 +15,21 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int 
 		ballon_num = _PlayersInfoPacket.player1.ballon_num;
 		ballon_length = _PlayersInfoPacket.player1.ballon_length;
 		stop = _PlayersInfoPacket.player1.stop;
+		xPos = 0, yPos = 0;
+		xPosF = 0.0f, yPosF = 0.0f;
+		direction = DIR_DOWN;
 	}
-	else
+	else 
 	{
 		// TODO : 다른 Player 초기화
+		SetPosition(400, 400);
+		xPos = 0, yPos = 76;
+		xPosF = 0.0f, yPosF = 0.0f;
+		direction = DIR_DOWN;
+		state = LIVE;
 	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
-	xPos = 0, yPos = 0;
-	xPosF = 0.0f, yPosF = 0.0f;
+
 	/*--------------------------------------*/
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
 	printf("초기화! %d %d\n", _PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);  // DEBUG
@@ -131,14 +139,21 @@ void CPlayer::Update(float fTimeElapsed)
 			if (xPos >= 616) xPos = 0;
 		}
 	}
-	SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
-	direction = PlayersInfoPacket.player1.direction;
-	printf("dircetion : %d\n", direction);
-	state = PlayersInfoPacket.player1.state;
-	speed = PlayersInfoPacket.player1.speed;
-	ballon_num = PlayersInfoPacket.player1.ballon_num;
-	ballon_length = PlayersInfoPacket.player1.ballon_length;
-	stop = PlayersInfoPacket.player1.stop;
+	// TODO : 임시로 해놓은 것
+
+	if (ID == 0)
+	{
+		SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
+		direction = PlayersInfoPacket.player1.direction;
+		printf("dircetion : %d\n", direction);
+		state = PlayersInfoPacket.player1.state;
+		speed = PlayersInfoPacket.player1.speed;
+		ballon_num = PlayersInfoPacket.player1.ballon_num;
+		ballon_length = PlayersInfoPacket.player1.ballon_length;
+		stop = PlayersInfoPacket.player1.stop;
+		
+	}
+	direction = DIR_DOWN;
 	//SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
 	//SetDirection(PlayersInfoPacket.player1.direction);
 	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
@@ -243,7 +258,7 @@ void CPlayer::SetBallon(CMap* Map)
 
 void CPlayer::Move(float fTimeElapsed)
 {
-	if (!GetStop())
+	/*if (!GetStop())
 	{
 		if (direction == DIR_DOWN) fy += speed * fTimeElapsed;
 		else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;
@@ -251,6 +266,6 @@ void CPlayer::Move(float fTimeElapsed)
 		else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;
 
 		SetPosition(fx, fy);
-	}
+	}*/
 
 }

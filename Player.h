@@ -17,7 +17,6 @@ public:
 public :
 	int			x, y;			// 캐릭터 x, y 좌표
 	float		fx, fy;
-
 private:
 	int			speed;			// 캐릭터의 이동속도
 	int			ballon_length;	// 물풍선의 길이
@@ -28,6 +27,7 @@ private:
 	int			count;			// 뭔지 모름
 	CBallon*	ballon[6];		// 물풍선
 
+	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표
 	float		xPosF, yPosF;
 private:

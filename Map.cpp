@@ -26,8 +26,8 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)	
 			Board[i][j].SetState(1);
 		}
 	}
-	player[0] = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
-	player[1] = new CPlayer(_hInst, PlayersInfoPacket);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[0] = new CPlayer(_hInst, PlayersInfoPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[1] = new CPlayer(_hInst, PlayersInfoPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
