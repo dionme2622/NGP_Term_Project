@@ -1,5 +1,6 @@
 #include "Map.h"
 
+
 std::default_random_engine dre;
 std::uniform_int_distribution<int> uid{ 1,9 };
 
@@ -72,33 +73,35 @@ void CMap::Update(float fTimeElapsed)
 			xPos = 0;
 	}
 
-	/*BallonBoom(player, 0);
-	BallonBoom(player, 1);
-	BallonBoom(player, 2);
-	BallonBoom(player, 3);
-	BallonBoom(player, 4);*/
-
+	for (int i = 0; i < 2; ++i) {
+		BallonBoom(player[i], 0);
+		BallonBoom(player[i], 1);
+		BallonBoom(player[i], 2);
+		BallonBoom(player[i], 3);
+		BallonBoom(player[i], 4);
+	}
 	//printf("beforecount: %d\n", player->GetBallon(0)->beforeboomcount);
 }
 
 void CMap::SetBallon()
 {
-	//if (player->GetState() == DAMAGE) return;
-	//for (int i = 0; i < player->GetBallonNum(); i++)
-	//{
-	//	if (player->GetBallon(i)->GetState() == 0)
-	//	{
-	//		player->GetBallon(i)->x = (player->x + 30 - 30) / 60 * 60;
-	//		player->GetBallon(i)->y = (player->y + 30 - 65) / 60 * 60;
-	//		if (Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].GetState() == 1)
-	//		{
-	//			player->GetBallon(i)->SetState(1);
-	//			Board[player->GetBallon(i)->y / 60][player->GetBallon(i)->x / 60].SetState(4);
-	//		}
-	//	}
-	//	//printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player->GetBallon(i)->x / 60, player->GetBallon(i)->y / 60);		// DEBUG
-	//}
-	
+	for (int j = 0; j < 2; ++j) {
+		if (player[j]->GetState() == DAMAGE) return;
+		for (int i = 0; i < player[j]->GetBallonNum(); i++)
+		{
+			if (player[j]->GetBallon(i)->GetState() == 0)
+			{
+				player[j]->GetBallon(i)->x = (player[j]->x + 30 - 30) / 60 * 60;
+				player[j]->GetBallon(i)->y = (player[j]->y + 30 - 65) / 60 * 60;
+				if (Board[player[j]->GetBallon(i)->y / 60][player[j]->GetBallon(i)->x / 60].GetState() == 1)
+				{
+					player[j]->GetBallon(i)->SetState(1);
+					Board[player[j]->GetBallon(i)->y / 60][player[j]->GetBallon(i)->x / 60].SetState(4);
+				}
+			}
+			printf("¹°Ç³¼± ¼³Ä¡! x: %d, y: %d\n", player[j]->GetBallon(i)->x / 60, player[j]->GetBallon(i)->y / 60);		// DEBUG
+		}
+	}
 }
 
 void CMap::BallonBoom(CPlayer* player, int num)

@@ -22,6 +22,8 @@ typedef struct SC_PlayersInfoPacket {
 
 CPlayer *player1 = new CPlayer();
 
+CS_PlayerInputPacket recvPacket;
+
 // 클라이언트의 방향키 값 처리 함수
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
@@ -41,7 +43,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
     // 방향키 값 수신
     char buf[BUFSIZE];
     while (1) {
-        retval = recv(client_sock, (char*)&dir, sizeof(dir), 0); // 방향키 데이터 수신
+        retval = recv(client_sock, (char*)&recvPacket, sizeof(recvPacket), 0); // 방향키 데이터 수신
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
             break;
@@ -51,7 +53,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         }
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("받은 데이터 : %d\n", dir);
+        printf("ID : %d, Key : %d\n", recvPacket.playerID, recvPacket.keyState);
 
         
 
@@ -117,6 +119,10 @@ int main(int argc, char* argv[])
             err_display("accept()");
             break;
         }
+
+        static int ID;
+        retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
+        ++ID;
 
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
