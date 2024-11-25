@@ -18,10 +18,10 @@ typedef struct CS_PlayerInputPacket {
 } CS_PlayerInputPacket;
 
 typedef struct SC_PlayersInfoPacket {
-    CPlayer player[2];           // 클라이언트에게 Player의 데이터를 보낸다.
+    CPlayer player[1];           // 클라이언트에게 Player의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
 
-CPlayer* player[2];
+CPlayer* player[1];
 
 
 //CPlayer* player2 = new CPlayer();
@@ -75,7 +75,7 @@ void GameLogicThread() {
         //printf("%d", num);
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
-        memcpy(&packet.player, player, sizeof(packet.player));
+        memcpy(&packet.player, player[0], sizeof(packet.player));
 
         
         // 클라이언트 목록 순회하며 데이터 전송
@@ -90,15 +90,15 @@ void GameLogicThread() {
             else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
             else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
         }
-        else                                // TODO : Player2의 조작
-        {
-            if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
-        }
+        //else                                // TODO : Player2의 조작
+        //{
+        //    if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
+        //    else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
+        //    else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
+        //    else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
+        //}
         
-        for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
+        for(int i = 0; i < 1; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
        
 
         //player[0]->Update(0.03f);

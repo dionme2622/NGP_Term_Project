@@ -233,8 +233,8 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 			// 이후 recv 처리
 			printf("Player 데이터 수신 성공: X=%d, Y=%d\n",
-				pFramework->receivedPacket.player1.x,
-				pFramework->receivedPacket.player1.y);
+				pFramework->receivedPacket.player[0].x,
+				pFramework->receivedPacket.player[0].y);
 
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);

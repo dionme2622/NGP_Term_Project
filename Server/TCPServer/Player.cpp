@@ -6,7 +6,7 @@ CPlayer::CPlayer()
 	direction = DIR_DOWN;
 	stop = false;
 	speed = 150;
-	state = DEAD;
+	state = LIVE;
 	ballon_length = 2;
 	ballon_num = 1;
 }
