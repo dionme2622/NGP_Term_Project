@@ -13,17 +13,10 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-//DWORD __stdcall SendData(LPVOID arg);
-//DWORD __stdcall ReceiveData(LPVOID arg);
 
 CGameFramework GameFramework;
 SC_PlayersInfoPacket receivedPacket;
-//SOCKET sock;
-//
-//HANDLE hSelectEvent;
 
-//CS_PlayerInputPacket sendPacket;
-//SC_PlayersInfoPacket receivedPacket;
 
 void ProcessInput();
 
