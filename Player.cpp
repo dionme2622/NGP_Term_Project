@@ -23,18 +23,20 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	else				// TODO : Player2의 초기화
 	{
 		// TODO : 다른 Player 초기화
-		SetPosition(400, 400);
-		xPos = 0, yPos = 76;
+		SetPosition(receivedPacket.player[1].x, receivedPacket.player[1].y);
+		direction = receivedPacket.player[1].direction;
+		state = receivedPacket.player[1].state;
+		speed = receivedPacket.player[1].speed;
+		ballon_num = receivedPacket.player[1].ballon_num;
+		ballon_length = receivedPacket.player[1].ballon_length;
+		stop = receivedPacket.player[1].stop;
+		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
-		direction = DIR_DOWN;
-		state = LIVE;
-		stop = true;
 	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
 
 	/*--------------------------------------*/
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
-	printf("초기화! %d %d\n", x, y);  // DEBUG
 
 	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
@@ -163,12 +165,12 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
 		SetDirection(receivedPacket.player[0].direction);
 		stop = receivedPacket.player[0].stop;
-		printf("업데이트 player x : %d, y : %d, stop : %d\r", x, y, stop);	// DEBUG
 	}
 	else				// TODO : Player2의 업데이트
 	{
-		//SetDirection(receivedPacket.player[0].direction);
-		//stop = receivedPacket.player[0].stop;
+		SetPosition(receivedPacket.player[1].x, receivedPacket.player[1].y);
+		SetDirection(receivedPacket.player[1].direction);
+		stop = receivedPacket.player[1].stop;
 	}
 }
 

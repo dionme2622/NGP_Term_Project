@@ -213,6 +213,7 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 		}
 		LeaveCriticalSection(&pFramework->cs); // 동기화 종료
 	}
+
 	return 0;
 }
 
@@ -224,20 +225,16 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 	while (1) {
 		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
-		printf("recv\n");
 		if (retval > 0) {
 			if (!initEventSet) {
 				// 처음 recv가 호출되면 이벤트 해제
 				initEventSet = true;
 			}
 
-			// 이후 recv 처리
-			printf("Player 데이터 수신 성공: X=%d, Y=%d\n",
-				pFramework->receivedPacket.player[0].x,
-				pFramework->receivedPacket.player[0].y);
-
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
+				printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.player[0].x, pFramework->receivedPacket.player[1].x);
+
 				SetEvent(pFramework->hRecvEvent);
 			}
 		}
@@ -246,7 +243,6 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 			break; // 오류 발생 시 루프 종료
 		}
 	}
-
 	return 0;
 }
 

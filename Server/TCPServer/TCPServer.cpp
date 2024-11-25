@@ -18,10 +18,10 @@ typedef struct CS_PlayerInputPacket {
 } CS_PlayerInputPacket;
 
 typedef struct SC_PlayersInfoPacket {
-    CPlayer player[1];           // 클라이언트에게 Player의 데이터를 보낸다.
+    CPlayer player[2];           // 클라이언트에게 Player의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
 
-CPlayer* player[1];
+CPlayer* player[2];
 
 
 //CPlayer* player2 = new CPlayer();
@@ -51,7 +51,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("ID : %d, Key : %d\n", recvPacket.playerID, recvPacket.keyState);
        
     }
 
@@ -75,13 +74,14 @@ void GameLogicThread() {
         //printf("%d", num);
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
-        memcpy(&packet.player, player[0], sizeof(packet.player));
+        memcpy(&packet.player[0], player[0], sizeof(packet.player));
+        memcpy(&packet.player[1], player[1], sizeof(packet.player));
 
         
         // 클라이언트 목록 순회하며 데이터 전송
         clientMutex.lock();
-        printf("dir: %d\n", recvPacket.keyState);
         player[0]->stop = true;
+        player[1]->stop = true;
 
         if (recvPacket.playerID == 0)       // TODO : Player1의 조작
         {
@@ -90,21 +90,29 @@ void GameLogicThread() {
             else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
             else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
         }
-        //else                                // TODO : Player2의 조작
-        //{
-        //    if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
-        //    else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
-        //    else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
-        //    else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
-        //}
+        else                                // TODO : Player2의 조작
+        {
+            if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
+        }
+
+        /*if (recvPacket.keyState == DIR_DOWN) player[recvPacket.playerID]->SetDirection(DIR_DOWN), player[recvPacket.playerID]->stop = false;
+        else if (recvPacket.keyState == DIR_LEFT) player[recvPacket.playerID]->SetDirection(DIR_LEFT), player[recvPacket.playerID]->stop = false;
+        else if (recvPacket.keyState == DIR_RIGHT) player[recvPacket.playerID]->SetDirection(DIR_RIGHT), player[recvPacket.playerID]->stop = false;
+        else if (recvPacket.keyState == DIR_UP) player[recvPacket.playerID]->SetDirection(DIR_UP), player[recvPacket.playerID]->stop = false;*/
         
-        for(int i = 0; i < 1; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
+        for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
        
 
         //player[0]->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
+
+            printf("p0 : %d,  p1 : %d\r", packet.player[0].x, packet.player[1].x);
+
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
@@ -112,10 +120,10 @@ void GameLogicThread() {
             }
             else {
                 // 패킷 전송 성공 시 출력
-                printf("패킷 전송 성공: 클라이언트 소켓 [%d]\n", (int)client_sock);
-                printf("보낸 데이터: \n");
-                printf("player[0].positionX: %d\n", packet.player[0].x);
-                printf("player[0].positionY: %d\n", packet.player[0].y);
+                //printf("패킷 전송 성공: 클라이언트 소켓 [%d]\n", (int)client_sock);
+                //printf("보낸 데이터: \n");
+                //printf("player[0].positionX: %d\n", packet.player[0].x);
+                //printf("player[0].positionY: %d\n", packet.player[0].y);
             }
         }
         clientMutex.unlock();
