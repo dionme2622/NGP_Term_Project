@@ -31,12 +31,7 @@ void CPlayer::SetPosition(float _fx, float _fy)
 
 void CPlayer::Move(float fTimeElapsed)
 {
-	/*stop = true;
-
-	if (dir == DIR_DOWN) SetDirection(DIR_DOWN), stop = false;
-	else if (dir == DIR_LEFT) SetDirection(DIR_LEFT), stop = false;
-	else if (dir == DIR_RIGHT) SetDirection(DIR_RIGHT), stop = false;
-	else if (dir == DIR_UP) SetDirection(DIR_UP), stop = false;*/
+	
 
 	if (!GetStop())
 	{
@@ -48,5 +43,4 @@ void CPlayer::Move(float fTimeElapsed)
 		SetPosition(fx, fy);
 	}
 
-	//printf("플레이어 위치 X: %d, Y: %d\n", x, y);
 }

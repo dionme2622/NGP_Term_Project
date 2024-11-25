@@ -10,7 +10,6 @@ int ObstacleBreak[13][15];
 void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-	printf("XX: %d\n", receivedPacket.player[0].x);
 	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
 	//for (int i = 0; i < 13; i++) {
 	//	for (int j = 0; j < 15; j++) {
@@ -99,7 +98,6 @@ void CMap::SetBallon()
 					Board[player[j]->GetBallon(i)->y / 60][player[j]->GetBallon(i)->x / 60].SetState(4);
 				}
 			}
-			printf("물풍선 설치! x: %d, y: %d\n", player[j]->GetBallon(i)->x / 60, player[j]->GetBallon(i)->y / 60);		// DEBUG
 		}
 	}
 }
@@ -379,7 +377,6 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 	Block[6] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Tree));
 
 
-	printf("Village Initialize\n");
 
 }
 void CVillage::Render(HDC MemDC, HDC MemDCImage)
