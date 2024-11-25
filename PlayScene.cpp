@@ -54,7 +54,7 @@ void CPlayScene::Update(float fTimeElapsed)
 
 void CPlayScene::Render()
 {
-	HDC hdc = GetDC(hWnd);
+	HDC hdc = GetDC(hWnd);	
 
 	HDC MemDC = CreateCompatibleDC(hdc);
 	HDC MemDCImage = CreateCompatibleDC(hdc);

@@ -65,6 +65,7 @@ static int num = 0;
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
     while (1) {
+        m_GameTimer.Tick(120.0f);
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 100ms 간격으로 실행
         //num++;
         //printf("%d", num);
@@ -76,8 +77,17 @@ void GameLogicThread() {
         // 클라이언트 목록 순회하며 데이터 전송
         clientMutex.lock();
         printf("dir: %d\n", recvPacket.keyState);
-        player1->SetDirection(recvPacket.keyState);
-        player1->Update(0.003f);
+        player1->stop = true;
+
+        if (recvPacket.keyState == DIR_DOWN) player1->SetDirection(DIR_DOWN), player1->stop = false;
+        else if (recvPacket.keyState == DIR_LEFT) player1->SetDirection(DIR_LEFT), player1->stop = false;
+        else if (recvPacket.keyState == DIR_RIGHT) player1->SetDirection(DIR_RIGHT), player1->stop = false;
+        else if (recvPacket.keyState == DIR_UP) player1->SetDirection(DIR_UP), player1->stop = false;
+        printf("stop: %d\n", player1->stop);
+        player1->Move(m_GameTimer.GetTimeElapsed());
+       
+
+        //player1->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
@@ -100,8 +110,8 @@ void GameLogicThread() {
 
 
 int main(int argc, char* argv[]) {
+    m_GameTimer.Reset();
     int retval;
-
     // 윈속 초기화
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;

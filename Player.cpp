@@ -162,7 +162,8 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 
 	SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
 	SetDirection(receivedPacket.player1.direction);
-	printf("업데이트 player x : %d, y : %d, direction : %d\r", x, y, direction);	// DEBUG
+	stop = receivedPacket.player1.stop;
+	printf("업데이트 player x : %d, y : %d, stop : %d\r", x, y, stop);	// DEBUG
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)

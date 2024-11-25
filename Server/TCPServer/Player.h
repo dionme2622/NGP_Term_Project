@@ -34,6 +34,6 @@ public:
 	int GetBallonLength() { return ballon_length; }
 	//CBallon* GetBallon(int i) { return ballon[i]; }
 
-	void Move(int dir, float fTimeElapsed);
+	void Move(float fTimeElapsed);
 };
 
