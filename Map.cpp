@@ -7,10 +7,10 @@ std::uniform_int_distribution<int> uid{ 1,9 };
 int ObstacleBreak[13][15];
 
 
-void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)		// 매개변수로 패킷 구조체를 받는다.
+void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-
+	printf("XX: %d\n", receivedPacket.player1.x);
 	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
 	//for (int i = 0; i < 13; i++) {
 	//	for (int j = 0; j < 15; j++) {
@@ -27,8 +27,8 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)	
 			Board[i][j].SetState(1);
 		}
 	}
-	player[0] = new CPlayer(_hInst, PlayersInfoPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
-	player[1] = new CPlayer(_hInst, PlayersInfoPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[0] = new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
@@ -63,7 +63,7 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 	}
 }
 
-void CMap::Update(float fTimeElapsed)
+void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	xPosF += 44 * 5 * fTimeElapsed;
 	while (xPosF >= 44.0f) {
@@ -315,10 +315,10 @@ void CMap::BallonBoom(CPlayer* player, int num)
 /// Village Map
 /// </summary>
 
-void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)
+void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 {
 	// TODO : Map이 Village일 때 초기화
-	CMap::Initialize(_hInst, PlayersInfoPacket);
+	CMap::Initialize(_hInst, receivedPacket);
 
 
 	//printf("player x: %d, y: %d\n", player->x, player->y);
@@ -543,10 +543,10 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 
 }
 
-void CVillage::Update(float fTimeElapsed)
+void CVillage::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
-	CMap::Update(fTimeElapsed);
-	for (int i = 0; i < 2; i++) player[i]->Update(fTimeElapsed);
+	CMap::Update(receivedPacket, fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 
 
@@ -554,10 +554,10 @@ void CVillage::Update(float fTimeElapsed)
 /// Pirate Map
 /// </summary>
 
-void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket)
+void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 {
 	// TODO : Map이 Pirate일 때 초기화
-	CMap::Initialize(_hInst, PlayersInfoPacket);
+	CMap::Initialize(_hInst, receivedPacket);
 
 
 	for (int i = 0; i < 4; i++)
@@ -809,8 +809,9 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 }
 
-void CPirate::Update(float fTimeElapsed)
+void CPirate::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
-	for (int i = 0; i < 2; i++) player[i]->Update(fTimeElapsed);
+	CMap::Update(receivedPacket, fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 

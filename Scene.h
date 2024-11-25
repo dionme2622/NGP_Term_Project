@@ -13,6 +13,7 @@ struct SButton
 
 class CGameFramework;
 
+
 class CScene
 {
 public:
@@ -31,26 +32,28 @@ public:
 
 
 	void DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop);
+	virtual void ReceiveData(SC_PlayersInfoPacket);
 
 public :
 	CGameFramework* GetFramework() { return m_pGameFramework;}
 
 
 protected:
-	HWND				hWnd;
-	HINSTANCE			hInst;
-	RECT				rc;
+	HWND					hWnd;
+	HINSTANCE				hInst;
+	RECT					rc;
 
 
-	HBITMAP				hBit;
-	HDC					MemDC;
-	HDC					MemDCImage;
-	HBITMAP				OldBit[3];
+	HBITMAP					hBit;
+	HDC						MemDC;
+	HDC						MemDCImage;
+	HBITMAP					OldBit[3];
 
-	POINT				cursorPos;
+	POINT					cursorPos;
 
 protected:
-	CGameFramework*		m_pGameFramework;
+	CGameFramework*			m_pGameFramework;
+	SC_PlayersInfoPacket	receivedPacket;
 
 public:
 	int*				currentscene;

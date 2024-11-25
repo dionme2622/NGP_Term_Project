@@ -13,12 +13,9 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-
 CGameFramework GameFramework;
 SC_PlayersInfoPacket receivedPacket;
 
-
-void ProcessInput();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -43,51 +40,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    //// 윈속 초기화
-    //WSADATA wsa;
-    //if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
-    //    printf("윈속 초기화 실패");
-    //    return 1;
-    //}
-
-    //// 소켓 생성
-    //sock = socket(AF_INET, SOCK_STREAM, 0);
-    //if (sock == INVALID_SOCKET) {
-    //    printf("소켓 생성 실패");
-    //    WSACleanup();
-    //    return 1;
-    //}
-
-    //hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-    //// 서버 주소 설정
-    //struct sockaddr_in serveraddr;
-    //memset(&serveraddr, 0, sizeof(serveraddr));
-    //serveraddr.sin_family = AF_INET;
-    //inet_pton(AF_INET, "127.0.0.1", &serveraddr.sin_addr);
-    //serveraddr.sin_port = htons(SERVERPORT);
-
-    //// 서버 연결
-    //if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR) {
-    //    printf("서버 연결 실패");
-    //    closesocket(sock);
-    //    WSACleanup();
-    //    exit(0);
-    //}
-    //int retval;
-    //sendPacket.playerID;
-    //retval = recv(sock, (char*)&sendPacket.playerID, sizeof(sendPacket.playerID), 0); // 방향키 데이터 수신
-
-
-   /* printf("서버 연결 성공");
-
-
-    CreateThread(NULL, 0, SendData, NULL, 0, NULL);
-    CreateThread(NULL, 0, ReceiveData, NULL, 0, NULL);
-
-    CloseHandle(hSelectEvent);*/
-
-
     while (1)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -101,7 +53,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            ProcessInput();
             GameFramework.FrameAdvance();
         }
     }
@@ -249,81 +200,3 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 #define _CRT_SECURE_NO_WARNINGS 
 
-
-//char GetPressedKeysAsString();
-void ProcessInput()
-{
-    // 현재 눌린 키들을 문자열로 가져오기
-    /*char pressedKeys = GetPressedKeysAsString();
-
-    if (pressedKeys) {
-        sendPacket.keyState = pressedKeys;
-    }*/
-}
-//
-//char GetPressedKeys()
-//{
-//    char pressedKey = '0';
-//
-//    // 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-//    for (int key = 0x01; key <= 0xFE; ++key) {
-//        // 키가 눌려 있는지 확인
-//        if (GetAsyncKeyState(key) & 0x8000) {
-//            pressedKey = key; // 눌린 키를 추가
-//        }
-//    }
-//
-//    return pressedKey;
-//}
-//
-//char GetPressedKeysAsString()
-//{
-//    // 눌려 있는 키 목록을 가져옴
-//    char pressedKeys = GetPressedKeys();
-//
-//    if (!pressedKeys) pressedKeys = '0';
-//
-//    return pressedKeys;
-//}
-
-//DWORD __stdcall SendData(LPVOID arg)
-//{
-//    int retval;
-//
-//    //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
-//    int tempData = 0;
-//
-//    while (1) {
-//        if (tempData != sendPacket.keyState) {
-//            tempData = sendPacket.keyState;
-//            retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
-//            printf("ID : %d, Key : %d", sendPacket.playerID, sendPacket.keyState);
-//        }
-//    }
-//
-//    return 0;
-//}
-//
-//
-//DWORD __stdcall ReceiveData(LPVOID arg)
-//{
-//    int retval;
-//
-//    //WaitForSingleObject(hSelectEvent, INFINITE);            // 서버 연결 전에 데이터 전송 막기
-//
-//    // TODO : 서버로부터 Player 데이터를 받아야 한다.
-//    //while (1) {
-//    //    retval = recv(sock, (char*)&receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
-//    //    if (retval > 0) {
-//    //        // 수신한 데이터로 처리      
-//    //        printf("Player 데이터 수신 성공: X=%d, Y=%d, State = %d\n",        // DEBUG
-//    //            receivedPacket.player1.x,
-//    //            receivedPacket.player1.y,
-//    //            receivedPacket.player1.GetState());
-//    //    }
-//    //}
-//
-//
-//    
-//    return 0;
-//}

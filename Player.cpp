@@ -2,22 +2,25 @@
 #include "Map.h"
 #include "Packet.h"
 
-CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int playerID)
+CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int playerID)
 {
+	
+	//printf("테스트 초기화 : %d\n", 테스트);
 	ID = playerID;
 	// Player Initialize
 	if (ID == 0)
 	{
-		SetPosition(_PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);
-		direction = _PlayersInfoPacket.player1.direction;
-		state = _PlayersInfoPacket.player1.state;
-		speed = _PlayersInfoPacket.player1.speed;
-		ballon_num = _PlayersInfoPacket.player1.ballon_num;
-		ballon_length = _PlayersInfoPacket.player1.ballon_length;
-		stop = _PlayersInfoPacket.player1.stop;
+		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
+		direction = receivedPacket.player1.direction;
+		state = receivedPacket.player1.state;
+		speed = receivedPacket.player1.speed;
+		ballon_num = receivedPacket.player1.ballon_num;
+		ballon_length = receivedPacket.player1.ballon_length;
+		stop = receivedPacket.player1.stop;
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
-		direction = DIR_DOWN;
+		//direction = DIR_DOWN;
+		state = LIVE;
 	}
 	else 
 	{
@@ -25,14 +28,14 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int 
 		SetPosition(400, 400);
 		xPos = 0, yPos = 76;
 		xPosF = 0.0f, yPosF = 0.0f;
-		direction = DIR_DOWN;
+		//direction = DIR_DOWN;
 		state = LIVE;
 	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
 
 	/*--------------------------------------*/
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
-	printf("초기화! %d %d\n", _PlayersInfoPacket.player1.x, _PlayersInfoPacket.player1.y);  // DEBUG
+	printf("초기화! %d %d\n", x, y);  // DEBUG
 
 	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
@@ -51,8 +54,10 @@ CPlayer::~CPlayer()
 	// TODO : 비트맵 제거
 }
 
-void CPlayer::Update(float fTimeElapsed)
+void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
+
+
 	if (state == LIVE)
 	{
 		float frameSpeed = 64.0f * 15 * fTimeElapsed;  // 부드러운 이동을 위한 속도 계산
@@ -141,22 +146,23 @@ void CPlayer::Update(float fTimeElapsed)
 	}
 	// TODO : 임시로 해놓은 것
 
-	if (ID == 0)
+	/*if (ID == 0)
 	{
-		SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
-		direction = PlayersInfoPacket.player1.direction;
+		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
+		direction = receivedPacket.player1.direction;
 		printf("dircetion : %d\n", direction);
-		state = PlayersInfoPacket.player1.state;
-		speed = PlayersInfoPacket.player1.speed;
-		ballon_num = PlayersInfoPacket.player1.ballon_num;
-		ballon_length = PlayersInfoPacket.player1.ballon_length;
-		stop = PlayersInfoPacket.player1.stop;
+		state = receivedPacket.player1.state;
+		speed = receivedPacket.player1.speed;
+		ballon_num = receivedPacket.player1.ballon_num;
+		ballon_length = receivedPacket.player1.ballon_length;
+		stop = receivedPacket.player1.stop;
 		
 	}
-	direction = DIR_DOWN;
-	//SetPosition(PlayersInfoPacket.player1.x, PlayersInfoPacket.player1.y);
-	//SetDirection(PlayersInfoPacket.player1.direction);
-	//printf("player x : %d, y : %d\n", x, y);	// DEBUG
+	direction = DIR_DOWN;*/
+
+	SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
+	SetDirection(receivedPacket.player1.direction);
+	printf("업데이트 player x : %d, y : %d, direction : %d\r", x, y, direction);	// DEBUG
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)

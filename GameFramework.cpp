@@ -200,6 +200,7 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 
 		EnterCriticalSection(&pFramework->cs); // 동기화 시작
 		if (tempData != pFramework->sendPacket.keyState) {
+			//if (pFramework->sendPacket.keyState == 48) continue;
 			tempData = pFramework->sendPacket.keyState;
 			printf("SendData - KeyState Sent: %d\n", tempData);
 
@@ -209,10 +210,14 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	}
 	return 0;
 }
-
+int 테스트 = 0;
 
 DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);  // 객체 포인터로 변환
+	printf("Player 데이터 수신 전: X=%d, Y=%d, State = %d\n",
+		pFramework->receivedPacket.player1.x,
+		pFramework->receivedPacket.player1.y,
+		pFramework->receivedPacket.player1.GetState());
 	int retval;
 	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 	while (1) {
@@ -222,8 +227,18 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 				pFramework->receivedPacket.player1.x,
 				pFramework->receivedPacket.player1.y,
 				pFramework->receivedPacket.player1.GetState());
+				테스트 = 50;
+				printf("초기화 전 데이터 recv\n");
+
+			if (pFramework->m_pScene)
+				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
+		}
+		else if (retval == SOCKET_ERROR) {
+			printf("recv() 실패: %d\n", WSAGetLastError());
+			break;  // 오류 발생 시 루프 종료
 		}
 	}
+	
 	return 0;
 }
 

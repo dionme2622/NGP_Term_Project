@@ -18,7 +18,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, player의 데이터를 Initialize 한다.
 	
-	MAP->Initialize(hInst, PlayersInfoPacket);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst, receivedPacket);		// 선택된 Map의 Initialize
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
@@ -47,7 +47,7 @@ void CPlayScene::Update(float fTimeElapsed)
 	// TODO : Play Scene Update
 	// 1. player의 방향벡터에 따라 움직인다.
 	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
-	MAP->Update(fTimeElapsed);
+	MAP->Update(receivedPacket, fTimeElapsed);
 
 	// 서버로 키 입력 버퍼 데이터들을 보낸다
 }

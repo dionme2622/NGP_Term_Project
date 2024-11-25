@@ -15,3 +15,4 @@ typedef struct SC_PlayersInfoPacket {
 } SC_PlayersInfoPacket;
 
 extern SC_PlayersInfoPacket receivedPacket;
+extern int Å×½ºÆ®;

@@ -8,10 +8,10 @@ class CPlayer
 {
 public:
 	CPlayer() {};
-	CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket, int playerID);
+	CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int playerID);
 	~CPlayer();
 
-	void Update(float fTimeElapsed);
+	void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 	void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 public :

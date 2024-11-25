@@ -2,7 +2,7 @@
 
 CPlayer::CPlayer()
 {
-	SetPosition(200, 200);		
+	SetPosition(250, 200);		
 	direction = DIR_DOWN;
 	stop = true;
 	speed = 150;

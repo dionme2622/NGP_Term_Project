@@ -10,9 +10,9 @@ public:
 	CMap() {};
 	~CMap() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket _PlayersInfoPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
-	virtual void Update(float fTimeElapsed);
+	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 	
 	CPlayer* Getplayer(int i) { return player[i]; }
 	CBoard GetBoard(int i, int j) { return Board[i][j]; }
@@ -42,9 +42,9 @@ public :
 	CVillage() {};
 	~CVillage() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
-	virtual void Update(float fTimeElapsed);
+	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 
 private:
 	HBITMAP TileBitmap;
@@ -57,9 +57,9 @@ public:
 	CPirate() {};
 	~CPirate() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket PlayersInfoPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
-	virtual void Update(float fTimeElapsed);
+	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 
 private:
 	HBITMAP TileBitmap;
