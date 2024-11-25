@@ -22,6 +22,8 @@ typedef struct SC_PlayersInfoPacket {
 } SC_PlayersInfoPacket;
 
 CPlayer* player1 = new CPlayer();
+//CPlayer* player2 = new CPlayer();
+
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
 std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
 
@@ -79,10 +81,13 @@ void GameLogicThread() {
         printf("dir: %d\n", recvPacket.keyState);
         player1->stop = true;
 
-        if (recvPacket.keyState == DIR_DOWN) player1->SetDirection(DIR_DOWN), player1->stop = false;
-        else if (recvPacket.keyState == DIR_LEFT) player1->SetDirection(DIR_LEFT), player1->stop = false;
-        else if (recvPacket.keyState == DIR_RIGHT) player1->SetDirection(DIR_RIGHT), player1->stop = false;
-        else if (recvPacket.keyState == DIR_UP) player1->SetDirection(DIR_UP), player1->stop = false;
+        if (recvPacket.playerID == 0)
+        {
+            if (recvPacket.keyState == DIR_DOWN) player1->SetDirection(DIR_DOWN), player1->stop = false;
+            else if (recvPacket.keyState == DIR_LEFT) player1->SetDirection(DIR_LEFT), player1->stop = false;
+            else if (recvPacket.keyState == DIR_RIGHT) player1->SetDirection(DIR_RIGHT), player1->stop = false;
+            else if (recvPacket.keyState == DIR_UP) player1->SetDirection(DIR_UP), player1->stop = false;
+        }
         printf("stop: %d\n", player1->stop);
         player1->Move(m_GameTimer.GetTimeElapsed());
        

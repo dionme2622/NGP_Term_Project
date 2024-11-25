@@ -8,7 +8,7 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	//printf("테스트 초기화 : %d\n", 테스트);
 	ID = playerID;
 	// Player Initialize
-	if (ID == 0)
+	if (ID == 0)			// TODO : Player1의 초기화
 	{
 		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
 		direction = receivedPacket.player1.direction;
@@ -22,14 +22,15 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 		//direction = DIR_DOWN;
 		state = LIVE;
 	}
-	else 
+	else				// TODO : Player2의 초기화
 	{
 		// TODO : 다른 Player 초기화
 		SetPosition(400, 400);
 		xPos = 0, yPos = 76;
 		xPosF = 0.0f, yPosF = 0.0f;
-		//direction = DIR_DOWN;
+		direction = DIR_DOWN;
 		state = LIVE;
+		stop = true;
 	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
 
@@ -159,11 +160,18 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 		
 	}
 	direction = DIR_DOWN;*/
-
-	SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-	SetDirection(receivedPacket.player1.direction);
-	stop = receivedPacket.player1.stop;
-	printf("업데이트 player x : %d, y : %d, stop : %d\r", x, y, stop);	// DEBUG
+	if (ID == 0)		// TODO : Player1의 업데이트
+	{
+		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
+		SetDirection(receivedPacket.player1.direction);
+		stop = receivedPacket.player1.stop;
+		printf("업데이트 player x : %d, y : %d, stop : %d\r", x, y, stop);	// DEBUG
+	}
+	else				// TODO : Player2의 업데이트
+	{
+		//SetDirection(receivedPacket.player1.direction);
+		//stop = receivedPacket.player1.stop;
+	}
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
