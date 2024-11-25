@@ -50,3 +50,8 @@ enum {
 	LIVE = 0, DAMAGE, DEAD, ESCAPE
 };
 
+#define DIR_DOWN		0x20
+#define BUFSIZE 50
+
+
+

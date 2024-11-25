@@ -1,6 +1,11 @@
 #include "Common.h"
 #include "Player.h"
 #include "Timer.h"
+#include <vector>
+#include <thread>
+#include <mutex>
+#include <chrono>
+
 #define SERVERPORT 9000
 #define BUFSIZE    50
 
@@ -12,79 +17,84 @@ typedef struct CS_PlayerInputPacket {
     int keyState;           // 입력한 Key 의 값
 } CS_PlayerInputPacket;
 
-
 typedef struct SC_PlayersInfoPacket {
-    CPlayer player1;           // 클라이언트에게 Player의 데이터를 보낸다. TODO : Player2의 정보도 추후에 같이 보내야 함
-    // TODO : 보드와 풍선에 대한 정보도 보내야 한다
-    // Board Info
-    // Ballon Info
+    CPlayer player;           // 클라이언트에게 Player의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
 
-CPlayer *player1 = new CPlayer();
+CPlayer* player1 = new CPlayer();
+std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
+std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
 
-CS_PlayerInputPacket recvPacket;
-
-// 클라이언트의 방향키 값 처리 함수
-DWORD WINAPI ProcessClient(LPVOID arg)
-{
-    int retval;
+// 클라이언트 방향키 처리 스레드
+DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
-    struct sockaddr_in clientaddr;
-    char addr[INET_ADDRSTRLEN];
-    int addrlen = sizeof(clientaddr);
-
-    // 클라이언트 정보 얻기
-    getpeername(client_sock, (struct sockaddr*)&clientaddr, &addrlen);
-    inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-    printf("[TCP/%s:%d] 클라이언트 처리 시작\n", addr, ntohs(clientaddr.sin_port));
-
-    int tempData = 0;
-
-    // 방향키 값 수신
     char buf[BUFSIZE];
+    int dir;
+    int retval;
+
     while (1) {
-        retval = recv(client_sock, (char*)&recvPacket, sizeof(recvPacket), 0); // 방향키 데이터 수신
-        if (retval == SOCKET_ERROR) {
-            err_display("recv()");
+        // 방향키 값 수신
+        retval = recv(client_sock, (char*)&dir, sizeof(dir), 0);
+        if (retval == SOCKET_ERROR || retval == 0) {
+            printf("클라이언트 연결 종료\n");
             break;
         }
-        else if (retval == 0) {
-            break; // 연결 종료
+
+        printf("받은 데이터 : %d\n", dir);
+        if (dir >= 37 && dir <=40) {  // 방향키 처리
+            player1->Move(dir, 0.03f);
         }
-        //system("cls");
-        buf[retval] = '\0'; // 수신한 문자열 종료 처리
-        printf("ID : %d, Key : %d\n", recvPacket.playerID, recvPacket.keyState);
-
-        
-
-        /*if (tempData != dir) {
-            tempData = dir;
-            retval = send(client_sock, (char*)&dir, sizeof(dir), 0);
-            printf("데이터 전송 성공: %d\n", dir);
-        }
-        if (retval == SOCKET_ERROR) {
-            err_display("send()");
-            break;
-        }*/
-
-
     }
 
-    // 소켓 닫기
+    // 연결 종료 시 소켓 닫기 및 리스트에서 제거
     closesocket(client_sock);
-    printf("[TCP/%s:%d] 클라이언트 처리 종료\n", addr, ntohs(clientaddr.sin_port));
+    clientMutex.lock();
+    clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
+    clientMutex.unlock();
+    printf("클라이언트 처리 종료\n");
     return 0;
 }
 
-int main(int argc, char* argv[])
-{
-    //m_GameTimer.Reset();				// 타이머 초기화
+static int num = 0;
+
+// 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
+void GameLogicThread() {
+    while (1) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // 100ms 간격으로 실행
+        num++;
+        printf("%d", num);
+        // 패킷 데이터 생성
+        SC_PlayersInfoPacket packet;
+        memcpy(&packet.player, player1, sizeof(CPlayer));
+
+        // 클라이언트 목록 순회하며 데이터 전송
+        clientMutex.lock();
+        for (SOCKET client_sock : clientSockets) {
+            int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
+            if (retval == SOCKET_ERROR) {
+                printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
+                closesocket(client_sock);
+                clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
+            }
+            else {
+                // 패킷 전송 성공 시 출력
+                printf("패킷 전송 성공: 클라이언트 소켓 [%d]\n", (int)client_sock);
+                printf("보낸 데이터: \n");
+                printf("  player1.positionX: %d\n", packet.player.x);
+                printf("  player1.positionY: %d\n", packet.player.y);
+            }
+        }
+        clientMutex.unlock();
+    }
+}
+
+
+int main(int argc, char* argv[]) {
     int retval;
 
     // 윈속 초기화
     WSADATA wsa;
-    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-        return 1;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
     // 소켓 생성
     SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -103,21 +113,20 @@ int main(int argc, char* argv[])
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // 데이터 통신에 사용할 변수
-    SOCKET client_sock;
-    struct sockaddr_in clientaddr;
-    int addrlen;
-    HANDLE hThread;
+    printf("서버가 클라이언트 연결 대기 중입니다...\n");
 
-    printf("서버가 방향키 값 수신 대기 중입니다...\n");
+    // 주기적으로 데이터를 전송하는 스레드 실행
+    std::thread gameLogicThread(GameLogicThread);
+    gameLogicThread.detach();
 
     while (1) {
-        // accept()
-        addrlen = sizeof(clientaddr);
-        client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+        // 클라이언트 연결 수락
+        struct sockaddr_in clientaddr;
+        int addrlen = sizeof(clientaddr);
+        SOCKET client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
         if (client_sock == INVALID_SOCKET) {
             err_display("accept()");
-            break;
+            continue;
         }
 
         static int ID;
@@ -128,9 +137,13 @@ int main(int argc, char* argv[])
         char addr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
         printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
+        // 접속한 클라이언트 소켓 추가
+        clientMutex.lock();
+        clientSockets.push_back(client_sock);
+        clientMutex.unlock();
 
-        // 스레드 생성하여 클라이언트 처리
-        hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
+        // 클라이언트 처리 스레드 생성
+        HANDLE hThread = CreateThread(NULL, 0, ClientThread, (LPVOID)client_sock, 0, NULL);
         if (hThread == NULL) {
             closesocket(client_sock);
         }
@@ -138,31 +151,14 @@ int main(int argc, char* argv[])
             CloseHandle(hThread);
         }
 
-        while (1) // TODO : 임시로 한 것
-        {
-            Sleep(10);
-            // TODO : dir에 따라서 Player 좌표 이동 (별도의 스레드 함수로 빼야 한다.)
-            player1->SetDirection(dir);
-            player1->Update(0.003f);
-
-            //printf("[TCP/%s:%d] 방향키 입력값: %d\r", addr, ntohs(clientaddr.sin_port), dir);
-
-            // 클라이언트에게 데이터 send
-            SC_PlayersInfoPacket packet;
-            memcpy(&packet.player1, player1, sizeof(CPlayer));
-            retval = send(client_sock, (char*)&packet, sizeof(SC_PlayersInfoPacket), 0);
-
-            if (retval == SOCKET_ERROR) {
-                err_display("send()");
-                break;
-            }
-        }
+        // 클라이언트 정보 출력
+        char addr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
+        printf("[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
     }
 
     // 소켓 닫기
     closesocket(listen_sock);
-
-    // 윈속 종료
     WSACleanup();
     return 0;
 }
