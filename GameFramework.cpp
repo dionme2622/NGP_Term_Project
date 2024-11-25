@@ -214,21 +214,16 @@ int 테스트 = 0;
 
 DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);  // 객체 포인터로 변환
-	printf("Player 데이터 수신 전: X=%d, Y=%d, State = %d\n",
-		pFramework->receivedPacket.player1.x,
-		pFramework->receivedPacket.player1.y,
-		pFramework->receivedPacket.player1.GetState());
+	// TODO : 플레이어 두 개의 데이터를 받아야한다.
 	int retval;
 	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 	while (1) {
 		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
 		if (retval > 0) {
 			printf("Player 데이터 수신 성공: X=%d, Y=%d, State = %d\n",
-				pFramework->receivedPacket.player1.x,
-				pFramework->receivedPacket.player1.y,
-				pFramework->receivedPacket.player1.GetState());
-				테스트 = 50;
-				printf("초기화 전 데이터 recv\n");
+				pFramework->receivedPacket.player[1].x,
+				pFramework->receivedPacket.player[1].y,
+				pFramework->receivedPacket.player[1].GetState());
 
 			if (pFramework->m_pScene)
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);

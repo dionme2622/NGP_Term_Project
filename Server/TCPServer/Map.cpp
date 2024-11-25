@@ -275,7 +275,7 @@
 //	// TODO : Map이 Village일 때 초기화
 //	CMap::Initialize(_hInst);
 //
-//	player->SetPosition(receivedPacket.player1.x, receivedPacket.player1.x);
+//	player->SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].x);
 //
 //	//printf("player x: %d, y: %d\n", player->x, player->y);
 //	//player->SetPosition((Board[11][13].x), (Board[11][13].y));

@@ -10,13 +10,13 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	// Player Initialize
 	if (ID == 0)			// TODO : Player1의 초기화
 	{
-		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-		direction = receivedPacket.player1.direction;
-		state = receivedPacket.player1.state;
-		speed = receivedPacket.player1.speed;
-		ballon_num = receivedPacket.player1.ballon_num;
-		ballon_length = receivedPacket.player1.ballon_length;
-		stop = receivedPacket.player1.stop;
+		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
+		direction = receivedPacket.player[0].direction;
+		state = receivedPacket.player[0].state;
+		speed = receivedPacket.player[0].speed;
+		ballon_num = receivedPacket.player[0].ballon_num;
+		ballon_length = receivedPacket.player[0].ballon_length;
+		stop = receivedPacket.player[0].stop;
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
 		//direction = DIR_DOWN;
@@ -149,28 +149,28 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 
 	/*if (ID == 0)
 	{
-		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-		direction = receivedPacket.player1.direction;
+		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
+		direction = receivedPacket.player[0].direction;
 		printf("dircetion : %d\n", direction);
-		state = receivedPacket.player1.state;
-		speed = receivedPacket.player1.speed;
-		ballon_num = receivedPacket.player1.ballon_num;
-		ballon_length = receivedPacket.player1.ballon_length;
-		stop = receivedPacket.player1.stop;
+		state = receivedPacket.player[0].state;
+		speed = receivedPacket.player[0].speed;
+		ballon_num = receivedPacket.player[0].ballon_num;
+		ballon_length = receivedPacket.player[0].ballon_length;
+		stop = receivedPacket.player[0].stop;
 		
 	}
 	direction = DIR_DOWN;*/
 	if (ID == 0)		// TODO : Player1의 업데이트
 	{
-		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-		SetDirection(receivedPacket.player1.direction);
-		stop = receivedPacket.player1.stop;
+		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
+		SetDirection(receivedPacket.player[0].direction);
+		stop = receivedPacket.player[0].stop;
 		printf("업데이트 player x : %d, y : %d, stop : %d\r", x, y, stop);	// DEBUG
 	}
 	else				// TODO : Player2의 업데이트
 	{
-		//SetDirection(receivedPacket.player1.direction);
-		//stop = receivedPacket.player1.stop;
+		//SetDirection(receivedPacket.player[0].direction);
+		//stop = receivedPacket.player[0].stop;
 	}
 }
 
@@ -227,7 +227,7 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 
-	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- player1 화살표
+	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- player[0] 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
 
 

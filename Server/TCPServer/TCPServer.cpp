@@ -18,10 +18,12 @@ typedef struct CS_PlayerInputPacket {
 } CS_PlayerInputPacket;
 
 typedef struct SC_PlayersInfoPacket {
-    CPlayer player;           // 클라이언트에게 Player의 데이터를 보낸다.
+    CPlayer player[2];           // 클라이언트에게 Player의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
 
-CPlayer* player1 = new CPlayer();
+CPlayer* player[2];
+
+
 //CPlayer* player2 = new CPlayer();
 
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
@@ -73,26 +75,33 @@ void GameLogicThread() {
         //printf("%d", num);
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
-        memcpy(&packet.player, player1, sizeof(CPlayer));
+        memcpy(&packet.player, player, sizeof(packet.player));
 
         
         // 클라이언트 목록 순회하며 데이터 전송
         clientMutex.lock();
         printf("dir: %d\n", recvPacket.keyState);
-        player1->stop = true;
+        player[0]->stop = true;
 
-        if (recvPacket.playerID == 0)
+        if (recvPacket.playerID == 0)       // TODO : Player1의 조작
         {
-            if (recvPacket.keyState == DIR_DOWN) player1->SetDirection(DIR_DOWN), player1->stop = false;
-            else if (recvPacket.keyState == DIR_LEFT) player1->SetDirection(DIR_LEFT), player1->stop = false;
-            else if (recvPacket.keyState == DIR_RIGHT) player1->SetDirection(DIR_RIGHT), player1->stop = false;
-            else if (recvPacket.keyState == DIR_UP) player1->SetDirection(DIR_UP), player1->stop = false;
+            if (recvPacket.keyState == DIR_DOWN) player[0]->SetDirection(DIR_DOWN), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_LEFT) player[0]->SetDirection(DIR_LEFT), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
         }
-        printf("stop: %d\n", player1->stop);
-        player1->Move(m_GameTimer.GetTimeElapsed());
+        else                                // TODO : Player2의 조작
+        {
+            if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
+            else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
+        }
+        
+        for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
        
 
-        //player1->Update(0.03f);
+        //player[0]->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
@@ -105,8 +114,8 @@ void GameLogicThread() {
                 // 패킷 전송 성공 시 출력
                 printf("패킷 전송 성공: 클라이언트 소켓 [%d]\n", (int)client_sock);
                 printf("보낸 데이터: \n");
-                printf("player1.positionX: %d\n", packet.player.x);
-                printf("player1.positionY: %d\n", packet.player.y);
+                printf("player[0].positionX: %d\n", packet.player[0].x);
+                printf("player[0].positionY: %d\n", packet.player[0].y);
             }
         }
         clientMutex.unlock();
@@ -116,6 +125,8 @@ void GameLogicThread() {
 
 int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
+    player[0] = new CPlayer();
+    player[1] = new CPlayer();
     int retval;
     // 윈속 초기화
     WSADATA wsa;

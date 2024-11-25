@@ -28,7 +28,7 @@ void CScene::DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop)
 void CScene::ReceiveData(SC_PlayersInfoPacket _receivedPacket)
 {
 	receivedPacket = _receivedPacket;
-	printf("Player dir°ª: %d\n", receivedPacket.player1.x, receivedPacket.player1.y);
+	printf("Player dir°ª: %d\n", receivedPacket.player[0].x, receivedPacket.player[0].y);
 }
 	
 

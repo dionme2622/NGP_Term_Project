@@ -10,7 +10,7 @@ int ObstacleBreak[13][15];
 void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-	printf("XX: %d\n", receivedPacket.player1.x);
+	printf("XX: %d\n", receivedPacket.player[0].x);
 	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
 	//for (int i = 0; i < 13; i++) {
 	//	for (int j = 0; j < 15; j++) {
