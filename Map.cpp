@@ -93,6 +93,7 @@ void CMap::SetBallon()
 
 void CMap::BallonBoom(Cplayer* player, int num)
 {
+	//물풍선 놓고 터지기 전
 	if (player->GetBallon(num)->GetState() == 1)
 	{
 		if (Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].GetState() == 5)
@@ -120,7 +121,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				else if (Board[y][x].GetState() == 3)
 					break;
 			}
-			for (int j = 1; j < player->GetBallonLength(); j++)	// left
+			for (int j = 1; j < player->GetBallonLength(); j++)   // left
 			{
 				int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
 				int y = (player->GetBallon(num)->y) / 60;
@@ -133,7 +134,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				else if (Board[y][x].GetState() == 3)
 					break;
 			}
-			for (int j = 1; j < player->GetBallonLength(); j++)	// up
+			for (int j = 1; j < player->GetBallonLength(); j++)   // up
 			{
 				int x = (player->GetBallon(num)->x) / 60;
 				int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
@@ -251,7 +252,7 @@ void CMap::BallonBoom(Cplayer* player, int num)
 				int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
 				int y = (player->GetBallon(num)->y) / 60;
 				if (Board[y][x].GetState() == 5)
-					Board[y][x].SetState(5);
+					Board[y][x].SetState(1);
 				else if (Board[y][x].GetState() == 2)
 					break;
 				else if (Board[y][x].GetState() == 3)

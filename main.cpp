@@ -235,7 +235,6 @@ DWORD __stdcall SendData(LPVOID arg)
         printf("서버 연결 실패");
         closesocket(sock);
         WSACleanup();
-        exit(0);
     }
 
     printf("서버 연결 성공");
