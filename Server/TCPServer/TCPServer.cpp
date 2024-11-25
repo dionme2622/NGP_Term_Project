@@ -75,7 +75,7 @@ void GameLogicThread() {
         
         // 클라이언트 목록 순회하며 데이터 전송
         clientMutex.lock();
-        printf("dir: %d\n", recvPacket.keyState);
+        //printf("dir: %d\n", recvPacket.keyState);
         player1->SetDirection(recvPacket.keyState);
         player1->Update(0.003f);
 

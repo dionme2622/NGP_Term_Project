@@ -11,7 +11,7 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	if (ID == 0)
 	{
 		SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-		direction = receivedPacket.player1.direction;
+		direction = DIR_DOWN;
 		state = receivedPacket.player1.state;
 		speed = receivedPacket.player1.speed;
 		ballon_num = receivedPacket.player1.ballon_num;
@@ -19,8 +19,6 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 		stop = receivedPacket.player1.stop;
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
-		//direction = DIR_DOWN;
-		state = LIVE;
 	}
 	else 
 	{
@@ -35,7 +33,10 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 
 	/*--------------------------------------*/
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
-	printf("초기화! %d %d\n", x, y);  // DEBUG
+
+	//printf("초기화! %d %d\n", x, y);  // DEBUG
+
+	printf("ssss : %d\n", receivedPacket.player1.x);
 
 	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습
@@ -160,9 +161,9 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 	}
 	direction = DIR_DOWN;*/
 
-	SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
-	SetDirection(receivedPacket.player1.direction);
-	printf("업데이트 player x : %d, y : %d, direction : %d\r", x, y, direction);	// DEBUG
+	//SetPosition(receivedPacket.player1.x, receivedPacket.player1.y);
+	//SetDirection(receivedPacket.player1.direction);
+	//printf("업데이트 player x : %d, y : %d, direction : %d\r", x, y, direction);	// DEBUG
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)

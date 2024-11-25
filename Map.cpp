@@ -10,14 +10,7 @@ int ObstacleBreak[13][15];
 void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-	printf("XX: %d\n", receivedPacket.player1.x);
-	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
-	//for (int i = 0; i < 13; i++) {
-	//	for (int j = 0; j < 15; j++) {
-	//		Board[i][j].SetPosition((j * 60 + 30), (i * 60 + 65));
-	//		Board[i][j].SetState(initPacket->mapState[i][j]);  // 서버 데이터 적용
-	//	}
-	//}
+
 
 	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다. 
 	{
@@ -27,6 +20,8 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		//
 			Board[i][j].SetState(1);
 		}
 	}
+	printf("init\n");
+
 	player[0] = new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 	player[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
 
