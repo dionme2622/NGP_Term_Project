@@ -19,8 +19,6 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 		stop = receivedPacket.player[0].stop;
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
-		//direction = DIR_DOWN;
-		state = LIVE;
 	}
 	else				// TODO : Player2의 초기화
 	{

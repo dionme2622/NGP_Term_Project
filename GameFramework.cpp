@@ -24,6 +24,7 @@ CGameFramework::CGameFramework()
 	}
 
 	hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	hRecvEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	// 소켓 주소 구조체 초기화
 	memset(&remoteAddr, 0, sizeof(remoteAddr));
@@ -54,6 +55,7 @@ CGameFramework::~CGameFramework()
 
 void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 {
+
 	hWnd = hMainWnd;
 	hInst = g_hInst;
 
@@ -66,8 +68,11 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_ppScenes[currentscene]->Initialize();
 	m_pScene = m_ppScenes[currentscene];																									
+
+	WaitForSingleObject(hRecvEvent, INFINITE);
+
+	m_ppScenes[currentscene]->Initialize();
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -195,14 +200,14 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 
 	int tempData = -1;
 
+	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 	while (1) {
-		WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 
 		EnterCriticalSection(&pFramework->cs); // 동기화 시작
 		if (tempData != pFramework->sendPacket.keyState) {
 			//if (pFramework->sendPacket.keyState == 48) continue;
 			tempData = pFramework->sendPacket.keyState;
-			printf("SendData - KeyState Sent: %d\n", tempData);
+			//printf("SendData - KeyState Sent: %d\r", tempData);
 
 			send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
 		}
@@ -210,30 +215,38 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	}
 	return 0;
 }
-int 테스트 = 0;
 
 DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
-	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);  // 객체 포인터로 변환
-	// TODO : 플레이어 두 개의 데이터를 받아야한다.
+	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
+
 	int retval;
-	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
+	bool initEventSet = false; // Event 해제 여부 확인
+
 	while (1) {
 		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
+		printf("recv\n");
 		if (retval > 0) {
-			printf("Player 데이터 수신 성공: X=%d, Y=%d, State = %d\n",
-				pFramework->receivedPacket.player[1].x,
-				pFramework->receivedPacket.player[1].y,
-				pFramework->receivedPacket.player[1].GetState());
+			if (!initEventSet) {
+				// 처음 recv가 호출되면 이벤트 해제
+				initEventSet = true;
+			}
 
-			if (pFramework->m_pScene)
+			// 이후 recv 처리
+			printf("Player 데이터 수신 성공: X=%d, Y=%d\n",
+				pFramework->receivedPacket.player1.x,
+				pFramework->receivedPacket.player1.y);
+
+			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
+				SetEvent(pFramework->hRecvEvent);
+			}
 		}
 		else if (retval == SOCKET_ERROR) {
 			printf("recv() 실패: %d\n", WSAGetLastError());
-			break;  // 오류 발생 시 루프 종료
+			break; // 오류 발생 시 루프 종료
 		}
 	}
-	
+
 	return 0;
 }
 

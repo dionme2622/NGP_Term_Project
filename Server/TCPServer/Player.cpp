@@ -2,11 +2,11 @@
 
 CPlayer::CPlayer()
 {
-	SetPosition(250, 200);		
+	SetPosition(400, 200);		
 	direction = DIR_DOWN;
-	stop = true;
+	stop = false;
 	speed = 150;
-	state = LIVE;
+	state = DEAD;
 	ballon_length = 2;
 	ballon_num = 1;
 }
