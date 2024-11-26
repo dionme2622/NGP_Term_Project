@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
-#include "player.h"
+#include "Player.h"
 #include "Packet.h"
 
 struct SButton

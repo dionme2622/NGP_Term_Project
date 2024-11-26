@@ -1,4 +1,4 @@
-#include "player.h"
+#include "Player.h"
 #include "Map.h"
 #include "Packet.h"
 
@@ -11,28 +11,28 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	// Player Initialize
 	if (ID == 0)			// TODO : Player1의 초기화
 	{
-		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
-		direction = receivedPacket.player[0].direction;
-		state = receivedPacket.player[0].state;
-		speed = receivedPacket.player[0].speed;
-		ballon_num = receivedPacket.player[0].ballon_num;
-		ballon_length = receivedPacket.player[0].ballon_length;
-		stop = receivedPacket.player[0].stop;
+		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
+		direction = receivedPacket.playerData[0].direction;
+		state = receivedPacket.playerData[0].state;
+		speed = receivedPacket.playerData[0].speed;
+		ballon_num = receivedPacket.playerData[0].ballon_num;
+		ballon_length = receivedPacket.playerData[0].ballon_length;
+		stop = receivedPacket.playerData[0].stop;
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
 	}
 	else				// TODO : Player2의 초기화
 	{
 		// TODO : 다른 Player 초기화
-		SetPosition(receivedPacket.player[1].x, receivedPacket.player[1].y);
-		direction = receivedPacket.player[1].direction;
-		state = receivedPacket.player[1].state;
-		speed = receivedPacket.player[1].speed;
-		ballon_num = receivedPacket.player[1].ballon_num;
-		ballon_length = receivedPacket.player[1].ballon_length;
-		stop = receivedPacket.player[1].stop;
-		xPos = 0, yPos = 0;
-		xPosF = 0.0f, yPosF = 0.0f;
+		SetPosition(receivedPacket.playerData[1].x, receivedPacket.playerData[1].y);
+		direction = receivedPacket.playerData[1].direction;
+		state = receivedPacket.playerData[1].state;
+		speed = receivedPacket.playerData[1].speed;
+		ballon_num = receivedPacket.playerData[1].ballon_num;
+		ballon_length = receivedPacket.playerData[1].ballon_length;
+		stop = receivedPacket.playerData[1].stop;
+		xPos = 0, yPos = 76;
+		xPosF = 0.0f, yPosF = 76.0f;
 	}
 	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
 
@@ -150,28 +150,28 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 
 	/*if (ID == 0)
 	{
-		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
-		direction = receivedPacket.player[0].direction;
+		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
+		direction = receivedPacket.playerData[0].direction;
 		printf("dircetion : %d\n", direction);
-		state = receivedPacket.player[0].state;
-		speed = receivedPacket.player[0].speed;
-		ballon_num = receivedPacket.player[0].ballon_num;
-		ballon_length = receivedPacket.player[0].ballon_length;
-		stop = receivedPacket.player[0].stop;
+		state = receivedPacket.playerData[0].state;
+		speed = receivedPacket.playerData[0].speed;
+		ballon_num = receivedPacket.playerData[0].ballon_num;
+		ballon_length = receivedPacket.playerData[0].ballon_length;
+		stop = receivedPacket.playerData[0].stop;
 		
 	}
 	direction = DIR_DOWN;*/
 	if (ID == 0)		// TODO : Player1의 업데이트
 	{
-		SetPosition(receivedPacket.player[0].x, receivedPacket.player[0].y);
-		SetDirection(receivedPacket.player[0].direction);
-		stop = receivedPacket.player[0].stop;
+		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
+		SetDirection(receivedPacket.playerData[0].direction);
+		stop = receivedPacket.playerData[0].stop;
 	}
 	else if (ID == 1)			// TODO : Player2의 업데이트
 	{
-		SetPosition(receivedPacket.player[1].x, receivedPacket.player[1].y);
-		SetDirection(receivedPacket.player[1].direction);
-		stop = receivedPacket.player[1].stop;
+		SetPosition(receivedPacket.playerData[1].x, receivedPacket.playerData[1].y);
+		SetDirection(receivedPacket.playerData[1].direction);
+		stop = receivedPacket.playerData[1].stop;
 	}
 
 }
@@ -229,7 +229,7 @@ void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
 		TransparentBlt(MemDC, x - 10, y - 10, 70, 70, MemDCImage, xPos, yPos, 88, 144, RGB(255, 0, 255));
 	}
 
-	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- player[0] 화살표
+	(HBITMAP)SelectObject(MemDCImage, MainBitmap[8]); //--- playerData[0] 화살표
 	TransparentBlt(MemDC, x + 20, y - 30, 24, 20, MemDCImage, 0, 0, 24, 28, RGB(255, 0, 255));
 
 

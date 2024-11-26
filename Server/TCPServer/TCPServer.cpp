@@ -67,8 +67,8 @@ void GameLogicThread() {
         //printf("%d", num);
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
-        memcpy(&packet.player[0], player[0], sizeof(CPlayer));
-        memcpy(&packet.player[1], player[1], sizeof(CPlayer));
+        memcpy(&packet.playerData[0], playerData[0], sizeof(PlayerData));
+        memcpy(&packet.playerData[1], playerData[1], sizeof(PlayerData));
 
         
         // 클라이언트 목록 순회하며 데이터 전송
@@ -97,8 +97,8 @@ void GameLogicThread() {
         else if (recvPacket.keyState == DIR_UP) player[recvPacket.playerID]->SetDirection(DIR_UP), player[recvPacket.playerID]->stop = false;*/
         
         for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
-       
-        playerData[0]->LoadFromPlayer(*(player[0]));
+        for(int i = 0; i < 2; i++) playerData[i]->LoadFromPlayer(player[i]);
+
         //player[0]->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
@@ -111,14 +111,14 @@ void GameLogicThread() {
                 closesocket(client_sock);
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
             }
-            //else {
-            //    // 패킷 전송 성공 시 출력
-            //    //printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
-            //        packet.player[1].x,
-            //        packet.player[1].y,
-            //        packet.player[1].direction,
-            //        packet.player[1].state);
-            //}
+            else {
+                // 패킷 전송 성공 시 출력
+                printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
+                    packet.playerData[1].x,
+                    packet.playerData[1].y,
+                    packet.playerData[1].direction,
+                    packet.playerData[1].state);
+            }
         }
         clientMutex.unlock();
     }
@@ -129,6 +129,9 @@ int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
     player[0] = new CPlayer();
     player[1] = new CPlayer();
+    playerData[0] = new PlayerData();
+    playerData[1] = new PlayerData();
+
     int retval;
     // 윈속 초기화
     WSADATA wsa;

@@ -10,27 +10,27 @@ public:
     int			state;			// 캐릭터의 상태
     bool		stop;			// 캐릭터 정지 유무
 
-    void LoadFromPlayer(const CPlayer& player)
+    void LoadFromPlayer(const CPlayer* player)
     {
-        x = player.x;
-        y = player.y;
-        speed = player.speed;
-        ballon_length = player.ballon_length;
-        ballon_num = player.ballon_num;
-        direction = player.direction;
-        state = player.state;
-        stop = player.stop;
+        x = player->x;
+        y = player->y;
+        speed = player->speed;
+        ballon_length = player->ballon_length;
+        ballon_num = player->ballon_num;
+        direction = player->direction;
+        state = player->state;
+        stop = player->stop;
     }
-    void ApplyToPlayer(CPlayer& player)
+    void ApplyToPlayer(CPlayer* player)
     {
-        player.x = x;
-        player.y = y;
-        player.speed = speed;
-        player.ballon_length = ballon_length;
-        player.ballon_num = ballon_num;
-        player.direction = direction;
-        player.state = state;
-        player.stop = stop;
+        player->x = x;
+        player->y = y;
+        player->speed = speed;
+        player->ballon_length = ballon_length;
+        player->ballon_num = ballon_num;
+        player->direction = direction;
+        player->state = state;
+        player->stop = stop;
     }
 };
 
@@ -40,5 +40,5 @@ typedef struct CS_PlayerInputPacket {
 } CS_PlayerInputPacket;
 
 typedef struct SC_PlayersInfoPacket {
-    PlayerData player[2];           // 클라이언트에게 Player의 데이터를 보낸다.
+    PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다.
 } SC_PlayersInfoPacket;

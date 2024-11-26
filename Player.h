@@ -32,7 +32,7 @@ public:
 private:
 	HBITMAP MainBitmap[9];
 public:
-	void SetDirection(int);			// player의 방향벡터를 설정하는 함수
+	void SetDirection(int);			// playerData의 방향벡터를 설정하는 함수
 	void SetPosition(int _x, int _y) { x = _x, y = _y, fx = (float)x, fy = (float)y; }
 	void SetPosition(float _fx, float _fy);
 	void SetState(int _state) { state = _state; }
@@ -48,7 +48,7 @@ public:
 	void Move(float fTimeElapsed);
 	//이건 뭐지
 	/*int count;
-	int player;
+	int playerData;
 	Ballon ballon[6];
 	Bullet bullet[3];*/
 };

@@ -23,5 +23,5 @@ private:
 	HBITMAP				backgroundImage;
 	HBITMAP				TileBitmap1;
 
-	//CPlayer*			player;			// 플레이어
+	//CPlayer*			playerData;			// 플레이어
 };
