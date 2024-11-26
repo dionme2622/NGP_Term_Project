@@ -24,7 +24,6 @@ public:
 	int			direction;		// 캐릭터의 방향
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
-	int			count;			// 뭔지 모름
 	//CBallon*	ballon[6];		// 물풍선
 
 	int			ID;

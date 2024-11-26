@@ -1,6 +1,18 @@
 #pragma once
 #include "Player.h"
 
+class PlayerData {
+public:
+    int			x, y;			// 캐릭터 x, y 좌표
+    float		fx, fy;
+    int			speed;			// 캐릭터의 이동속도
+    int			ballon_length;	// 물풍선의 길이
+    int			ballon_num;		// 물풍선의 개수
+    int			direction;		// 캐릭터의 방향
+    int			state;			// 캐릭터의 상태
+    bool		stop;			// 캐릭터 정지 유무
+};
+
 typedef struct CS_PlayerInputPacket {
     int playerID = 0;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState = 0;           // 입력한 Key 의 값

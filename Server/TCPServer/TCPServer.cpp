@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include "Packet.h"
 
 #define SERVERPORT 9000
 #define BUFSIZE    50
@@ -12,17 +13,8 @@
 CGameTimer m_GameTimer;
 int dir = 0;
 
-typedef struct CS_PlayerInputPacket {
-    int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
-    int keyState;           // 입력한 Key 의 값
-} CS_PlayerInputPacket;
-
-typedef struct SC_PlayersInfoPacket {
-    CPlayer player[2];           // 클라이언트에게 Player의 데이터를 보낸다.
-} SC_PlayersInfoPacket;
-
 CPlayer* player[2];
-
+PlayerData* playerData[2];
 
 //CPlayer* player2 = new CPlayer();
 
@@ -49,6 +41,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         else if (retval == 0) {
             break; // 연결 종료
         }
+        printf("키 입력: %d", recvPacket.keyState);
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
        
@@ -105,27 +98,27 @@ void GameLogicThread() {
         
         for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
        
-
+        playerData[0]->LoadFromPlayer(*(player[0]));
         //player[0]->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
-            printf("packet size : %d\r", packet.player[1].direction);
+            //printf("packet size : %d\r", packet.player[1].direction);
             
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
             }
-            else {
-                // 패킷 전송 성공 시 출력
-                printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
-                    packet.player[1].x,
-                    packet.player[1].y,
-                    packet.player[1].direction,
-                    packet.player[1].state);
-            }
+            //else {
+            //    // 패킷 전송 성공 시 출력
+            //    //printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
+            //        packet.player[1].x,
+            //        packet.player[1].y,
+            //        packet.player[1].direction,
+            //        packet.player[1].state);
+            //}
         }
         clientMutex.unlock();
     }
