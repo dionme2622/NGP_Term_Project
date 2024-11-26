@@ -11,26 +11,14 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 	// Player Initialize
 	if (ID == 0)			// TODO : Player1의 초기화
 	{
-		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
-		direction = receivedPacket.playerData[0].direction;
-		state = receivedPacket.playerData[0].state;
-		speed = receivedPacket.playerData[0].speed;
-		ballon_num = receivedPacket.playerData[0].ballon_num;
-		ballon_length = receivedPacket.playerData[0].ballon_length;
-		stop = receivedPacket.playerData[0].stop;
+		receivedPacket.playerData[0].ApplyToPlayer(this);
 		xPos = 0, yPos = 0;
 		xPosF = 0.0f, yPosF = 0.0f;
 	}
 	else				// TODO : Player2의 초기화
 	{
 		// TODO : 다른 Player 초기화
-		SetPosition(receivedPacket.playerData[1].x, receivedPacket.playerData[1].y);
-		direction = receivedPacket.playerData[1].direction;
-		state = receivedPacket.playerData[1].state;
-		speed = receivedPacket.playerData[1].speed;
-		ballon_num = receivedPacket.playerData[1].ballon_num;
-		ballon_length = receivedPacket.playerData[1].ballon_length;
-		stop = receivedPacket.playerData[1].stop;
+		receivedPacket.playerData[1].ApplyToPlayer(this);
 		xPos = 0, yPos = 76;
 		xPosF = 0.0f, yPosF = 76.0f;
 	}
@@ -146,33 +134,16 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 			if (xPos >= 616) xPos = 0;
 		}
 	}
-	// TODO : 임시로 해놓은 것
-
-	/*if (ID == 0)
-	{
-		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
-		direction = receivedPacket.playerData[0].direction;
-		printf("dircetion : %d\n", direction);
-		state = receivedPacket.playerData[0].state;
-		speed = receivedPacket.playerData[0].speed;
-		ballon_num = receivedPacket.playerData[0].ballon_num;
-		ballon_length = receivedPacket.playerData[0].ballon_length;
-		stop = receivedPacket.playerData[0].stop;
-		
-	}
-	direction = DIR_DOWN;*/
-	if (ID == 0)		// TODO : Player1의 업데이트
-	{
-		SetPosition(receivedPacket.playerData[0].x, receivedPacket.playerData[0].y);
-		SetDirection(receivedPacket.playerData[0].direction);
-		stop = receivedPacket.playerData[0].stop;
-	}
-	else if (ID == 1)			// TODO : Player2의 업데이트
-	{
-		SetPosition(receivedPacket.playerData[1].x, receivedPacket.playerData[1].y);
-		SetDirection(receivedPacket.playerData[1].direction);
-		stop = receivedPacket.playerData[1].stop;
-	}
+	receivedPacket.playerData[ID].ApplyToPlayer(this);
+	//if (ID == 0)		// TODO : Player1의 업데이트
+	//{
+	//	receivedPacket.playerData[ID].ApplyToPlayer(this);
+	//	
+	//}
+	//else if (ID == 1)			// TODO : Player2의 업데이트
+	//{
+	//	receivedPacket.playerData[1].ApplyToPlayer(this);
+	//}
 
 }
 
