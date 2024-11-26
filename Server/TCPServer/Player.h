@@ -13,7 +13,14 @@ public:
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
 	int			count;			// 뭔지 모름
+
 //	CBallon* ballon[6];		// 물풍선
+	int			ID;
+	int			xPos, yPos;		// 이미지 x, y 좌표
+	float		xPosF, yPosF;
+
+private:
+	HBITMAP MainBitmap[9];
 
 public:
 	CPlayer();

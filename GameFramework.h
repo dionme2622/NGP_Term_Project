@@ -68,8 +68,8 @@ private:
 	HANDLE hSelectEvent;
 	HANDLE hRecvEvent;
 
-	CS_PlayerInputPacket sendPacket;  // 정적 대신 멤버 변수로 변경
-	SC_PlayersInfoPacket receivedPacket; // 정적 대신 멤버 변수로 변경
+	CS_PlayerInputPacket sendPacket;  
+	SC_PlayersInfoPacket receivedPacket; 
 
 	CRITICAL_SECTION cs;
 public:

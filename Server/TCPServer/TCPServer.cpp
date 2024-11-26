@@ -74,8 +74,8 @@ void GameLogicThread() {
         //printf("%d", num);
         // 패킷 데이터 생성
         SC_PlayersInfoPacket packet;
-        memcpy(&packet.player[0], player[0], sizeof(packet.player));
-        memcpy(&packet.player[1], player[1], sizeof(packet.player));
+        memcpy(&packet.player[0], player[0], sizeof(CPlayer));
+        memcpy(&packet.player[1], player[1], sizeof(CPlayer));
 
         
         // 클라이언트 목록 순회하며 데이터 전송
@@ -90,7 +90,7 @@ void GameLogicThread() {
             else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
             else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
         }
-        else                                // TODO : Player2의 조작
+        else if(recvPacket.playerID == 1)                               // TODO : Player2의 조작
         {
             if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
             else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
@@ -111,8 +111,8 @@ void GameLogicThread() {
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
-            printf("p0 : %d,  p1 : %d\r", packet.player[0].x, packet.player[1].x);
-
+            printf("packet size : %d\r", packet.player[1].direction);
+            
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
@@ -120,10 +120,11 @@ void GameLogicThread() {
             }
             else {
                 // 패킷 전송 성공 시 출력
-                //printf("패킷 전송 성공: 클라이언트 소켓 [%d]\n", (int)client_sock);
-                //printf("보낸 데이터: \n");
-                //printf("player[0].positionX: %d\n", packet.player[0].x);
-                //printf("player[0].positionY: %d\n", packet.player[0].y);
+                printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
+                    packet.player[1].x,
+                    packet.player[1].y,
+                    packet.player[1].direction,
+                    packet.player[1].state);
             }
         }
         clientMutex.unlock();
