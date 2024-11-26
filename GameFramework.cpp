@@ -225,6 +225,7 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 	while (1) {
 		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
+		printf("ss");
 		if (retval > 0) {
 			if (!initEventSet) {
 				// 처음 recv가 호출되면 이벤트 해제
@@ -233,8 +234,12 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
-				printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.player[0].x, pFramework->receivedPacket.player[1].x);
-
+				//printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.player[0].x, pFramework->receivedPacket.player[1].x);
+				printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
+					pFramework->receivedPacket.player[1].x,
+					pFramework->receivedPacket.player[1].y,
+					pFramework->receivedPacket.player[1].direction,
+					pFramework->receivedPacket.player[1].state);
 				SetEvent(pFramework->hRecvEvent);
 			}
 		}

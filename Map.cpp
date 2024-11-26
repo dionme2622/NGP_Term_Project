@@ -84,7 +84,7 @@ void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 
 void CMap::SetBallon()
 {
-	for (int j = 0; j < 2; ++j) {
+	/*for (int j = 0; j < 2; ++j) {
 		if (player[j]->GetState() == DAMAGE) return;
 		for (int i = 0; i < player[j]->GetBallonNum(); i++)
 		{
@@ -99,214 +99,214 @@ void CMap::SetBallon()
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void CMap::BallonBoom(CPlayer* player, int num)
 {
-	//물풍선 놓고 터지기 전
-	if (player->GetBallon(num)->GetState() == 1)
-	{
-		if (Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].GetState() == 5)
-			player->GetBallon(num)->beforeboomcount = 70;
-		if (player->GetBallon(num)->beforeboomcount < 70)
-			player->GetBallon(num)->beforeboomcount++;
-		else
-			player->GetBallon(num)->SetState(2);
-	}
-	else if (player->GetBallon(num)->GetState() == 2)
-	{
-		if (player->GetBallon(num)->startboomcount < 50)
-		{
-			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
-			for (int j = 1; j < player->GetBallonLength(); j++) // right
-			{
-				int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (x < 0 || x == 15)
-					break;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++)   // left
-			{
-				int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (x < 0 || x == 15)
-					break;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++)   // up
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++) // down
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
+	////물풍선 놓고 터지기 전
+	//if (player->GetBallon(num)->GetState() == 1)
+	//{
+	//	if (Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].GetState() == 5)
+	//		player->GetBallon(num)->beforeboomcount = 70;
+	//	if (player->GetBallon(num)->beforeboomcount < 70)
+	//		player->GetBallon(num)->beforeboomcount++;
+	//	else
+	//		player->GetBallon(num)->SetState(2);
+	//}
+	//else if (player->GetBallon(num)->GetState() == 2)
+	//{
+	//	if (player->GetBallon(num)->startboomcount < 50)
+	//	{
+	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
+	//		for (int j = 1; j < player->GetBallonLength(); j++) // right
+	//		{
+	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (x < 0 || x == 15)
+	//				break;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++)   // left
+	//		{
+	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (x < 0 || x == 15)
+	//				break;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++)   // up
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++) // down
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
 
-			}
-			player->GetBallon(num)->beforeboomcount = 0;
-			player->GetBallon(num)->startboomcount++;
-		}
+	//		}
+	//		player->GetBallon(num)->beforeboomcount = 0;
+	//		player->GetBallon(num)->startboomcount++;
+	//	}
 
-		if (player->GetBallon(num)->startboomcount >= 50) // TODO : 잔상이 남는부분 고쳐야 함
-		{
-			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
-			for (int j = 1; j < player->GetBallonLength(); j++)
-			{
-				int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (x < 0 || x == 15)
-					break;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-				{
-					ObstacleBreak[y][x] = 1;
-					break;
-				}
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
-			{
-				int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (x < 0 || x == 15)
-					break;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-				{
-					ObstacleBreak[y][x] = 1;
-					break;
-				}
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-				{
-					ObstacleBreak[y][x] = 1;
-					break;
-				}
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j < player->GetBallonLength(); j++)
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-				if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-					Board[y][x].SetState(5);
-				else if (Board[y][x].GetState() == 2)
-				{
-					ObstacleBreak[y][x] = 1;
-					break;
-				}
-				else if (Board[y][x].GetState() == 3)
-					break;
+	//	if (player->GetBallon(num)->startboomcount >= 50) // TODO : 잔상이 남는부분 고쳐야 함
+	//	{
+	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
+	//		for (int j = 1; j < player->GetBallonLength(); j++)
+	//		{
+	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (x < 0 || x == 15)
+	//				break;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//			{
+	//				ObstacleBreak[y][x] = 1;
+	//				break;
+	//			}
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++)
+	//		{
+	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (x < 0 || x == 15)
+	//				break;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//			{
+	//				ObstacleBreak[y][x] = 1;
+	//				break;
+	//			}
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++)
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//			{
+	//				ObstacleBreak[y][x] = 1;
+	//				break;
+	//			}
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j < player->GetBallonLength(); j++)
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
+	//				Board[y][x].SetState(5);
+	//			else if (Board[y][x].GetState() == 2)
+	//			{
+	//				ObstacleBreak[y][x] = 1;
+	//				break;
+	//			}
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
 
-			}
-			player->GetBallon(num)->startboomcount++;
-			player->GetBallon(num)->SetState(0);
-			for (int i = 0; i < 15; i++)
-				for (int j = 0; j < 13; j++)
-					if (ObstacleBreak[j][i] == 1)
-					{
-						int n = uid(dre);
-						if (n == 6)
-							Board[j][i].SetState(6);
-						else if (n == 7)
-							Board[j][i].SetState(7);
-						else if (n == 8)
-							Board[j][i].SetState(8);
-						else if (n == 9)
-							Board[j][i].SetState(9);
-						else
-							Board[j][i].SetState(1);
-					}
-			for (int i = 0; i < 15; i++)
-				for (int j = 0; j < 13; j++)
-					ObstacleBreak[j][i] = 0;
-			Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(1);
-			for (int j = 1; j <= player->GetBallonLength(); j++)
-			{
-				int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (Board[y][x].GetState() == 5)
-					Board[y][x].SetState(1);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j <= player->GetBallonLength(); j++)
-			{
-				int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-				int y = (player->GetBallon(num)->y) / 60;
-				if (x < 0 || x == 15)
-					break;
-				if (Board[y][x].GetState() == 5)
-					Board[y][x].SetState(1);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j <= player->GetBallonLength(); j++)
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-				if (Board[y][x].GetState() == 5)
-					Board[y][x].SetState(1);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			for (int j = 1; j <= player->GetBallonLength(); j++)
-			{
-				int x = (player->GetBallon(num)->x) / 60;
-				int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-				if (Board[y][x].GetState() == 5)
-					Board[y][x].SetState(1);
-				else if (Board[y][x].GetState() == 2)
-					break;
-				else if (Board[y][x].GetState() == 3)
-					break;
-			}
-			player->GetBallon(num)->startboomcount = 0;
-		}
-	}
+	//		}
+	//		player->GetBallon(num)->startboomcount++;
+	//		player->GetBallon(num)->SetState(0);
+	//		for (int i = 0; i < 15; i++)
+	//			for (int j = 0; j < 13; j++)
+	//				if (ObstacleBreak[j][i] == 1)
+	//				{
+	//					int n = uid(dre);
+	//					if (n == 6)
+	//						Board[j][i].SetState(6);
+	//					else if (n == 7)
+	//						Board[j][i].SetState(7);
+	//					else if (n == 8)
+	//						Board[j][i].SetState(8);
+	//					else if (n == 9)
+	//						Board[j][i].SetState(9);
+	//					else
+	//						Board[j][i].SetState(1);
+	//				}
+	//		for (int i = 0; i < 15; i++)
+	//			for (int j = 0; j < 13; j++)
+	//				ObstacleBreak[j][i] = 0;
+	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(1);
+	//		for (int j = 1; j <= player->GetBallonLength(); j++)
+	//		{
+	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (Board[y][x].GetState() == 5)
+	//				Board[y][x].SetState(1);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j <= player->GetBallonLength(); j++)
+	//		{
+	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
+	//			int y = (player->GetBallon(num)->y) / 60;
+	//			if (x < 0 || x == 15)
+	//				break;
+	//			if (Board[y][x].GetState() == 5)
+	//				Board[y][x].SetState(1);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j <= player->GetBallonLength(); j++)
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 5)
+	//				Board[y][x].SetState(1);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		for (int j = 1; j <= player->GetBallonLength(); j++)
+	//		{
+	//			int x = (player->GetBallon(num)->x) / 60;
+	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
+	//			if (Board[y][x].GetState() == 5)
+	//				Board[y][x].SetState(1);
+	//			else if (Board[y][x].GetState() == 2)
+	//				break;
+	//			else if (Board[y][x].GetState() == 3)
+	//				break;
+	//		}
+	//		player->GetBallon(num)->startboomcount = 0;
+	//	}
+	//}
 }
 
 

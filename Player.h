@@ -17,7 +17,7 @@ public:
 public :
 	int			x, y;			// 캐릭터 x, y 좌표
 	float		fx, fy;
-private:
+public:
 	int			speed;			// 캐릭터의 이동속도
 	int			ballon_length;	// 물풍선의 길이
 	int			ballon_num;		// 물풍선의 개수
@@ -25,7 +25,7 @@ private:
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
 	int			count;			// 뭔지 모름
-	CBallon*	ballon[6];		// 물풍선
+	//CBallon*	ballon[6];		// 물풍선
 
 	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표
@@ -44,7 +44,7 @@ public:
 	int GetState() { return state; }
 	int GetBallonNum() { return ballon_num; }
 	int GetBallonLength() { return ballon_length; }
-	CBallon* GetBallon(int i) { return ballon[i]; }
+	//CBallon* GetBallon(int i) { return ballon[i]; }
 
 	void Move(float fTimeElapsed);
 	//이건 뭐지
