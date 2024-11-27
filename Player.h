@@ -46,10 +46,6 @@ public:
 	//CBallon* GetBallon(int i) { return ballon[i]; }
 
 	void Move(float fTimeElapsed);
-	//ÀÌ°Ç ¹¹Áö
-	/*int count;
-	int playerData;
-	Ballon ballon[6];
-	Bullet bullet[3];*/
+	
 };
 
