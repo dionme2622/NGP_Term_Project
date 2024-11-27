@@ -40,6 +40,14 @@ class BoardData {
 public:
     int state;
     int block;
+
+    void SetState(int _state) { state = _state; }
+};
+
+class MapData {
+public:
+    int mapIndex;
+    BoardData boardData[13][15];
 };
 
 typedef struct CS_PlayerInputPacket {
@@ -49,5 +57,5 @@ typedef struct CS_PlayerInputPacket {
 
 typedef struct SC_PlayersInfoPacket {
     PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다.
-    //BoardData  boardData;               // 클라이언트에게 Board의 데이터를 보낸다.
+    MapData mapData;                    // 클라이언트에게 Map의 데이터를 보낸다.
 } SC_PlayersInfoPacket;

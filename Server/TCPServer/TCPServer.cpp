@@ -15,14 +15,18 @@ int dir = 0;
 
 CPlayer* player[2];
 PlayerData* playerData[2];
+MapData* mapData;
 int keyState[2] = {};
 //CPlayer* player2 = new CPlayer();
 
-CS_PlayerInputPacket recvPacket;
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
 std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
 std::map<int, int> clientInput;
 
+SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
+
+
+void Initialize();
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
@@ -65,6 +69,8 @@ void GameLogicThread() {
         m_GameTimer.Tick(120.0f);
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 10ms 간격 실행
 
+        
+        
         // 모든 플레이어 상태 업데이트
         for (int playerID = 0; playerID < 2; ++playerID) {
             player[playerID]->stop = true;
@@ -86,11 +92,11 @@ void GameLogicThread() {
         }
 
         // 모든 플레이어 데이터를 클라이언트들에게 전송
-        SC_PlayersInfoPacket packet;
         for (int i = 0; i < 2; ++i) {
-            memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));
+            memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
         }
-
+        //memcpy(&packet.mapData, mapData, sizeof(MapData));                      // Map의 데이터를 클라이언트에게 보낸다.
+        
         clientMutex.lock();
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
@@ -111,7 +117,7 @@ int main(int argc, char* argv[]) {
     player[1] = new CPlayer();
     playerData[0] = new PlayerData();
     playerData[1] = new PlayerData();
-
+    mapData = new MapData();
     int retval;
     // 윈속 초기화
     WSADATA wsa;
@@ -154,6 +160,8 @@ int main(int argc, char* argv[]) {
         retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
         ++ID;
 
+        Initialize();       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
+
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
@@ -177,4 +185,55 @@ int main(int argc, char* argv[]) {
     closesocket(listen_sock);
     WSACleanup();
     return 0;
+}
+
+
+void Initialize() {
+    for (int i = 0; i < 13; i++) {
+        for (int j = 0; j < 15; j++) {
+            packet.mapData.boardData[i][j].SetState(1);
+        }
+    }
+
+    for (int i = 2; i < 13; i++)
+    {
+        packet.mapData.boardData[0][i].SetState(2);
+        packet.mapData.boardData[12][i].SetState(2);
+    }
+    for (int i = 4; i < 11; i++)
+    {
+        packet.mapData.boardData[1][i].SetState(2);
+        packet.mapData.boardData[11][i].SetState(2);
+    }
+    packet.mapData.boardData[1][1].SetState(3); packet.mapData.boardData[1][3].SetState(3); packet.mapData.boardData[1][11].SetState(3); packet.mapData.boardData[1][13].SetState(3);
+    packet.mapData.boardData[3][1].SetState(3); packet.mapData.boardData[3][3].SetState(3); packet.mapData.boardData[3][11].SetState(3); packet.mapData.boardData[3][13].SetState(3);
+    packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+    packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+    packet.mapData.boardData[7][1].SetState(3); packet.mapData.boardData[7][3].SetState(3); packet.mapData.boardData[7][11].SetState(3); packet.mapData.boardData[7][13].SetState(3);
+    packet.mapData.boardData[6][5].SetState(3); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][9].SetState(3);	packet.mapData.boardData[10][9].SetState(3);
+    packet.mapData.boardData[9][1].SetState(3); packet.mapData.boardData[9][3].SetState(3); packet.mapData.boardData[9][11].SetState(3); packet.mapData.boardData[9][13].SetState(3);
+    packet.mapData.boardData[4][6].SetState(3); packet.mapData.boardData[4][8].SetState(3); packet.mapData.boardData[8][6].SetState(3);	packet.mapData.boardData[8][8].SetState(3);
+
+    for (int i = 0; i < 5; i++)
+    {
+        packet.mapData.boardData[2][i].SetState(2);
+        packet.mapData.boardData[4][i].SetState(2);
+        packet.mapData.boardData[8][i].SetState(2);
+        packet.mapData.boardData[10][i].SetState(2);
+    }
+    for (int i = 10; i < 15; i++)
+    {
+        packet.mapData.boardData[2][i].SetState(2);
+        packet.mapData.boardData[4][i].SetState(2);
+        packet.mapData.boardData[8][i].SetState(2);
+        packet.mapData.boardData[10][i].SetState(2);
+    }
+    packet.mapData.boardData[3][0].SetState(2); packet.mapData.boardData[3][5].SetState(2); packet.mapData.boardData[3][9].SetState(2); packet.mapData.boardData[3][14].SetState(2);
+    packet.mapData.boardData[10][0].SetState(2); packet.mapData.boardData[10][5].SetState(2); packet.mapData.boardData[10][9].SetState(2); packet.mapData.boardData[10][14].SetState(2);
+    for (int i = 5; i < 10; i++)
+    {
+        packet.mapData.boardData[5][i].SetState(2);
+        packet.mapData.boardData[7][i].SetState(2);
+    }
+    packet.mapData.boardData[10][2].SetState(1); packet.mapData.boardData[10][5].SetState(1); packet.mapData.boardData[10][9].SetState(1); packet.mapData.boardData[10][12].SetState(1);
 }
