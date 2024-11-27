@@ -27,6 +27,7 @@ SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
 
 
 void Initialize();
+void PlayerMeetObstacle(CPlayer* Player);
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
@@ -86,7 +87,7 @@ void GameLogicThread() {
 
             // 캐릭터 이동
             player[playerID]->Move(m_GameTimer.GetTimeElapsed());
-
+            PlayerMeetObstacle(player[playerID]);
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
         }
@@ -236,4 +237,88 @@ void Initialize() {
         packet.mapData.boardData[7][i].SetState(2);
     }
     packet.mapData.boardData[10][2].SetState(1); packet.mapData.boardData[10][5].SetState(1); packet.mapData.boardData[10][9].SetState(1); packet.mapData.boardData[10][12].SetState(1);
+}
+
+void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
+{
+    if (Player->direction == DIR_LEFT)
+    {
+        int i = (Player->x - 30) / 60;
+        int j = (Player->y - 65) / 60;
+        if (packet.mapData.boardData[j][i].state == 2 || packet.mapData.boardData[j][i].state == 3 || packet.mapData.boardData[j][i].state == 40)
+        {
+            Player->x = i * 60 + 60 + 30;
+            j = (Player->y + 60 - 65) / 60;
+            if ((Player->y % 60 >= 45 || Player->y % 60 <= 5) && (packet.mapData.boardData[j][i].state != 2 && packet.mapData.boardData[j][i].state != 3 && packet.mapData.boardData[j][i].state != 40) && (packet.mapData.boardData[j][i + 1].state != 2 && packet.mapData.boardData[j][i + 1].state != 3 && packet.mapData.boardData[j][i + 1].state != 40))
+                Player->y = Player->y + 1;
+        }
+        j = (Player->y + 60 - 65) / 60;
+        if ((packet.mapData.boardData[j][i].state == 2 || packet.mapData.boardData[j][i].state == 3 || packet.mapData.boardData[j][i].state == 40) && Player->y % 60 != 5)
+        {
+            Player->x = i * 60 + 60 + 30;
+            j = (Player->y - 65) / 60;
+            if (Player->y % 60 <= 25 && Player->y % 60 >= 5 && (packet.mapData.boardData[j][i].state != 2 && packet.mapData.boardData[j][i].state != 3 && packet.mapData.boardData[j][i].state != 40) && (packet.mapData.boardData[j][i + 1].state != 2 && packet.mapData.boardData[j][i + 1].state != 3 && packet.mapData.boardData[j][i + 1].state != 40))
+                Player->y = Player->y - 1;
+        }
+    }
+    /*else if (Player->direction == DIR_RIGHT)
+    {
+        int i = (Player->x - 30) / 60;
+        int j = (Player->y - 65) / 60;
+        if (packet.mapData.boardData[j][i + 1].state == 2 || packet.mapData.boardData[j][i + 1].state == 3 || packet.mapData.boardData[j][i + 1].state == 40)
+        {
+            Player->x = i * 60 + 30;
+            j = (Player->y + 60 - 65) / 60;
+            if ((Player->y % 60 >= 45 || Player->y % 60 <= 5) && (packet.mapData.boardData[j][i + 1].state != 2 && packet.mapData.boardData[j][i + 1].state != 3 && packet.mapData.boardData[j][i + 1].state != 40) && (packet.mapData.boardData[j][i - 1].state != 2 && packet.mapData.boardData[j][i - 1].state != 3 && packet.mapData.boardData[j][i - 1].state != 40))
+                Player->y = Player->y + 1;
+        }
+        j = (Player->y + 60 - 65) / 60;
+        if ((packet.mapData.boardData[j][i + 1].state == 2 || packet.mapData.boardData[j][i + 1].state == 3 || packet.mapData.boardData[j][i + 1].state == 40) && Player->y % 60 != 5)
+        {
+            Player->x = i * 60 + 30;
+            j = (Player->y - 65) / 60;
+            if (Player->y % 60 <= 25 && Player->y % 60 >= 5 && (packet.mapData.boardData[j][i + 1].state != 2 && packet.mapData.boardData[j][i + 1].state != 3 && packet.mapData.boardData[j][i + 1].state != 40) && (packet.mapData.boardData[j][i - 1].state != 2 && packet.mapData.boardData[j][i - 1].state != 3 && packet.mapData.boardData[j][i - 1].state != 40))
+                Player->y = Player->y - 1;
+        }
+    }
+    else if (Player->direction == DIR_UP)
+    {
+        int i = (Player->x - 30) / 60;
+        int j = (Player->y - 65) / 60;
+        if (packet.mapData.boardData[j][i].state == 2 || packet.mapData.boardData[j][i].state == 3 || packet.mapData.boardData[j][i].state == 40)
+        {
+            Player->y = j * 60 + 60 + 65;
+            i = (Player->x + 60 - 30) / 60;
+            if (Player->x % 60 <= 30 && Player->x % 60 >= 10 && (packet.mapData.boardData[j][i].state != 2 && packet.mapData.boardData[j][i].state != 3 && packet.mapData.boardData[j][i].state != 40) && (packet.mapData.boardData[j + 1][i].state != 2 && packet.mapData.boardData[j + 1][i].state != 3 && packet.mapData.boardData[j + 1][i].state != 40))
+                Player->x = Player->x + 1;
+        }
+        i = (Player->x + 60 - 30) / 60;
+        if ((packet.mapData.boardData[j][i].state == 2 || packet.mapData.boardData[j][i].state == 3 || packet.mapData.boardData[j][i].state == 40) && Player->x % 60 != 30)
+        {
+            Player->y = j * 60 + 60 + 65;
+            i = (Player->x - 30) / 60;
+            if (Player->x % 60 <= 50 && Player->x % 60 >= 30 && (packet.mapData.boardData[j][i].state != 2 && packet.mapData.boardData[j][i].state != 3 && packet.mapData.boardData[j][i].state != 40) && (packet.mapData.boardData[j + 1][i].state != 2 && packet.mapData.boardData[j + 1][i].state != 3 && packet.mapData.boardData[j + 1][i].state != 40))
+                Player->x = Player->x - 1;
+        }
+    }
+    else if (Player->direction == DIR_DOWN)
+    {
+        int i = (Player->x - 30) / 60;
+        int j = (Player->y - 65) / 60;
+        if (packet.mapData.boardData[j + 1][i].state == 2 || packet.mapData.boardData[j + 1][i].state == 3 || packet.mapData.boardData[j + 1][i].state == 40)
+        {
+            Player->y = j * 60 + 65;
+            i = (Player->x + 60 - 30) / 60;
+            if (Player->x % 60 <= 30 && Player->x % 60 >= 10 && (packet.mapData.boardData[j + 1][i].state != 2 && packet.mapData.boardData[j + 1][i].state != 3 && packet.mapData.boardData[j + 1][i].state != 40) && (packet.mapData.boardData[j - 1][i].state != 2 && packet.mapData.boardData[j - 1][i].state != 3 && packet.mapData.boardData[j - 1][i].state != 40))
+                Player->x = Player->x + 1;
+        }
+        i = (Player->x + 60 - 30) / 60;
+        if ((packet.mapData.boardData[j + 1][i].state == 2 || packet.mapData.boardData[j + 1][i].state == 3 || packet.mapData.boardData[j + 1][i].state == 40) && Player->x % 60 != 30)
+        {
+            Player->y = j * 60 + 65;
+            i = (Player->x - 30) / 60;
+            if (Player->x % 60 <= 50 && Player->x % 60 >= 30 && (packet.mapData.boardData[j + 1][i].state != 2 && packet.mapData.boardData[j + 1][i].state != 3 && packet.mapData.boardData[j + 1][i].state != 40) && (packet.mapData.boardData[j - 1][i].state != 2 && packet.mapData.boardData[j - 1][i].state != 3 && packet.mapData.boardData[j - 1][i].state != 40))
+                Player->x = Player->x - 1;
+        }
+    }*/
 }

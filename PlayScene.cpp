@@ -40,7 +40,7 @@ void CPlayScene::Update(float fTimeElapsed)
 	// TODO : Play Scene Update
 	// 1. playerData의 방향벡터에 따라 움직인다.
 	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
-	MAP->Update(receivedPacket, fTimeElapsed);
+	MAP->Update(receivedPacket, fTimeElapsed);	
 
 	// 서버로 키 입력 버퍼 데이터들을 보낸다
 }
