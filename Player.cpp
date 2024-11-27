@@ -134,16 +134,7 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 			if (xPos >= 616) xPos = 0;
 		}
 	}
-	receivedPacket.playerData[ID].ApplyToPlayer(this);
-	//if (ID == 0)		// TODO : Player1의 업데이트
-	//{
-	//	receivedPacket.playerData[ID].ApplyToPlayer(this);
-	//	
-	//}
-	//else if (ID == 1)			// TODO : Player2의 업데이트
-	//{
-	//	receivedPacket.playerData[1].ApplyToPlayer(this);
-	//}
+	receivedPacket.playerData[ID].ApplyToPlayer(this);		// Player Update
 
 }
 

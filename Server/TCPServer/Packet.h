@@ -9,6 +9,8 @@ public:
     int			direction;		// 캐릭터의 방향
     int			state;			// 캐릭터의 상태
     bool		stop;			// 캐릭터 정지 유무
+    //CBallon* ballon[6];		    // 물풍선
+
 
     void LoadFromPlayer(const CPlayer* player)
     {
@@ -34,6 +36,12 @@ public:
     }
 };
 
+class BoardData {
+public:
+    int state;
+    int block;
+};
+
 typedef struct CS_PlayerInputPacket {
     int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState;           // 입력한 Key 의 값
@@ -41,4 +49,5 @@ typedef struct CS_PlayerInputPacket {
 
 typedef struct SC_PlayersInfoPacket {
     PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다.
+    //BoardData  boardData;               // 클라이언트에게 Board의 데이터를 보낸다.
 } SC_PlayersInfoPacket;

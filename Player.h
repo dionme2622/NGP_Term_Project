@@ -24,7 +24,7 @@ public:
 	int			direction;		// 캐릭터의 방향
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
-	//CBallon*	ballon[6];		// 물풍선
+	CBallon*	ballon[6];		// 물풍선
 
 	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표

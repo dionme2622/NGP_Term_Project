@@ -14,7 +14,7 @@ public:
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 	
-	CPlayer* Getplayer(int i) { return playerData[i]; }
+	CPlayer* Getplayer(int i) { return player[i]; }
 	CBoard GetBoard(int i, int j) { return Board[i][j]; }
 
 	void SetBallon();
@@ -23,7 +23,7 @@ public:
 
 protected:
 	CBoard			Board[13][15];
-	CPlayer*		playerData[2];
+	CPlayer*		player[2];
 	HINSTANCE		hInst;
 
 private:

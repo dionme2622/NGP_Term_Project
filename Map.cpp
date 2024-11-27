@@ -18,7 +18,7 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		//
 	//	}
 	//}
 
-	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다. 
+	for (int i = 0; i < 13; i++)			
 	{
 		for (int j = 0; j < 15; j++)
 		{
@@ -26,8 +26,8 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		//
 			Board[i][j].SetState(1);
 		}
 	}
-	playerData[0] = new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
-	playerData[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
+	player[0] =  new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
+	player[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
@@ -73,11 +73,11 @@ void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 	}
 
 	for (int i = 0; i < 2; ++i) {
-		BallonBoom(playerData[i], 0);
-		BallonBoom(playerData[i], 1);
-		BallonBoom(playerData[i], 2);
-		BallonBoom(playerData[i], 3);
-		BallonBoom(playerData[i], 4);
+		BallonBoom(player[i], 0);
+		BallonBoom(player[i], 1);
+		BallonBoom(player[i], 2);
+		BallonBoom(player[i], 3);
+		BallonBoom(player[i], 4);
 	}
 	//printf("beforecount: %d\n", playerData->GetBallon(0)->beforeboomcount);
 }
@@ -319,9 +319,13 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 	// TODO : Map이 Village일 때 초기화
 	CMap::Initialize(_hInst, receivedPacket);
 
-
-	//printf("playerData x: %d, y: %d\n", playerData->x, playerData->y);
-	//playerData->SetPosition((Board[11][13].x), (Board[11][13].y));
+	//for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
+	//{
+	//	for (int j = 0; j < 15; j++)
+	//	{
+	//		Board[i][j].SetState(receivedPacket.boardData.state);
+	//	}
+	//}
 
 	for (int i = 2; i < 13; i++)
 	{
@@ -536,7 +540,7 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 	if (Board[10][9].GetState() == 1) TransparentBlt(MemDC, Board[10][9].x, Board[10][9].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 	if (Board[10][12].GetState() == 1) TransparentBlt(MemDC, Board[10][12].x, Board[10][12].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 
-	for(int i = 0; i < 2; i++) playerData[i]->Render(MemDC, MemDCImage, this);
+	for(int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 	CMap::Render(MemDC, MemDCImage);
 
 }
@@ -544,7 +548,7 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 void CVillage::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	CMap::Update(receivedPacket, fTimeElapsed);
-	for (int i = 0; i < 2; i++) playerData[i]->Update(receivedPacket, fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 
 
@@ -804,12 +808,12 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	(HBITMAP)SelectObject(MemDCImage, obstacle_pirate); // 장애물
 	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
 
-	for (int i = 0; i < 2; i++) playerData[i]->Render(MemDC, MemDCImage, this);
+	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 }
 
 void CPirate::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	CMap::Update(receivedPacket, fTimeElapsed);
-	for (int i = 0; i < 2; i++) playerData[i]->Update(receivedPacket, fTimeElapsed);
+	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 

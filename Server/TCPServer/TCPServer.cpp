@@ -23,46 +23,80 @@ std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
 
 CS_PlayerInputPacket recvPacket;
 
+static int num = 0;
+
+
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
     char buf[BUFSIZE];
- 
     int retval;
 
+    // 소켓을 비블로킹 모드로 설정
+    u_long mode = 1; // 1 = 비블로킹
+    ioctlsocket(client_sock, FIONBIO, &mode);
+
+    // 주기적으로 num 값을 증가시키기 위한 시간 체크 변수
+    auto last_time = std::chrono::steady_clock::now();
+
     while (1) {
+        // 현재 시간 확인
+        auto now = std::chrono::steady_clock::now();
+
+        // 1초(1000ms)가 경과하면 num 증가
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time).count() >= 10) {
+            num++;
+            printf("num 증가: %d\n", num);
+
+            if (recvPacket.keyState == DIR_DOWN) player[0]->SetDirection(DIR_DOWN), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_LEFT) player[0]->SetDirection(DIR_LEFT), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
+            else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
+
+            for (int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
+            for (int i = 0; i < 2; i++) playerData[i]->LoadFromPlayer(player[i]);
+
+            last_time = now; // 마지막 시간을 현재 시간으로 업데이트
+        }
+
         // 방향키 값 수신
         retval = recv(client_sock, (char*)&recvPacket, sizeof(recvPacket), 0);
-        if (retval == SOCKET_ERROR || retval == 0) {
+
+        if (retval == SOCKET_ERROR) {
+            int err = WSAGetLastError();
+            if (err == WSAEWOULDBLOCK) {
+                // 비블로킹 모드에서 데이터를 기다리는 중
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                continue; // 다른 작업 없이 다시 루프 실행
+            }
+            else {
+                printf("클라이언트 연결 종료 (에러: %d)\n", err);
+                break;
+            }
+        }
+        else if (retval == 0) {
+            // 연결 종료
             printf("클라이언트 연결 종료\n");
             break;
         }
-        else if (retval == 0) {
-            break; // 연결 종료
+        else {
+            // 데이터를 정상적으로 수신
+            printf("키 입력: %d\n", recvPacket.keyState);
         }
-        printf("키 입력: %d", recvPacket.keyState);
-        //system("cls");
-        buf[retval] = '\0'; // 수신한 문자열 종료 처리
-       
     }
 
-    // 연결 종료 시 소켓 닫기 및 리스트에서 제거
-    closesocket(client_sock);
-    clientMutex.lock();
-    clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
-    clientMutex.unlock();
-    printf("클라이언트 처리 종료\n");
     return 0;
 }
 
-static int num = 0;
+
+
 
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
     while (1) {
         m_GameTimer.Tick(120.0f);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 100ms 간격으로 실행
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 100ms 간격으로 실행
         //num++;
         //printf("%d", num);
         // 패킷 데이터 생성
@@ -70,42 +104,19 @@ void GameLogicThread() {
         memcpy(&packet.playerData[0], playerData[0], sizeof(PlayerData));
         memcpy(&packet.playerData[1], playerData[1], sizeof(PlayerData));
 
-        
+
         // 클라이언트 목록 순회하며 데이터 전송
         clientMutex.lock();
         player[0]->stop = true;
         player[1]->stop = true;
 
-        if (recvPacket.playerID == 0)       // TODO : Player1의 조작
-        {
-            if (recvPacket.keyState == DIR_DOWN) player[0]->SetDirection(DIR_DOWN), player[0]->stop = false;
-            else if (recvPacket.keyState == DIR_LEFT) player[0]->SetDirection(DIR_LEFT), player[0]->stop = false;
-            else if (recvPacket.keyState == DIR_RIGHT) player[0]->SetDirection(DIR_RIGHT), player[0]->stop = false;
-            else if (recvPacket.keyState == DIR_UP) player[0]->SetDirection(DIR_UP), player[0]->stop = false;
-        }
-        else if(recvPacket.playerID == 1)                               // TODO : Player2의 조작
-        {
-            if (recvPacket.keyState == DIR_DOWN) player[1]->SetDirection(DIR_DOWN), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_LEFT) player[1]->SetDirection(DIR_LEFT), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_RIGHT) player[1]->SetDirection(DIR_RIGHT), player[1]->stop = false;
-            else if (recvPacket.keyState == DIR_UP) player[1]->SetDirection(DIR_UP), player[1]->stop = false;
-        }
 
-        /*if (recvPacket.keyState == DIR_DOWN) player[recvPacket.playerID]->SetDirection(DIR_DOWN), player[recvPacket.playerID]->stop = false;
-        else if (recvPacket.keyState == DIR_LEFT) player[recvPacket.playerID]->SetDirection(DIR_LEFT), player[recvPacket.playerID]->stop = false;
-        else if (recvPacket.keyState == DIR_RIGHT) player[recvPacket.playerID]->SetDirection(DIR_RIGHT), player[recvPacket.playerID]->stop = false;
-        else if (recvPacket.keyState == DIR_UP) player[recvPacket.playerID]->SetDirection(DIR_UP), player[recvPacket.playerID]->stop = false;*/
-        
-        for(int i = 0; i < 2; i++) player[i]->Move(m_GameTimer.GetTimeElapsed());
-        for(int i = 0; i < 2; i++) playerData[i]->LoadFromPlayer(player[i]);
-
-        //player[0]->Update(0.03f);
 
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
             //printf("packet size : %d\r", packet.player[1].direction);
-            
+
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
