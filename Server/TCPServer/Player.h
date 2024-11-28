@@ -6,16 +6,16 @@ class CBallon
 public:
 	CBallon() {
 		state = 0;
-		beforeboomcount = 0;
-		startboomcount = 0;
+		beforeboomcount = 0.0f;
+		startboomcount = 0.0f;
 	};
 	~CBallon() {};
 
 public:
 	int			x, y;
 	int			state;   //			0가지고 있는거      1 처음 설치할떄			 2 펑!
-	int			beforeboomcount;
-	int			startboomcount;
+	float		beforeboomcount;
+	float		startboomcount;
 
 public:
 	int GetState() { return state; }

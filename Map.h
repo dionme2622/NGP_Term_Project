@@ -7,7 +7,7 @@
 class CMap
 {
 public:
-	CMap() {};
+	CMap();
 	~CMap() {};
 
 	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
@@ -17,10 +17,6 @@ public:
 	CPlayer* Getplayer(int i) { return player[i]; }
 	CBoard GetBoard(int i, int j) { return Board[i][j]; }
 
-	void SetBallon();
-
-	void BallonBoom(CPlayer* playerData, int num);
-
 protected:
 	CBoard			Board[13][15];
 	CPlayer*		player[2];
@@ -28,12 +24,15 @@ protected:
 
 private:
 	// Attribute
-	int xPos, yPos;
-	float xPosF, yPosF;
+	int xPos;
+	float xPosF;
 
+	int Item_xPos;
+	float Item_xPosF;
 
 	// Resource
 	HBITMAP BallonBitmap[2];
+	HBITMAP ItemBitmap;
 };
 
 class CVillage : public CMap

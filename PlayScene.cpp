@@ -31,7 +31,6 @@ void CPlayScene::ProcessInput()
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
 
-	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : playerData ¹°Ç³¼± ¼³Ä¡
 
 }
 

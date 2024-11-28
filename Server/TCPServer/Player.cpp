@@ -33,8 +33,6 @@ void CPlayer::SetPosition(float _fx, float _fy)
 
 void CPlayer::Move(float fTimeElapsed)
 {
-	
-
 	//if (!GetStop())
 	//{
 	//	if (direction == DIR_DOWN) fy += speed * fTimeElapsed;			// down

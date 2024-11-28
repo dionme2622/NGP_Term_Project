@@ -7,8 +7,10 @@
 #include <chrono>
 #include "Packet.h"
 
-#define SERVERPORT 9000
-#define BUFSIZE    50
+#define SERVERPORT      9000
+#define BUFSIZE         50
+#define BEFOREBOOMCOUNT 1.5f
+#define STARTBOOMCOUNT  0.5f
 
 CGameTimer m_GameTimer;
 int dir = 0;
@@ -29,10 +31,10 @@ SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
 void Initialize();
 void PlayerMeetObstacle(CPlayer* Player);
 void PlayerGetItem(CPlayer* Player);
-void BallonBoom(CPlayer* Player, int num);
+void BallonBoom(CPlayer* Player, int num, float fTimeElapsed);
 
 std::default_random_engine dre;
-std::uniform_int_distribution<int> uid{ 1,9 };
+std::uniform_int_distribution<int> uid{ 3,8 };
 
 int ObstacleBreak[13][15];
 
@@ -111,13 +113,13 @@ void GameLogicThread() {
             player[playerID]->Move(m_GameTimer.GetTimeElapsed());
             PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
             PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
-            BallonBoom(player[playerID], 0);
-            BallonBoom(player[playerID], 1);
-            BallonBoom(player[playerID], 2);
-            BallonBoom(player[playerID], 3);
-            BallonBoom(player[playerID], 4);
-            BallonBoom(player[playerID], 5);
-
+            BallonBoom(player[playerID], 0, m_GameTimer.GetTimeElapsed());
+            BallonBoom(player[playerID], 1, m_GameTimer.GetTimeElapsed());
+            BallonBoom(player[playerID], 2, m_GameTimer.GetTimeElapsed());
+            BallonBoom(player[playerID], 3, m_GameTimer.GetTimeElapsed());
+            BallonBoom(player[playerID], 4, m_GameTimer.GetTimeElapsed());
+            BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
+                                         
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
         }
@@ -360,8 +362,9 @@ void PlayerGetItem(CPlayer* Player)
 
     if (packet.mapData.boardData[j][i].state == 6)		// 이동속도 아이템
     {
-        if (Player->speed < 10)
-            Player->speed += 10;
+        if (Player->speed < 200)
+            Player->speed += 20;
+        printf("Player speed : %d\n", Player->speed);
         packet.mapData.boardData[j][i].state = 1;
 
     }
@@ -379,21 +382,21 @@ void PlayerGetItem(CPlayer* Player)
     }
 }
 
-void BallonBoom(CPlayer* Player, int num)
+void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
 {
     ////물풍선 놓고 터지기 전
     if (Player->ballon[num]->GetState() == 1)
     {
     	if (packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].state == 5)
-    		Player->ballon[num]->beforeboomcount = 70;
-    	if (Player->ballon[num]->beforeboomcount < 70)
-    		Player->ballon[num]->beforeboomcount++;
+    		Player->ballon[num]->beforeboomcount = BEFOREBOOMCOUNT;
+    	if (Player->ballon[num]->beforeboomcount < BEFOREBOOMCOUNT)     // 풍선은 1.5초가 지나면 터진다
+    		Player->ballon[num]->beforeboomcount += fTimeElapsed;
     	else
     		Player->ballon[num]->SetState(2);
     }
     else if (Player->ballon[num]->GetState() == 2)
     {
-    	if (Player->ballon[num]->startboomcount < 50)
+    	if (Player->ballon[num]->startboomcount < STARTBOOMCOUNT)       // 폭발의 지속시간은 0.5초 이다
     	{
     		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
     		for (int j = 1; j < Player->GetBallonLength(); j++) // right
@@ -445,11 +448,11 @@ void BallonBoom(CPlayer* Player, int num)
     				break;
 
     		}
-    		Player->ballon[num]->beforeboomcount = 0;
-    		Player->ballon[num]->startboomcount++;
+    		Player->ballon[num]->beforeboomcount = 0.0f;
+    		Player->ballon[num]->startboomcount += fTimeElapsed;
     	}
 
-    	if (Player->ballon[num]->startboomcount >= 50) 
+    	if (Player->ballon[num]->startboomcount >= STARTBOOMCOUNT)
     	{
     		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
     		for (int j = 1; j < Player->GetBallonLength(); j++)
@@ -513,7 +516,7 @@ void BallonBoom(CPlayer* Player, int num)
     				break;
 
     		}
-    		Player->ballon[num]->startboomcount++;
+    		Player->ballon[num]->startboomcount += fTimeElapsed;
     		Player->ballon[num]->SetState(0);
     		for (int i = 0; i < 15; i++)
     			for (int j = 0; j < 13; j++)
@@ -526,8 +529,6 @@ void BallonBoom(CPlayer* Player, int num)
     						packet.mapData.boardData[j][i].SetState(7);
     					else if (n == 8)
     						packet.mapData.boardData[j][i].SetState(8);
-    					else if (n == 9)
-    						packet.mapData.boardData[j][i].SetState(9);
     					else
     						packet.mapData.boardData[j][i].SetState(1);
     				}
@@ -581,7 +582,7 @@ void BallonBoom(CPlayer* Player, int num)
     			else if (packet.mapData.boardData[y][x].state == 3)
     				break;
     		}
-    		Player->ballon[num]->startboomcount = 0;
+    		Player->ballon[num]->startboomcount = 0.0f;
     	}
     }
 }

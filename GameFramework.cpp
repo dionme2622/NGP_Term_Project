@@ -29,7 +29,7 @@ CGameFramework::CGameFramework()
 	// 소켓 주소 구조체 초기화
 	memset(&remoteAddr, 0, sizeof(remoteAddr));
 	remoteAddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "10.220.29.218", &remoteAddr.sin_addr);
+	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
 	remoteAddr.sin_port = htons(SERVERPORT);
 	// 서버 연결
 	if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
