@@ -12,6 +12,7 @@
 
 #include "tchar.h"
 #include "random"
+#include "map"
 #pragma comment (lib, "msimg32.lib")
 #pragma comment(lib, "Ws2_32.lib")  // Winsock 라이브러리 추가
 
@@ -29,6 +30,7 @@
 #define DIR_UP			38
 #define DIR_DOWN		40
 #define DIR_STOP		48
+#define SPACE			32
 enum {
 	LIVE = 0, DAMAGE, DEAD, ESCAPE
 };

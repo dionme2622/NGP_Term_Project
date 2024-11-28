@@ -183,6 +183,7 @@
     <Image Include="Image\effect\bubble.bmp" />
     <Image Include="Image\effect\Explosion.bmp" />
     <Image Include="Image\effect\solo_player.bmp" />
+    <Image Include="Image\item\Item.bmp" />
     <Image Include="Image\tile\Ship\map_pirate_tile6.bmp" />
     <Image Include="Image\tile\Tile_pirate.bmp" />
     <Image Include="Image\tile\Tile_town.bmp" />

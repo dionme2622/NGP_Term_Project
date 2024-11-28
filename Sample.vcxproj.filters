@@ -255,5 +255,8 @@
     <Image Include="Image\effect\Explosion.bmp">
       <Filter>Resource\Character</Filter>
     </Image>
+    <Image Include="Image\item\Item.bmp">
+      <Filter>Resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>

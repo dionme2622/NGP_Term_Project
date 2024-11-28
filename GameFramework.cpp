@@ -43,7 +43,6 @@ CGameFramework::CGameFramework()
 	int retval;
 	retval = recv(sock, (char*)&sendPacket.playerID, sizeof(sendPacket.playerID), 0); // 방향키 데이터 수신
 
-
 	CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
 	CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
 

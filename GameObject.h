@@ -66,7 +66,6 @@ private:
 	int state;				// 1이면 일반타일, 2이면 블록, 3이면 장애물, 6: 신발아이템, 7: 물줄기아이템, 8: 물풍선아이템
 	int block;				// 뭔지 모름
 
-	RECT		boundingBox;
 };
 
 
@@ -83,6 +82,5 @@ public:
 	virtual void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 public:
-	RECT		boundingBox;
 
 };

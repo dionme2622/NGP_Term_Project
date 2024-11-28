@@ -7,31 +7,34 @@ std::uniform_int_distribution<int> uid{ 1,9 };
 int ObstacleBreak[13][15];
 
 
+CMap::CMap()
+{
+	xPos = 0;
+	xPosF = 0.0f;
+
+	Item_xPos = 0;
+	Item_xPosF = 0.0f;
+}
+
 void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-	// TODO : 서버로부터 받은 맵 상태 데이터로 초기화
-	//for (int i = 0; i < 13; i++) {
-	//	for (int j = 0; j < 15; j++) {
-	//		Board[i][j].SetPosition((j * 60 + 30), (i * 60 + 65));
-	//		Board[i][j].SetState(initPacket->mapState[i][j]);  // 서버 데이터 적용
-	//	}
-	//}
 
-	for (int i = 0; i < 13; i++)					// TODO : 여기서 맵의 초기화 데이터를 서버로 부터 받아야 한다. 
+	for (int i = 0; i < 13; i++)			
 	{
 		for (int j = 0; j < 15; j++)
 		{
 			Board[i][j].SetPosition((j * 60 + 30), (i * 60 + 65));
-			Board[i][j].SetState(1);
 		}
 	}
-	player[0] = new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
-	player[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 player 객체를 생성한다.
+	player[0] =  new CPlayer(_hInst, receivedPacket, 0);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
+	player[1] = new CPlayer(_hInst, receivedPacket, 1);					// TODO : 여기서 플레이어의 초기화 데이터를 서버로부터 받은 후 playerData 객체를 생성한다.
 
 	// Resource
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
 	BallonBitmap[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Explosion));
+	ItemBitmap		= LoadBitmap(hInst, MAKEINTRESOURCE(IDB_ITEM));
+
 }
 
 void CMap::Render(HDC MemDC, HDC MemDCImage)
@@ -60,6 +63,26 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 			}
 		}
 	}
+
+	(HBITMAP)SelectObject(MemDCImage, ItemBitmap);			// Item
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			if (Board[i][j].GetState() == 6)
+			{
+				TransparentBlt(MemDC, Board[i][j].x + 10, Board[i][j].y + 10, 40, 40, MemDCImage, Item_xPos, 45, 42, 45, RGB(255, 0, 255));		// 이동속도
+			}
+			else if (Board[i][j].GetState() == 7)
+			{
+				TransparentBlt(MemDC, Board[i][j].x + 10, Board[i][j].y + 10, 40, 40, MemDCImage, Item_xPos, 90, 42, 45, RGB(255, 0, 255));		// 물풍선 길이
+			}
+			else if (Board[i][j].GetState() == 8)
+			{
+				TransparentBlt(MemDC, Board[i][j].x + 10, Board[i][j].y + 10, 40, 40, MemDCImage, Item_xPos, 0, 42, 45, RGB(255, 0, 255));		// 물풍선 갯수
+			}
+		}
+	}
 }
 
 void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
@@ -72,243 +95,14 @@ void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 			xPos = 0;
 	}
 
-	for (int i = 0; i < 2; ++i) {
-		BallonBoom(player[i], 0);
-		BallonBoom(player[i], 1);
-		BallonBoom(player[i], 2);
-		BallonBoom(player[i], 3);
-		BallonBoom(player[i], 4);
+	Item_xPosF += 42 * 10 * fTimeElapsed;
+	while (Item_xPosF >= 42.0f) {
+		Item_xPosF = 0;
+		Item_xPos += 42;
+		if (Item_xPos >= 126)
+			Item_xPos = 0;
 	}
-	//printf("beforecount: %d\n", player->GetBallon(0)->beforeboomcount);
 }
-
-void CMap::SetBallon()
-{
-	/*for (int j = 0; j < 2; ++j) {
-		if (player[j]->GetState() == DAMAGE) return;
-		for (int i = 0; i < player[j]->GetBallonNum(); i++)
-		{
-			if (player[j]->GetBallon(i)->GetState() == 0)
-			{
-				player[j]->GetBallon(i)->x = (player[j]->x + 30 - 30) / 60 * 60;
-				player[j]->GetBallon(i)->y = (player[j]->y + 30 - 65) / 60 * 60;
-				if (Board[player[j]->GetBallon(i)->y / 60][player[j]->GetBallon(i)->x / 60].GetState() == 1)
-				{
-					player[j]->GetBallon(i)->SetState(1);
-					Board[player[j]->GetBallon(i)->y / 60][player[j]->GetBallon(i)->x / 60].SetState(4);
-				}
-			}
-		}
-	}*/
-}
-
-void CMap::BallonBoom(CPlayer* player, int num)
-{
-	////물풍선 놓고 터지기 전
-	//if (player->GetBallon(num)->GetState() == 1)
-	//{
-	//	if (Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].GetState() == 5)
-	//		player->GetBallon(num)->beforeboomcount = 70;
-	//	if (player->GetBallon(num)->beforeboomcount < 70)
-	//		player->GetBallon(num)->beforeboomcount++;
-	//	else
-	//		player->GetBallon(num)->SetState(2);
-	//}
-	//else if (player->GetBallon(num)->GetState() == 2)
-	//{
-	//	if (player->GetBallon(num)->startboomcount < 50)
-	//	{
-	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
-	//		for (int j = 1; j < player->GetBallonLength(); j++) // right
-	//		{
-	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (x < 0 || x == 15)
-	//				break;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++)   // left
-	//		{
-	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (x < 0 || x == 15)
-	//				break;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++)   // up
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++) // down
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-
-	//		}
-	//		player->GetBallon(num)->beforeboomcount = 0;
-	//		player->GetBallon(num)->startboomcount++;
-	//	}
-
-	//	if (player->GetBallon(num)->startboomcount >= 50) // TODO : 잔상이 남는부분 고쳐야 함
-	//	{
-	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(5);
-	//		for (int j = 1; j < player->GetBallonLength(); j++)
-	//		{
-	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (x < 0 || x == 15)
-	//				break;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//			{
-	//				ObstacleBreak[y][x] = 1;
-	//				break;
-	//			}
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++)
-	//		{
-	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (x < 0 || x == 15)
-	//				break;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//			{
-	//				ObstacleBreak[y][x] = 1;
-	//				break;
-	//			}
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++)
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//			{
-	//				ObstacleBreak[y][x] = 1;
-	//				break;
-	//			}
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j < player->GetBallonLength(); j++)
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 1 || Board[y][x].GetState() == 4 || Board[y][x].GetState() == 40 || Board[y][x].GetState() == 6 || Board[y][x].GetState() == 7 || Board[y][x].GetState() == 8 || Board[y][x].GetState() == 9)
-	//				Board[y][x].SetState(5);
-	//			else if (Board[y][x].GetState() == 2)
-	//			{
-	//				ObstacleBreak[y][x] = 1;
-	//				break;
-	//			}
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-
-	//		}
-	//		player->GetBallon(num)->startboomcount++;
-	//		player->GetBallon(num)->SetState(0);
-	//		for (int i = 0; i < 15; i++)
-	//			for (int j = 0; j < 13; j++)
-	//				if (ObstacleBreak[j][i] == 1)
-	//				{
-	//					int n = uid(dre);
-	//					if (n == 6)
-	//						Board[j][i].SetState(6);
-	//					else if (n == 7)
-	//						Board[j][i].SetState(7);
-	//					else if (n == 8)
-	//						Board[j][i].SetState(8);
-	//					else if (n == 9)
-	//						Board[j][i].SetState(9);
-	//					else
-	//						Board[j][i].SetState(1);
-	//				}
-	//		for (int i = 0; i < 15; i++)
-	//			for (int j = 0; j < 13; j++)
-	//				ObstacleBreak[j][i] = 0;
-	//		Board[(player->GetBallon(num)->y) / 60][(player->GetBallon(num)->x) / 60].SetState(1);
-	//		for (int j = 1; j <= player->GetBallonLength(); j++)
-	//		{
-	//			int x = ((player->GetBallon(num)->x) + 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (Board[y][x].GetState() == 5)
-	//				Board[y][x].SetState(1);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j <= player->GetBallonLength(); j++)
-	//		{
-	//			int x = ((player->GetBallon(num)->x) - 60 * j) / 60;
-	//			int y = (player->GetBallon(num)->y) / 60;
-	//			if (x < 0 || x == 15)
-	//				break;
-	//			if (Board[y][x].GetState() == 5)
-	//				Board[y][x].SetState(1);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j <= player->GetBallonLength(); j++)
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) + 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 5)
-	//				Board[y][x].SetState(1);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		for (int j = 1; j <= player->GetBallonLength(); j++)
-	//		{
-	//			int x = (player->GetBallon(num)->x) / 60;
-	//			int y = ((player->GetBallon(num)->y) - 60 * j) / 60;
-	//			if (Board[y][x].GetState() == 5)
-	//				Board[y][x].SetState(1);
-	//			else if (Board[y][x].GetState() == 2)
-	//				break;
-	//			else if (Board[y][x].GetState() == 3)
-	//				break;
-	//		}
-	//		player->GetBallon(num)->startboomcount = 0;
-	//	}
-	//}
-}
-
 
 /// <summary>
 /// Village Map
@@ -319,52 +113,13 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 	// TODO : Map이 Village일 때 초기화
 	CMap::Initialize(_hInst, receivedPacket);
 
-
-	//printf("player x: %d, y: %d\n", player->x, player->y);
-	//player->SetPosition((Board[11][13].x), (Board[11][13].y));
-
-	for (int i = 2; i < 13; i++)
+	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
 	{
-		Board[0][i].SetState(2);
-		Board[12][i].SetState(2);
+		for (int j = 0; j < 15; j++)
+		{
+			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
+		}
 	}
-	for (int i = 4; i < 11; i++)
-	{
-		Board[1][i].SetState(2);
-		Board[11][i].SetState(2);
-	}
-	Board[1][1].SetState(3); Board[1][3].SetState(3); Board[1][11].SetState(3); Board[1][13].SetState(3);
-	Board[3][1].SetState(3); Board[3][3].SetState(3); Board[3][11].SetState(3); Board[3][13].SetState(3);
-	Board[5][1].SetState(3); Board[5][3].SetState(3); Board[5][11].SetState(3); Board[5][13].SetState(3);
-	Board[5][1].SetState(3); Board[5][3].SetState(3); Board[5][11].SetState(3); Board[5][13].SetState(3);
-	Board[7][1].SetState(3); Board[7][3].SetState(3); Board[7][11].SetState(3); Board[7][13].SetState(3);
-	Board[6][5].SetState(3); Board[6][7].SetState(3); Board[6][9].SetState(3);	Board[10][9].SetState(3);
-	Board[9][1].SetState(3); Board[9][3].SetState(3); Board[9][11].SetState(3); Board[9][13].SetState(3);
-	Board[4][6].SetState(3); Board[4][8].SetState(3); Board[8][6].SetState(3);	Board[8][8].SetState(3);
-
-	for (int i = 0; i < 5; i++)
-	{
-		Board[2][i].SetState(2);
-		Board[4][i].SetState(2);
-		Board[8][i].SetState(2);
-		Board[10][i].SetState(2);
-	}
-	for (int i = 10; i < 15; i++)
-	{
-		Board[2][i].SetState(2);
-		Board[4][i].SetState(2);
-		Board[8][i].SetState(2);
-		Board[10][i].SetState(2);
-	}
-	Board[3][0].SetState(2); Board[3][5].SetState(2); Board[3][9].SetState(2); Board[3][14].SetState(2);
-	Board[10][0].SetState(2); Board[10][5].SetState(2); Board[10][9].SetState(2); Board[10][14].SetState(2);
-	for (int i = 5; i < 10; i++)
-	{
-		Board[5][i].SetState(2);
-		Board[7][i].SetState(2);
-	}
-	Board[10][2].SetState(1); Board[10][5].SetState(1); Board[10][9].SetState(1); Board[10][12].SetState(1);
-
 
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Village_Tile));
@@ -381,16 +136,6 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
 }
 void CVillage::Render(HDC MemDC, HDC MemDCImage)
 {	
-
-	for (int i = 0; i < 13; i++)
-	{
-		for (int j = 0; j < 15; j++)
-		{
-			//printf("%d \n", Board[i][j].GetState());
-		//	if (Board[i][j].GetState() == 4) printf("4444\n");
-		}
-	}
-
 	(HBITMAP)SelectObject(MemDCImage, TileBitmap); //--- 배경 이미지
 	for (int i = 0; i < 13; i++)
 	{
@@ -544,6 +289,14 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 void CVillage::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	CMap::Update(receivedPacket, fTimeElapsed);
+
+	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
+		}
+	}
 	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 

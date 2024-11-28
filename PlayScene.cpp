@@ -16,7 +16,7 @@ CPlayScene::~CPlayScene()
 
 void CPlayScene::Initialize()
 {
-	// TODO : Bitmap, Map, player의 데이터를 Initialize 한다.
+	// TODO : Bitmap, Map, playerData의 데이터를 Initialize 한다.
 	
 	MAP->Initialize(hInst, receivedPacket);		// 선택된 Map의 Initialize
 
@@ -36,15 +36,7 @@ void CPlayScene::ProcessInput()
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
 
-	//bool stop = true;
-	// TODO : player의 방향 벡터를 설정한다.
-	/*if (pKeysBuffer[VK_UP] & 0xF0) MAP->Getplayer()->SetDirection(DIR_UP), stop = false;
-	if (pKeysBuffer[VK_DOWN] & 0xF0) MAP->Getplayer()->SetDirection(DIR_DOWN), stop = false;
-	if (pKeysBuffer[VK_LEFT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_LEFT), stop = false;
-	if (pKeysBuffer[VK_RIGHT] & 0xF0) MAP->Getplayer()->SetDirection(DIR_RIGHT), stop = false;*/
-	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : player 물풍선 설치
 
-	//MAP->Getplayer()->SetStop(stop);
 }
 
 int CPlayScene::GetPressedKeysAsChar()
@@ -75,9 +67,9 @@ int CPlayScene::GetPressedKey()
 void CPlayScene::Update(float fTimeElapsed)
 {
 	// TODO : Play Scene Update
-	// 1. player의 방향벡터에 따라 움직인다.
+	// 1. playerData의 방향벡터에 따라 움직인다.
 	// 2. Bitmap의 좌표를 움직여서 애니메이션을 넣는다.
-	MAP->Update(receivedPacket, fTimeElapsed);
+	MAP->Update(receivedPacket, fTimeElapsed);	
 
 	// 서버로 키 입력 버퍼 데이터들을 보낸다
 }
@@ -95,7 +87,7 @@ void CPlayScene::Render()
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 
 	MAP->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
-	//player->Render(MemDC, MemDCImage);		// player Render
+	//playerData->Render(MemDC, MemDCImage);		// playerData Render
 
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);

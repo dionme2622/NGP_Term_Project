@@ -24,8 +24,7 @@ public:
 	int			direction;		// 캐릭터의 방향
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
-	int			count;			// 뭔지 모름
-	//CBallon*	ballon[6];		// 물풍선
+	CBallon*	ballon[6];		// 물풍선
 
 	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표
@@ -33,7 +32,7 @@ public:
 private:
 	HBITMAP MainBitmap[9];
 public:
-	void SetDirection(int);			// player의 방향벡터를 설정하는 함수
+	void SetDirection(int);			// playerData의 방향벡터를 설정하는 함수
 	void SetPosition(int _x, int _y) { x = _x, y = _y, fx = (float)x, fy = (float)y; }
 	void SetPosition(float _fx, float _fy);
 	void SetState(int _state) { state = _state; }
@@ -47,10 +46,6 @@ public:
 	//CBallon* GetBallon(int i) { return ballon[i]; }
 
 	void Move(float fTimeElapsed);
-	//이건 뭐지
-	/*int count;
-	int player;
-	Ballon ballon[6];
-	Bullet bullet[3];*/
+	
 };
 
