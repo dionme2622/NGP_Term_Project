@@ -9,6 +9,8 @@ CPlayer::CPlayer()
 	state = LIVE;
 	ballon_length = 2;
 	ballon_num = 1;
+	
+	for (int i = 0; i < 6; i++) ballon[i] = new CBallon();
 }
 
 CPlayer::~CPlayer()

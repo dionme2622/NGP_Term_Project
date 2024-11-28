@@ -71,8 +71,6 @@ void GameLogicThread() {
         m_GameTimer.Tick(120.0f);
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 10ms 간격 실행
 
-        
-        
         // 모든 플레이어 상태 업데이트
         for (int playerID = 0; playerID < 2; ++playerID) {
             player[playerID]->stop = true;
@@ -84,11 +82,30 @@ void GameLogicThread() {
                 else if (keyState[playerID] == DIR_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
                 else if (keyState[playerID] == DIR_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
                 else if (keyState[playerID] == DIR_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
+                else if (keyState[playerID] == SPACE) {
+                    if (player[playerID]->state == DAMAGE) return;
+                    for (int i = 0; i < player[playerID]->ballon_num; i++)
+                    {
+                        if (player[playerID]->ballon[i]->state == 0)
+                        {
+                            player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
+                            player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
+                            if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
+                            {
+                                player[playerID]->ballon[i]->SetState(1);
+                                packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
+                            }
+                        }
+                    }
+                    printf("space!\n");
+
+                }
+                
             }
 
             // 캐릭터 이동
             player[playerID]->Move(m_GameTimer.GetTimeElapsed());
-            PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
+            //PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
             PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
@@ -108,7 +125,7 @@ void GameLogicThread() {
                 closesocket(client_sock);
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
             }
-        }
+        } 
         clientMutex.unlock();
     }
 }

@@ -30,6 +30,7 @@
 #define DIR_UP			38
 #define DIR_DOWN		40
 #define DIR_STOP		48
+#define SPACE			32
 enum {
 	LIVE = 0, DAMAGE, DEAD, ESCAPE
 };

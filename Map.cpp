@@ -504,6 +504,14 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 void CVillage::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	CMap::Update(receivedPacket, fTimeElapsed);
+
+	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
+		}
+	}
 	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 
