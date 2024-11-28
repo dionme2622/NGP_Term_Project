@@ -63,3 +63,5 @@ typedef struct SC_PlayersInfoPacket {
     MapData mapData;
     // Ballon Info
 } SC_PlayersInfoPacket;
+
+

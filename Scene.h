@@ -57,11 +57,9 @@ protected:
 	POINT					cursorPos;
 
 	CS_PlayerInputPacket	sendPacket;
-
-
+	SC_PlayersInfoPacket	receivedPacket;
 protected:
 	CGameFramework*			m_pGameFramework;
-	SC_PlayersInfoPacket	receivedPacket;
 
 public:
 	int*				currentscene;

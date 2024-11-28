@@ -1,5 +1,16 @@
 #pragma once
+#include "Map.h"
 #include "Scene.h"
+
+struct SSendLobbyPacket {
+	int selectedMap = 0;
+	bool nextSceneCall = 0;
+};
+
+struct SRecvLobbyPacket {
+	CMap recvMapData;
+	bool recvNextSceneCall = false;
+};
 
 class CLobbyScene : public CScene
 {
@@ -18,21 +29,21 @@ public:
 
 	void SelectMap();
 
-
-
-
 	virtual void SendData(SOCKET _sock);
 	virtual void ReceiveData(SOCKET _sock);
 
+
 private:
-	HBITMAP			 backgroundImage;
+	HBITMAP				 backgroundImage;
 
-	HBITMAP			 selecMapImage;
-	bool			 showSelectMap = false;
+	HBITMAP				 selecMapImage;
+	bool				 showSelectMap = false;
 
-	HBITMAP			 mapImage;
-	HBITMAP*		 mapImages;
+	HBITMAP				 mapImage;
+	HBITMAP*			 mapImages;
 
+	SSendLobbyPacket	 sendLobbyPacket;
+	SRecvLobbyPacket     recvLobbyPacket;
 };
 
 

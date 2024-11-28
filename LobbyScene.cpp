@@ -43,6 +43,11 @@ void CLobbyScene::ProcessInput()
 void CLobbyScene::Update(float fTimeElapsed)
 {
 	// TODO : Lobby Scene Update
+	if (recvLobbyPacket.recvNextSceneCall) {
+		//TODO
+		// ¸Ê ¹ÞÀº°É·Î ¾À ³Ñ±â±â
+		GetFramework()->SetCurScene(PLAYSCENE);
+	}
 }
 
 void CLobbyScene::Render()
@@ -90,6 +95,8 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
 							cursorPos.y > 370 && cursorPos.y < 520 ) {
 
+			//int mapData = 0;
+
 			if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapImage = mapImages[0];
 			else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3) mapImage = mapImages[1];
 			else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapImage = mapImages[2];
@@ -103,7 +110,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (mapImage && sendPacket.playerID == 0) {
 			if (cursorPos.x > 773 && cursorPos.x < 1055 &&
 				cursorPos.y > 753 && cursorPos.y < 831) {
-				//send()
+				sendLobbyPacket.nextSceneCall = true;
 			}
 		}
 		printf("%d, %d\n", cursorPos.x, cursorPos.y);
@@ -133,9 +140,14 @@ void CLobbyScene::SelectMap()
 	if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
 		cursorPos.y > 370 && cursorPos.y < 520) {
 
-		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapImage = mapImages[0];
-		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3) mapImage = mapImages[1];
-		else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapImage = mapImages[2];
+		int mapData;
+
+		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapData = 1;
+		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3)	mapData = 2;
+		else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapData = 3;
+
+		mapImage = mapImages[mapData];
+		sendLobbyPacket.selectedMap = mapData;
 
 		showSelectMap = !showSelectMap;
 	}
@@ -144,12 +156,14 @@ void CLobbyScene::SelectMap()
 		cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 }
 
-void CLobbyScene::SendData(SOCKET _sock)
+void CLobbyScene::SendData(SOCKET sock)
 {
+	int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
 }
 
-void CLobbyScene::ReceiveData(SOCKET _sock)
+void CLobbyScene::ReceiveData(SOCKET sock)
 {
+	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
 }
 
 

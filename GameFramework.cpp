@@ -9,7 +9,7 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
-	currentscene		= PLAYSCENE;			// Scene의 인덱스
+	currentscene		= LOBBYSCENE;			// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
 
 	//서버 통신 관련 변수 초기화
