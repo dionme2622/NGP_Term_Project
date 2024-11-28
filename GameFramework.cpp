@@ -234,7 +234,7 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
 				//printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.playerData[0].x, pFramework->receivedPacket.playerData[1].x); // DEBUG
-				printf("board state: %d\n", pFramework->receivedPacket.mapData.boardData[10][0].state);
+				//printf("board state: %d\n", pFramework->receivedPacket.mapData.boardData[10][0].state);		// DEBUG
 				SetEvent(pFramework->hRecvEvent);
 			}
 		}

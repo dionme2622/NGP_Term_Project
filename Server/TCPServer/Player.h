@@ -4,7 +4,11 @@
 class CBallon 
 {
 public:
-	CBallon() { state = 0; };
+	CBallon() {
+		state = 0;
+		beforeboomcount = 0;
+		startboomcount = 0;
+	};
 	~CBallon() {};
 
 public:
