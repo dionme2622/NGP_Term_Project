@@ -201,23 +201,9 @@ void CGameFramework::InitializeCriticalSection()
 DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
-	int tempData = -1;
-
 	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 
-
 	while (1) {
-
-		////EnterCriticalSection(&pFramework->cs); // 동기화 시작
-		//if (tempData != pFramework->sendPacket.keyState) {
-		//	//if (pFramework->sendPacket.keyState == 48) continue;
-		//	tempData = pFramework->sendPacket.keyState;
-		//	//printf("SendData - KeyState Sent: %d\r", tempData);
-
-		//	send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
-		//}
-		////LeaveCriticalSection(&pFramework->cs); // 동기화 종료
-
 		pFramework->m_pScene->SendData(pFramework->sock);
 	}
 
@@ -227,20 +213,10 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
-	int retval;
-
 	while (1) {
-		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
-		if (retval > 0) {
-
-			if (pFramework->m_pScene) {
-				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
-				SetEvent(pFramework->hRecvEvent);
-			}
-		}
-		else if (retval == SOCKET_ERROR) {
-			printf("recv() 실패: %d\n", WSAGetLastError());
-			break; // 오류 발생 시 루프 종료
+		if (pFramework->m_pScene) {
+			pFramework->m_pScene->ReceiveData(pFramework->sock);
+			SetEvent(pFramework->hRecvEvent);
 		}
 	}
 	return 0;

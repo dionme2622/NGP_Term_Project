@@ -23,7 +23,7 @@ public:
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 	virtual void SendData(SOCKET _sock) {};
-
+	virtual void ReceiveData(SOCKET _sock) {};
 private:
 
 };

@@ -127,13 +127,16 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	}
 }
 
-void CPlayScene::SendData(SOCKET _sock)
+void CPlayScene::SendData(SOCKET sock)
 {
-
 	if (pastData != sendPacket.keyState) {
 		pastData = sendPacket.keyState;
-
-		send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
+		int retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
+		printf("%d, ID : %d\n", sendPacket.keyState, sendPacket.playerID);
 	}
-	printf("%d\n", sendPacket.keyState);
+}
+
+void CPlayScene::ReceiveData(SOCKET sock)
+{
+	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
 }

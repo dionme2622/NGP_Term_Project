@@ -25,14 +25,9 @@ void CScene::DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop)
 							 rc.left,  rc.top,  rc.right,  rc.bottom, RGB(255, 0, 255));
 }
 
-void CScene::ReceiveData(SC_PlayersInfoPacket _receivedPacket)
-{
-	receivedPacket = _receivedPacket;
-}
-
 void CScene::SetID(int id)
 {
-	m_ID = id;
+	sendPacket.playerID = id;
 }
 	
 

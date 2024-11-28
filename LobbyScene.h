@@ -22,7 +22,7 @@ public:
 
 
 	virtual void SendData(SOCKET _sock);
-
+	virtual void ReceiveData(SOCKET _sock);
 
 private:
 	HBITMAP			 backgroundImage;

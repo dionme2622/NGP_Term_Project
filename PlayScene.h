@@ -19,10 +19,8 @@ public:
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	
-
-
 	virtual void SendData(SOCKET _sock);
+	virtual void ReceiveData(SOCKET _sock);
 private:
 	HBITMAP				backgroundImage;
 	HBITMAP				TileBitmap1;
@@ -32,7 +30,6 @@ private:
 
 	SOCKET sock;
 
-	CS_PlayerInputPacket sendPacket;
 
 	int pastData = -1;
 

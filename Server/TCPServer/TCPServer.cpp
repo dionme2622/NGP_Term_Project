@@ -23,14 +23,10 @@ typedef struct SC_PlayersInfoPacket {
 
 CPlayer* player[2];
 
-
-//CPlayer* player2 = new CPlayer();
-
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
 std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
 
 CS_PlayerInputPacket recvPacket;
-
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
@@ -42,6 +38,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     while (1) {
         // 방향키 값 수신
         retval = recv(client_sock, (char*)&recvPacket, sizeof(recvPacket), 0);
+
         if (retval == SOCKET_ERROR || retval == 0) {
             printf("클라이언트 연결 종료\n");
             break;
@@ -55,6 +52,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
        
     }
+    printf("%d", recvPacket.keyState);
 
     // 연결 종료 시 소켓 닫기 및 리스트에서 제거
     closesocket(client_sock);
@@ -113,7 +111,6 @@ void GameLogicThread() {
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
-            printf("packet size : %d\r", packet.player[1].direction);
             
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");

@@ -100,9 +100,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 			cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 
-
-
-		if (mapImage && m_ID == 0) {
+		if (mapImage && sendPacket.playerID == 0) {
 			if (cursorPos.x > 773 && cursorPos.x < 1055 &&
 				cursorPos.y > 753 && cursorPos.y < 831) {
 				//send()
@@ -147,6 +145,10 @@ void CLobbyScene::SelectMap()
 }
 
 void CLobbyScene::SendData(SOCKET _sock)
+{
+}
+
+void CLobbyScene::ReceiveData(SOCKET _sock)
 {
 }
 

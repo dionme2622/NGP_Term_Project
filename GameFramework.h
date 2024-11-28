@@ -30,8 +30,6 @@ public:
 	void Render();
 
 	void ProcessInput();
-	int GetPressedKeysAsString();
-	int GetPressedKeys();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
