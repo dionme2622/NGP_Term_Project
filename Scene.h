@@ -34,6 +34,11 @@ public:
 	void DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop);
 	virtual void ReceiveData(SC_PlayersInfoPacket);
 
+	void SetID(int id);
+
+
+	virtual void SendData(SOCKET _sock) = 0;
+
 public :
 	CGameFramework* GetFramework() { return m_pGameFramework;}
 
@@ -50,6 +55,8 @@ protected:
 	HBITMAP					OldBit[3];
 
 	POINT					cursorPos;
+
+	int						m_ID;
 
 protected:
 	CGameFramework*			m_pGameFramework;

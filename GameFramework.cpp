@@ -43,10 +43,10 @@ CGameFramework::CGameFramework()
 	int retval;
 	retval = recv(sock, (char*)&sendPacket.playerID, sizeof(sendPacket.playerID), 0); // 방향키 데이터 수신
 
+
 	CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
 	CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
 
-	CloseHandle(hSelectEvent);
 }
 
 CGameFramework::~CGameFramework()
@@ -70,6 +70,9 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	m_pScene = m_ppScenes[currentscene];																									
 
+	m_pScene->SetID(sendPacket.playerID);
+
+	SetEvent(hSelectEvent);
 	WaitForSingleObject(hRecvEvent, INFINITE);
 
 	m_ppScenes[currentscene]->Initialize();
@@ -113,36 +116,36 @@ void CGameFramework::ProcessInput()
 {
 	m_pScene->ProcessInput();
 
-	char pressedKeys = GetPressedKeysAsString();
+	/*char pressedKeys = GetPressedKeysAsString();
 
 	if (pressedKeys)
-		sendPacket.keyState = pressedKeys;
+		sendPacket.keyState = pressedKeys;*/
 }
 
-int CGameFramework::GetPressedKeys()
-{
-	char pressedKey = '0';
-	
-	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-	for (int key = 0x01; key <= 0xFE; ++key) {
-	    // 키가 눌려 있는지 확인
-	    if (GetAsyncKeyState(key) & 0x8000) {
-	        pressedKey = key; // 눌린 키를 추가
-	    }
-	}
-	
-	return pressedKey;
-}
-
-int CGameFramework::GetPressedKeysAsString()
-{
-	// 눌려 있는 키 목록을 가져옴
-	char pressedKeys = GetPressedKeys();
-	
-	if (!pressedKeys) pressedKeys = '0';
-	
-	return pressedKeys;
-}
+//int CGameFramework::GetPressedKeys()
+//{
+//	char pressedKey = '0';
+//	
+//	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+//	for (int key = 0x01; key <= 0xFE; ++key) {
+//	    // 키가 눌려 있는지 확인
+//	    if (GetAsyncKeyState(key) & 0x8000) {
+//	        pressedKey = key; // 눌린 키를 추가
+//	    }
+//	}
+//	
+//	return pressedKey;
+//}
+//
+//int CGameFramework::GetPressedKeysAsString()
+//{
+//	// 눌려 있는 키 목록을 가져옴
+//	char pressedKeys = GetPressedKeys();
+//	
+//	if (!pressedKeys) pressedKeys = '0';
+//	
+//	return pressedKeys;
+//}
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
@@ -201,17 +204,21 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	int tempData = -1;
 
 	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
+
+
 	while (1) {
 
-		EnterCriticalSection(&pFramework->cs); // 동기화 시작
-		if (tempData != pFramework->sendPacket.keyState) {
-			//if (pFramework->sendPacket.keyState == 48) continue;
-			tempData = pFramework->sendPacket.keyState;
-			//printf("SendData - KeyState Sent: %d\r", tempData);
+		////EnterCriticalSection(&pFramework->cs); // 동기화 시작
+		//if (tempData != pFramework->sendPacket.keyState) {
+		//	//if (pFramework->sendPacket.keyState == 48) continue;
+		//	tempData = pFramework->sendPacket.keyState;
+		//	//printf("SendData - KeyState Sent: %d\r", tempData);
 
-			send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
-		}
-		LeaveCriticalSection(&pFramework->cs); // 동기화 종료
+		//	send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
+		//}
+		////LeaveCriticalSection(&pFramework->cs); // 동기화 종료
+
+		pFramework->m_pScene->SendData(pFramework->sock);
 	}
 
 	return 0;
@@ -221,25 +228,13 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
 	int retval;
-	bool initEventSet = false; // Event 해제 여부 확인
 
 	while (1) {
 		retval = recv(pFramework->sock, (char*)&pFramework->receivedPacket, sizeof(SC_PlayersInfoPacket), 0);
-		printf("ss");
 		if (retval > 0) {
-			if (!initEventSet) {
-				// 처음 recv가 호출되면 이벤트 해제
-				initEventSet = true;
-			}
 
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
-				//printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.player[0].x, pFramework->receivedPacket.player[1].x);
-				printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
-					pFramework->receivedPacket.player[1].x,
-					pFramework->receivedPacket.player[1].y,
-					pFramework->receivedPacket.player[1].direction,
-					pFramework->receivedPacket.player[1].state);
 				SetEvent(pFramework->hRecvEvent);
 			}
 		}

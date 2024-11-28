@@ -27,6 +27,11 @@ void CPlayScene::Initialize()
 
 void CPlayScene::ProcessInput()
 {
+	char pressedKeys = GetPressedKeysAsChar();
+	if (pressedKeys)
+		sendPacket.keyState = pressedKeys;
+
+
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	GetKeyboardState(pKeysBuffer);
@@ -40,6 +45,31 @@ void CPlayScene::ProcessInput()
 	if (pKeysBuffer[VK_SPACE] & 0xF0) MAP->SetBallon();	// TODO : player 물풍선 설치
 
 	//MAP->Getplayer()->SetStop(stop);
+}
+
+int CPlayScene::GetPressedKeysAsChar()
+{
+	// 눌려 있는 키 목록을 가져옴
+	char pressedKeys = GetPressedKey();
+
+	if (!pressedKeys) pressedKeys = '0';
+
+	return pressedKeys;
+}
+
+int CPlayScene::GetPressedKey()
+{
+	char pressedKey = '0';
+
+	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+	for (int key = 0x01; key <= 0xFE; ++key) {
+		// 키가 눌려 있는지 확인
+		if (GetAsyncKeyState(key) & 0x8000) {
+			pressedKey = key; // 눌린 키를 추가
+		}
+	}
+
+	return pressedKey;
 }
 
 void CPlayScene::Update(float fTimeElapsed)
@@ -94,5 +124,15 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		break;
 	default:
 		break;
+	}
+}
+
+void CPlayScene::SendData(SOCKET _sock)
+{
+
+	if (pastData != sendPacket.keyState) {
+		pastData = sendPacket.keyState;
+
+		send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
 	}
 }

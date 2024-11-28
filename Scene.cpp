@@ -29,6 +29,11 @@ void CScene::ReceiveData(SC_PlayersInfoPacket _receivedPacket)
 {
 	receivedPacket = _receivedPacket;
 }
+
+void CScene::SetID(int id)
+{
+	m_ID = id;
+}
 	
 
 

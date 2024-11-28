@@ -132,6 +132,8 @@ void GameLogicThread() {
 }
 
 
+
+
 int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
     player[0] = new CPlayer();
@@ -162,6 +164,7 @@ int main(int argc, char* argv[]) {
 
     // 주기적으로 데이터를 전송하는 스레드 실행
     std::thread gameLogicThread(GameLogicThread);
+
     gameLogicThread.detach();
 
     while (1) {
