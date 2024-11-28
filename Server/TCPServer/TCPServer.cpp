@@ -105,7 +105,7 @@ void GameLogicThread() {
 
             // 캐릭터 이동
             player[playerID]->Move(m_GameTimer.GetTimeElapsed());
-            //PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
+            PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
             PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);

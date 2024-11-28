@@ -29,7 +29,7 @@ CGameFramework::CGameFramework()
 	// 소켓 주소 구조체 초기화
 	memset(&remoteAddr, 0, sizeof(remoteAddr));
 	remoteAddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
+	inet_pton(AF_INET, "10.220.29.218", &remoteAddr.sin_addr);
 	remoteAddr.sin_port = htons(SERVERPORT);
 	// 서버 연결
 	if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
@@ -233,6 +233,8 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 			if (pFramework->m_pScene) {
 				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
+				//printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.playerData[0].x, pFramework->receivedPacket.playerData[1].x); // DEBUG
+				printf("board state: %d\n", pFramework->receivedPacket.mapData.boardData[10][0].state);
 				SetEvent(pFramework->hRecvEvent);
 			}
 		}
