@@ -31,6 +31,12 @@ void PlayerMeetObstacle(CPlayer* Player);
 void PlayerGetItem(CPlayer* Player);
 void BallonBoom(CPlayer* Player, int num);
 
+std::default_random_engine dre;
+std::uniform_int_distribution<int> uid{ 1,9 };
+
+int ObstacleBreak[13][15];
+
+
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
@@ -108,6 +114,9 @@ void GameLogicThread() {
             BallonBoom(player[playerID], 0);
             BallonBoom(player[playerID], 1);
             BallonBoom(player[playerID], 2);
+            BallonBoom(player[playerID], 3);
+            BallonBoom(player[playerID], 4);
+            BallonBoom(player[playerID], 5);
 
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
@@ -440,7 +449,7 @@ void BallonBoom(CPlayer* Player, int num)
     		Player->ballon[num]->startboomcount++;
     	}
 
-    	if (Player->ballon[num]->startboomcount >= 50) // TODO : 잔상이 남는부분 고쳐야 함
+    	if (Player->ballon[num]->startboomcount >= 50) 
     	{
     		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
     		for (int j = 1; j < Player->GetBallonLength(); j++)
@@ -453,7 +462,7 @@ void BallonBoom(CPlayer* Player, int num)
     				packet.mapData.boardData[y][x].SetState(5);
     			else if (packet.mapData.boardData[y][x].state == 2)
     			{
-    				//ObstacleBreak[y][x] = 1;
+    				ObstacleBreak[y][x] = 1;
     				break;
     			}
     			else if (packet.mapData.boardData[y][x].state == 3)
@@ -469,7 +478,7 @@ void BallonBoom(CPlayer* Player, int num)
     				packet.mapData.boardData[y][x].SetState(5);
     			else if (packet.mapData.boardData[y][x].state == 2)
     			{
-    				//ObstacleBreak[y][x] = 1;
+    				ObstacleBreak[y][x] = 1;
     				break;
     			}
     			else if (packet.mapData.boardData[y][x].state == 3)
@@ -483,7 +492,7 @@ void BallonBoom(CPlayer* Player, int num)
     				packet.mapData.boardData[y][x].SetState(5);
     			else if (packet.mapData.boardData[y][x].state == 2)
     			{
-    				//ObstacleBreak[y][x] = 1;
+    				ObstacleBreak[y][x] = 1;
     				break;
     			}
     			else if (packet.mapData.boardData[y][x].state == 3)
@@ -497,7 +506,7 @@ void BallonBoom(CPlayer* Player, int num)
     				packet.mapData.boardData[y][x].SetState(5);
     			else if (packet.mapData.boardData[y][x].state == 2)
     			{
-    				//ObstacleBreak[y][x] = 1;
+    				ObstacleBreak[y][x] = 1;
     				break;
     			}
     			else if (packet.mapData.boardData[y][x].state == 3)
@@ -506,7 +515,7 @@ void BallonBoom(CPlayer* Player, int num)
     		}
     		Player->ballon[num]->startboomcount++;
     		Player->ballon[num]->SetState(0);
-    		/*for (int i = 0; i < 15; i++)
+    		for (int i = 0; i < 15; i++)
     			for (int j = 0; j < 13; j++)
     				if (ObstacleBreak[j][i] == 1)
     				{
@@ -524,7 +533,7 @@ void BallonBoom(CPlayer* Player, int num)
     				}
     		for (int i = 0; i < 15; i++)
     			for (int j = 0; j < 13; j++)
-    				ObstacleBreak[j][i] = 0;*/
+    				ObstacleBreak[j][i] = 0;
     		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(1);
     		for (int j = 1; j <= Player->GetBallonLength(); j++)
     		{
