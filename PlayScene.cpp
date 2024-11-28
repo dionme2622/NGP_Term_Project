@@ -135,4 +135,5 @@ void CPlayScene::SendData(SOCKET _sock)
 
 		send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
 	}
+	printf("%d\n", sendPacket.keyState);
 }

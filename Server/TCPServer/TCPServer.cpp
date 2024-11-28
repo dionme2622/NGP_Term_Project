@@ -49,6 +49,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         else if (retval == 0) {
             break; // 연결 종료
         }
+
+        printf("%d", recvPacket.keyState);
         //system("cls");
         buf[retval] = '\0'; // 수신한 문자열 종료 처리
        
@@ -118,14 +120,7 @@ void GameLogicThread() {
                 closesocket(client_sock);
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
             }
-            else {
-                // 패킷 전송 성공 시 출력
-                printf("Player[1] - x: %d, y: %d, direction: %d, state: %d\n",
-                    packet.player[1].x,
-                    packet.player[1].y,
-                    packet.player[1].direction,
-                    packet.player[1].state);
-            }
+            
         }
         clientMutex.unlock();
     }
