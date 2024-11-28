@@ -28,6 +28,7 @@ SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
 
 void Initialize();
 void PlayerMeetObstacle(CPlayer* Player);
+void PlayerGetItem(CPlayer* Player);
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
@@ -87,7 +88,8 @@ void GameLogicThread() {
 
             // 캐릭터 이동
             player[playerID]->Move(m_GameTimer.GetTimeElapsed());
-            PlayerMeetObstacle(player[playerID]);
+            PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
+            PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
         }
@@ -261,7 +263,7 @@ void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
                 Player->y = Player->y - 1;
         }
     }
-    /*else if (Player->direction == DIR_RIGHT)
+    else if (Player->direction == DIR_RIGHT)
     {
         int i = (Player->x - 30) / 60;
         int j = (Player->y - 65) / 60;
@@ -320,5 +322,31 @@ void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
             if (Player->x % 60 <= 50 && Player->x % 60 >= 30 && (packet.mapData.boardData[j + 1][i].state != 2 && packet.mapData.boardData[j + 1][i].state != 3 && packet.mapData.boardData[j + 1][i].state != 40) && (packet.mapData.boardData[j - 1][i].state != 2 && packet.mapData.boardData[j - 1][i].state != 3 && packet.mapData.boardData[j - 1][i].state != 40))
                 Player->x = Player->x - 1;
         }
-    }*/
+    }
+}
+
+void PlayerGetItem(CPlayer* Player)
+{
+    int i = (Player->x + 30 - 30) / 60;
+    int j = (Player->y + 30 - 65) / 60;
+
+    if (packet.mapData.boardData[j][i].state == 6)		// 이동속도 아이템
+    {
+        if (Player->speed < 10)
+            Player->speed += 10;
+        packet.mapData.boardData[j][i].state = 1;
+
+    }
+    else if (packet.mapData.boardData[j][i].state == 7)		// 물줄기 아이템
+    {
+        if (Player->ballon_length < 6)
+            Player->ballon_length += 1;
+        packet.mapData.boardData[j][i].state = 1;
+    }
+    else if (packet.mapData.boardData[j][i].state == 8)		// 물풍선 갯수 아이템
+    {
+        if (Player->ballon_num < 5)
+            Player->ballon_num += 1;
+        packet.mapData.boardData[j][i].state = 1;
+    }
 }

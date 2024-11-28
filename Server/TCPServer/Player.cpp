@@ -33,14 +33,21 @@ void CPlayer::Move(float fTimeElapsed)
 {
 	
 
+	//if (!GetStop())
+	//{
+	//	if (direction == DIR_DOWN) fy += speed * fTimeElapsed;			// down
+	//	else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;		// left
+	//	else if (direction == DIR_UP) fy -= speed * fTimeElapsed;			// up
+	//	else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;		// right
+
+	//	SetPosition(fx, fy);
+	//}
 	if (!GetStop())
 	{
-		if (direction == DIR_DOWN) fy += speed * fTimeElapsed;			// down
-		else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;		// left
-		else if (direction == DIR_UP) fy -= speed * fTimeElapsed;			// up
-		else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;		// right
+		if (direction == DIR_DOWN) y += speed * fTimeElapsed;			// down
+		else if (direction == DIR_LEFT) x -= speed * fTimeElapsed;		// left
+		else if (direction == DIR_UP) y -= speed * fTimeElapsed;			// up
+		else if (direction == DIR_RIGHT) x += speed * fTimeElapsed;		// right
 
-		SetPosition(fx, fy);
 	}
-
 }
