@@ -21,6 +21,34 @@ typedef struct SC_PlayersInfoPacket {
 CPlayer* player1 = new CPlayer();
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
 std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
+<<<<<<< Updated upstream
+=======
+std::map<int, int> clientInput;
+
+SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
+
+
+void Initialize();
+void PlayerMeetObstacle(CPlayer* Player);
+void PlayerGetItem(CPlayer* Player);
+void BallonBoom(CPlayer* Player, int num, float fTimeElapsed);
+
+std::default_random_engine dre;
+std::uniform_int_distribution<int> uid{ 3,8 };
+
+int ObstacleBreak[13][15];
+
+//struct SSendPacket {
+//    int selectedMap = 0;
+//    bool nextSceneCall = 0;
+//}SendPacket;
+//
+//struct SRecvPacket {
+//    CMap recvMapData;
+//    bool recvNextSceneCall = false;
+//}SRecvPacket;
+
+>>>>>>> Stashed changes
 
 // 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
