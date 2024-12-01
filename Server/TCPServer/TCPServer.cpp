@@ -53,7 +53,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
 
         // 2. 패킷 타입 확인
-        printf("수신된 패킷 타입: %d\n", header.packetType);
+        //printf("수신된 패킷 타입: %d\r", header.packetType);
 
         // 3. 패킷 타입에 따라 처리
         if (header.packetType == 1) { // PlayerInputPacket
@@ -74,15 +74,16 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         else if (header.packetType == 2) { // LobbyPacket
             CS_LobbyPacket lobbyPacket;
-            retval = recv(client_sock, (char*)&lobbyPacket + sizeof(PacketHeader),
-                sizeof(CS_LobbyPacket) - sizeof(PacketHeader), 0);
-            if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
+            retval = recv(client_sock, (char*)&lobbyPacket, sizeof(lobbyPacket), 0);
+            /*if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
                 printf("LobbyPacket 수신 실패\n");
                 break;
-            }
+            }*/
+            printf("%d", lobbyPacket.nextSceneCall);
 
-            printf("Ready 패킷 수신: Map=%d, NextScene=%s\n",
-                lobbyPacket.selectedMap, lobbyPacket.nextSceneCall ? "true" : "false");
+
+            //printf("Ready 패킷 수신: Map=%d, NextScene=%s\r",
+                //lobbyPacket.selectedMap, lobbyPacket.nextSceneCall ? "true" : "false");
 
             // SC_LobbyPacket 작성 및 브로드캐스트
             SC_LobbyPacket responsePacket;
@@ -93,13 +94,14 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             std::lock_guard<std::mutex> lock(clientMutex);
             for (SOCKET sock : clientSockets) {
                 retval = send(sock, (char*)&responsePacket, sizeof(SC_LobbyPacket), 0);
+
                 if (retval == SOCKET_ERROR) {
-                    printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
+                    //printf("클라이언트로 데이터 전송 실패. 소켓 제거.\r");
                     closesocket(sock);
                     clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), sock), clientSockets.end());
                 }
                 else {
-                    printf("클라이언트로 SC_LobbyPacket 전송 완료.\n");
+                    //printf("클라이언트로 SC_LobbyPacket 전송 완료.\r");
                 }
             }
         }
