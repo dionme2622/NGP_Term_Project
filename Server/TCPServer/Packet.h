@@ -50,7 +50,12 @@ public:
     BoardData boardData[13][15];
 };
 
+typedef struct PacketHeader {
+    int packetType; // 1=PlayerInput, 2=ReadyPacket
+} PacketHeader;
+
 typedef struct CS_PlayerInputPacket {
+    PacketHeader header;
     int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState;           // 입력한 Key 의 값
 } CS_PlayerInputPacket;
@@ -59,3 +64,14 @@ typedef struct SC_PlayersInfoPacket {
     PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다.
     MapData mapData;                    // 클라이언트에게 Map의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
+
+typedef struct CS_LobbyPacket {
+    PacketHeader header;
+    int selectedMap;
+    bool nextSceneCall;
+}CS_LobbyPacket;
+
+typedef struct SC_LobbyPacket {
+    MapData mapData;
+    bool nextSceneCall = false;
+}SC_LobbyPacket;

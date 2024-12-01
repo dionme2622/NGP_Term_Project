@@ -39,27 +39,74 @@ std::uniform_int_distribution<int> uid{ 3,8 };
 int ObstacleBreak[13][15];
 
 
-// 클라이언트 방향키 처리 스레드
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
-    CS_PlayerInputPacket localRecvPacket; // 로컬 변수로 변경
     int retval;
 
     while (1) {
-        // 방향키 값 수신
-        retval = recv(client_sock, (char*)&localRecvPacket, sizeof(localRecvPacket), 0);
-        if (retval == SOCKET_ERROR || retval == 0) {
-            printf("클라이언트 연결 종료\n");
+        // 1. 헤더만 읽기
+        PacketHeader header;
+        retval = recv(client_sock, (char*)&header, sizeof(PacketHeader), 0);
+        if (retval <= 0 || retval != sizeof(PacketHeader)) {
+            printf("클라이언트 연결 종료 또는 헤더 수신 실패\n");
             break;
         }
 
-        // 수신한 데이터를 keyState에 업데이트
-        {
-            std::lock_guard<std::mutex> lock(clientMutex); // 동기화
-            keyState[localRecvPacket.playerID] = localRecvPacket.keyState;
-        }
+        // 2. 패킷 타입 확인
+        printf("수신된 패킷 타입: %d\n", header.packetType);
 
-        printf("ID[%d], 키 입력: %d\n", localRecvPacket.playerID, localRecvPacket.keyState);
+        // 3. 패킷 타입에 따라 처리
+        if (header.packetType == 1) { // PlayerInputPacket
+            CS_PlayerInputPacket inputPacket;
+            retval = recv(client_sock, (char*)&inputPacket + sizeof(PacketHeader),
+                sizeof(CS_PlayerInputPacket) - sizeof(PacketHeader), 0);
+            if (retval <= 0 || retval != (sizeof(CS_PlayerInputPacket) - sizeof(PacketHeader))) {
+                printf("PlayerInput 패킷 수신 실패\n");
+                break;
+            }
+
+            // KeyState 업데이트
+            {
+                std::lock_guard<std::mutex> lock(clientMutex);
+                keyState[inputPacket.playerID] = inputPacket.keyState;
+            }
+            printf("ID[%d], 키 입력: %d\n", inputPacket.playerID, inputPacket.keyState);
+        }
+        else if (header.packetType == 2) { // LobbyPacket
+            CS_LobbyPacket lobbyPacket;
+            retval = recv(client_sock, (char*)&lobbyPacket + sizeof(PacketHeader),
+                sizeof(CS_LobbyPacket) - sizeof(PacketHeader), 0);
+            if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
+                printf("LobbyPacket 수신 실패\n");
+                break;
+            }
+
+            printf("Ready 패킷 수신: Map=%d, NextScene=%s\n",
+                lobbyPacket.selectedMap, lobbyPacket.nextSceneCall ? "true" : "false");
+
+            // SC_LobbyPacket 작성 및 브로드캐스트
+            SC_LobbyPacket responsePacket;
+            responsePacket.mapData = *mapData;
+            responsePacket.nextSceneCall = lobbyPacket.nextSceneCall;
+
+            // 클라이언트들에게 브로드캐스트
+            std::lock_guard<std::mutex> lock(clientMutex);
+            for (SOCKET sock : clientSockets) {
+                retval = send(sock, (char*)&responsePacket, sizeof(SC_LobbyPacket), 0);
+                if (retval == SOCKET_ERROR) {
+                    printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
+                    closesocket(sock);
+                    clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), sock), clientSockets.end());
+                }
+                else {
+                    printf("클라이언트로 SC_LobbyPacket 전송 완료.\n");
+                }
+            }
+        }
+        else {
+            printf("알 수 없는 패킷 타입: %d\n", header.packetType);
+            break;
+        }
     }
 
     // 연결 종료 처리
@@ -71,8 +118,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     printf("클라이언트 처리 종료\n");
     return 0;
 }
-
-static int num = 0;
 
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
@@ -119,7 +164,7 @@ void GameLogicThread() {
             BallonBoom(player[playerID], 3, m_GameTimer.GetTimeElapsed());
             BallonBoom(player[playerID], 4, m_GameTimer.GetTimeElapsed());
             BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
-                                         
+
             // 플레이어 데이터 업데이트
             playerData[playerID]->LoadFromPlayer(player[playerID]);
         }
@@ -129,26 +174,23 @@ void GameLogicThread() {
             memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
         }
         //memcpy(&packet.mapData, mapData, sizeof(MapData));                      // Map의 데이터를 클라이언트에게 보낸다.
-        
+
         clientMutex.lock();
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
-            
-            
+
+
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
-            
-        }
+
+            }
         }
         clientMutex.unlock();
     }
 }
-
-
-
 
 int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
@@ -394,202 +436,202 @@ void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
     ////물풍선 놓고 터지기 전
     if (Player->ballon[num]->GetState() == 1)
     {
-    	if (packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].state == 5)
-    		Player->ballon[num]->beforeboomcount = BEFOREBOOMCOUNT;
-    	if (Player->ballon[num]->beforeboomcount < BEFOREBOOMCOUNT)     // 풍선은 1.5초가 지나면 터진다
-    		Player->ballon[num]->beforeboomcount += fTimeElapsed;
-    	else
-    		Player->ballon[num]->SetState(2);
+        if (packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].state == 5)
+            Player->ballon[num]->beforeboomcount = BEFOREBOOMCOUNT;
+        if (Player->ballon[num]->beforeboomcount < BEFOREBOOMCOUNT)     // 풍선은 1.5초가 지나면 터진다
+            Player->ballon[num]->beforeboomcount += fTimeElapsed;
+        else
+            Player->ballon[num]->SetState(2);
     }
     else if (Player->ballon[num]->GetState() == 2)
     {
-    	if (Player->ballon[num]->startboomcount < STARTBOOMCOUNT)       // 폭발의 지속시간은 0.5초 이다
-    	{
-    		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
-    		for (int j = 1; j < Player->GetBallonLength(); j++) // right
-    		{
-    			int x = ((Player->ballon[num]->x) + 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (x < 0 || x == 15)
-    				break;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++)   // left
-    		{
-    			int x = ((Player->ballon[num]->x) - 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (x < 0 || x == 15)
-    				break;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++)   // up
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) + 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++) // down
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) - 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
+        if (Player->ballon[num]->startboomcount < STARTBOOMCOUNT)       // 폭발의 지속시간은 0.5초 이다
+        {
+            packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
+            for (int j = 1; j < Player->GetBallonLength(); j++) // right
+            {
+                int x = ((Player->ballon[num]->x) + 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (x < 0 || x == 15)
+                    break;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++)   // left
+            {
+                int x = ((Player->ballon[num]->x) - 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (x < 0 || x == 15)
+                    break;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++)   // up
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) + 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++) // down
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) - 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
 
-    		}
-    		Player->ballon[num]->beforeboomcount = 0.0f;
-    		Player->ballon[num]->startboomcount += fTimeElapsed;
-    	}
+            }
+            Player->ballon[num]->beforeboomcount = 0.0f;
+            Player->ballon[num]->startboomcount += fTimeElapsed;
+        }
 
-    	if (Player->ballon[num]->startboomcount >= STARTBOOMCOUNT)
-    	{
-    		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
-    		for (int j = 1; j < Player->GetBallonLength(); j++)
-    		{
-    			int x = ((Player->ballon[num]->x) + 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (x < 0 || x == 15)
-    				break;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    			{
-    				ObstacleBreak[y][x] = 1;
-    				break;
-    			}
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++)
-    		{
-    			int x = ((Player->ballon[num]->x) - 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (x < 0 || x == 15)
-    				break;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    			{
-    				ObstacleBreak[y][x] = 1;
-    				break;
-    			}
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++)
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) + 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    			{
-    				ObstacleBreak[y][x] = 1;
-    				break;
-    			}
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j < Player->GetBallonLength(); j++)
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) - 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
-    				packet.mapData.boardData[y][x].SetState(5);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    			{
-    				ObstacleBreak[y][x] = 1;
-    				break;
-    			}
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
+        if (Player->ballon[num]->startboomcount >= STARTBOOMCOUNT)
+        {
+            packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(5);
+            for (int j = 1; j < Player->GetBallonLength(); j++)
+            {
+                int x = ((Player->ballon[num]->x) + 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (x < 0 || x == 15)
+                    break;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                {
+                    ObstacleBreak[y][x] = 1;
+                    break;
+                }
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++)
+            {
+                int x = ((Player->ballon[num]->x) - 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (x < 0 || x == 15)
+                    break;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                {
+                    ObstacleBreak[y][x] = 1;
+                    break;
+                }
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++)
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) + 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                {
+                    ObstacleBreak[y][x] = 1;
+                    break;
+                }
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j < Player->GetBallonLength(); j++)
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) - 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 1 || packet.mapData.boardData[y][x].state == 4 || packet.mapData.boardData[y][x].state == 40 || packet.mapData.boardData[y][x].state == 6 || packet.mapData.boardData[y][x].state == 7 || packet.mapData.boardData[y][x].state == 8 || packet.mapData.boardData[y][x].state == 9)
+                    packet.mapData.boardData[y][x].SetState(5);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                {
+                    ObstacleBreak[y][x] = 1;
+                    break;
+                }
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
 
-    		}
-    		Player->ballon[num]->startboomcount += fTimeElapsed;
-    		Player->ballon[num]->SetState(0);
-    		for (int i = 0; i < 15; i++)
-    			for (int j = 0; j < 13; j++)
-    				if (ObstacleBreak[j][i] == 1)
-    				{
-    					int n = uid(dre);
-    					if (n == 6)
-    						packet.mapData.boardData[j][i].SetState(6);
-    					else if (n == 7)
-    						packet.mapData.boardData[j][i].SetState(7);
-    					else if (n == 8)
-    						packet.mapData.boardData[j][i].SetState(8);
-    					else
-    						packet.mapData.boardData[j][i].SetState(1);
-    				}
-    		for (int i = 0; i < 15; i++)
-    			for (int j = 0; j < 13; j++)
-    				ObstacleBreak[j][i] = 0;
-    		packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(1);
-    		for (int j = 1; j <= Player->GetBallonLength(); j++)
-    		{
-    			int x = ((Player->ballon[num]->x) + 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (packet.mapData.boardData[y][x].state == 5)
-    				packet.mapData.boardData[y][x].SetState(1);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j <= Player->GetBallonLength(); j++)
-    		{
-    			int x = ((Player->ballon[num]->x) - 60 * j) / 60;
-    			int y = (Player->ballon[num]->y) / 60;
-    			if (x < 0 || x == 15)
-    				break;
-    			if (packet.mapData.boardData[y][x].state == 5)
-    				packet.mapData.boardData[y][x].SetState(1);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j <= Player->GetBallonLength(); j++)
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) + 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 5)
-    				packet.mapData.boardData[y][x].SetState(1);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		for (int j = 1; j <= Player->GetBallonLength(); j++)
-    		{
-    			int x = (Player->ballon[num]->x) / 60;
-    			int y = ((Player->ballon[num]->y) - 60 * j) / 60;
-    			if (packet.mapData.boardData[y][x].state == 5)
-    				packet.mapData.boardData[y][x].SetState(1);
-    			else if (packet.mapData.boardData[y][x].state == 2)
-    				break;
-    			else if (packet.mapData.boardData[y][x].state == 3)
-    				break;
-    		}
-    		Player->ballon[num]->startboomcount = 0.0f;
-    	}
+            }
+            Player->ballon[num]->startboomcount += fTimeElapsed;
+            Player->ballon[num]->SetState(0);
+            for (int i = 0; i < 15; i++)
+                for (int j = 0; j < 13; j++)
+                    if (ObstacleBreak[j][i] == 1)
+                    {
+                        int n = uid(dre);
+                        if (n == 6)
+                            packet.mapData.boardData[j][i].SetState(6);
+                        else if (n == 7)
+                            packet.mapData.boardData[j][i].SetState(7);
+                        else if (n == 8)
+                            packet.mapData.boardData[j][i].SetState(8);
+                        else
+                            packet.mapData.boardData[j][i].SetState(1);
+                    }
+            for (int i = 0; i < 15; i++)
+                for (int j = 0; j < 13; j++)
+                    ObstacleBreak[j][i] = 0;
+            packet.mapData.boardData[(Player->ballon[num]->y) / 60][(Player->ballon[num]->x) / 60].SetState(1);
+            for (int j = 1; j <= Player->GetBallonLength(); j++)
+            {
+                int x = ((Player->ballon[num]->x) + 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (packet.mapData.boardData[y][x].state == 5)
+                    packet.mapData.boardData[y][x].SetState(1);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j <= Player->GetBallonLength(); j++)
+            {
+                int x = ((Player->ballon[num]->x) - 60 * j) / 60;
+                int y = (Player->ballon[num]->y) / 60;
+                if (x < 0 || x == 15)
+                    break;
+                if (packet.mapData.boardData[y][x].state == 5)
+                    packet.mapData.boardData[y][x].SetState(1);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j <= Player->GetBallonLength(); j++)
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) + 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 5)
+                    packet.mapData.boardData[y][x].SetState(1);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            for (int j = 1; j <= Player->GetBallonLength(); j++)
+            {
+                int x = (Player->ballon[num]->x) / 60;
+                int y = ((Player->ballon[num]->y) - 60 * j) / 60;
+                if (packet.mapData.boardData[y][x].state == 5)
+                    packet.mapData.boardData[y][x].SetState(1);
+                else if (packet.mapData.boardData[y][x].state == 2)
+                    break;
+                else if (packet.mapData.boardData[y][x].state == 3)
+                    break;
+            }
+            Player->ballon[num]->startboomcount = 0.0f;
+        }
     }
 }
