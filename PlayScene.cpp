@@ -95,3 +95,21 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		break;
 	}
 }
+<<<<<<< Updated upstream
+=======
+
+void CPlayScene::SendData(SOCKET sock)
+{
+	if (pastData != sendPacket.keyState) {
+		pastData = sendPacket.keyState;
+		sendPacket.header = 1;
+		int retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
+		printf("%d, ID : %d\n", sendPacket.keyState, sendPacket.playerID);
+	}
+}
+
+void CPlayScene::ReceiveData(SOCKET sock)
+{
+	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
+}
+>>>>>>> Stashed changes
