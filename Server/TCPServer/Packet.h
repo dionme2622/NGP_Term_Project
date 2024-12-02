@@ -68,10 +68,10 @@ typedef struct SC_PlayersInfoPacket {
 typedef struct CS_LobbyPacket {
     PacketHeader header;
     int selectedMap;
-    bool nextSceneCall;
+    int nextSceneCall;
 }CS_LobbyPacket;
 
 typedef struct SC_LobbyPacket {
     MapData mapData;
-    bool nextSceneCall = false;
+    int nextSceneCall;
 }SC_LobbyPacket;

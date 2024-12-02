@@ -9,13 +9,13 @@ typedef struct PacketHeader {
 
 struct SSendLobbyPacket {
 	PacketHeader header;
-	int selectedMap = 0;
-	bool nextSceneCall = 0;
+	int selectedMap;
+	int nextSceneCall;
 };
 
 struct SRecvLobbyPacket {
 	CMap recvMapData;
-	bool recvNextSceneCall = false;
+	int recvNextSceneCall;
 };
 
 class CLobbyScene : public CScene

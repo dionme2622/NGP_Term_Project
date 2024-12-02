@@ -38,6 +38,17 @@ std::uniform_int_distribution<int> uid{ 3,8 };
 
 int ObstacleBreak[13][15];
 
+int recv_all(SOCKET sock, char* buf, int len) {
+    int total = 0;
+    int bytes;
+    while (total < len) {
+        bytes = recv(sock, buf + total, len - total, 0);
+        if (bytes <= 0) return bytes;  // 오류 또는 연결 종료
+        total += bytes;
+    }
+    return total;
+}
+
 
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
@@ -53,7 +64,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
 
         // 2. 패킷 타입 확인
-        //printf("수신된 패킷 타입: %d\r", header.packetType);
+        printf("수신된 패킷 타입: %d\n", header.packetType);
 
         // 3. 패킷 타입에 따라 처리
         if (header.packetType == 1) { // PlayerInputPacket
@@ -74,34 +85,35 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         else if (header.packetType == 2) { // LobbyPacket
             CS_LobbyPacket lobbyPacket;
-            retval = recv(client_sock, (char*)&lobbyPacket, sizeof(lobbyPacket), 0);
-            /*if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
+            retval = recv_all(client_sock, (char*)&lobbyPacket + sizeof(PacketHeader),
+                sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
+            if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
                 printf("LobbyPacket 수신 실패\n");
                 break;
-            }*/
-            printf("%d", lobbyPacket.nextSceneCall);
-
-
-            //printf("Ready 패킷 수신: Map=%d, NextScene=%s\r",
-                //lobbyPacket.selectedMap, lobbyPacket.nextSceneCall ? "true" : "false");
+            }
+            printf("%d\n", sizeof(CS_LobbyPacket));
+            printf("%d\n", sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
+            printf("Ready 패킷 수신: Map=%d, NextScene=%d\n",lobbyPacket.selectedMap, lobbyPacket.nextSceneCall);
 
             // SC_LobbyPacket 작성 및 브로드캐스트
             SC_LobbyPacket responsePacket;
             responsePacket.mapData = *mapData;
-            responsePacket.nextSceneCall = lobbyPacket.nextSceneCall;
+            
+
+         
+
 
             // 클라이언트들에게 브로드캐스트
             std::lock_guard<std::mutex> lock(clientMutex);
             for (SOCKET sock : clientSockets) {
                 retval = send(sock, (char*)&responsePacket, sizeof(SC_LobbyPacket), 0);
-
                 if (retval == SOCKET_ERROR) {
-                    //printf("클라이언트로 데이터 전송 실패. 소켓 제거.\r");
+                    printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);
                     clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), sock), clientSockets.end());
                 }
                 else {
-                    //printf("클라이언트로 SC_LobbyPacket 전송 완료.\r");
+                    printf("클라이언트로 SC_LobbyPacket 전송 완료.\n");
                 }
             }
         }
@@ -120,6 +132,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     printf("클라이언트 처리 종료\n");
     return 0;
 }
+
+
 
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
@@ -226,9 +240,9 @@ int main(int argc, char* argv[]) {
     printf("서버가 클라이언트 연결 대기 중입니다...\n");
 
     // 주기적으로 데이터를 전송하는 스레드 실행
-    std::thread gameLogicThread(GameLogicThread);
+    //std::thread gameLogicThread(GameLogicThread);
 
-    gameLogicThread.detach();
+    //gameLogicThread.detach();
 
     while (1) {
         // 클라이언트 연결 수락
@@ -270,7 +284,6 @@ int main(int argc, char* argv[]) {
     WSACleanup();
     return 0;
 }
-
 
 void Initialize() {
     for (int i = 0; i < 13; i++) {

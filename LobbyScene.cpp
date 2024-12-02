@@ -163,13 +163,17 @@ void CLobbyScene::SendData(SOCKET sock)
 	sendLobbyPacket.header.packetType = 2;
 	int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
 
-	printf("%d", sendLobbyPacket.nextSceneCall);
+	printf("%d", sendLobbyPacket.header.packetType);
+	printf("%d", sendLobbyPacket.selectedMap);
+	printf("%d\n", sendLobbyPacket.nextSceneCall);
+	printf("%d\n", sizeof(sendLobbyPacket));
 }
 
 void CLobbyScene::ReceiveData(SOCKET sock)
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
-	//if (retval) printf("%d\n", recvLobbyPacket.recvNextSceneCall);
+	printf("-----------%d", recvLobbyPacket.recvNextSceneCall);
+	printf("%d\n", sizeof(recvLobbyPacket.recvNextSceneCall));
 
 }
 
