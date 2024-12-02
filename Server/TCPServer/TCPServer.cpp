@@ -84,8 +84,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("ID[%d], 키 입력: %d\n", inputPacket.playerID, inputPacket.keyState);
         }
         else if (header.packetType == 2) { // LobbyPacket
-            CS_LobbyPacket lobbyPacket;
-            retval = recv_all(client_sock, (char*)&lobbyPacket + sizeof(PacketHeader),
+            CS_LobbyPacket cs_lobbyPacket;
+            retval = recv_all(client_sock, (char*)&cs_lobbyPacket + sizeof(PacketHeader),
                 sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
             if (retval <= 0 || retval != (sizeof(CS_LobbyPacket) - sizeof(PacketHeader))) {
                 printf("LobbyPacket 수신 실패\n");
@@ -93,11 +93,11 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             }
             printf("%d\n", sizeof(CS_LobbyPacket));
             printf("%d\n", sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
-            printf("Ready 패킷 수신: Map=%d, NextScene=%d\n",lobbyPacket.selectedMap, lobbyPacket.nextSceneCall);
+            printf("Ready 패킷 수신: Map=%d, NextScene=%d\n",cs_lobbyPacket.selectedMap, cs_lobbyPacket.nextSceneCall);
 
             // SC_LobbyPacket 작성 및 브로드캐스트
-            SC_LobbyPacket responsePacket;
-            responsePacket.mapData = *mapData;
+            SC_LobbyPacket sc_lobbyPacket;
+            sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
             
 
          
@@ -106,7 +106,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             // 클라이언트들에게 브로드캐스트
             std::lock_guard<std::mutex> lock(clientMutex);
             for (SOCKET sock : clientSockets) {
-                retval = send(sock, (char*)&responsePacket, sizeof(SC_LobbyPacket), 0);
+                retval = send(sock, (char*)&sc_lobbyPacket, sizeof(SC_LobbyPacket), 0);
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);
