@@ -1,6 +1,25 @@
 #pragma once
 #include "Scene.h"
 
+<<<<<<< Updated upstream
+=======
+
+typedef struct PacketHeader {
+	int packetType; // 1=PlayerInput, 2=ReadyPacket
+} PacketHeader;
+
+struct SSendLobbyPacket {
+	PacketHeader header;
+	int selectedMap = 0;
+	bool nextSceneCall = 0;
+};
+
+struct SRecvLobbyPacket {
+	CMap recvMapData;
+	bool recvNextSceneCall = false;
+};
+
+>>>>>>> Stashed changes
 class CLobbyScene : public CScene
 {
 public:

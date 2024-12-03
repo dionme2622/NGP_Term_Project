@@ -52,6 +52,7 @@ public:
 };
 
 typedef struct CS_PlayerInputPacket {
+    int header = 1;
     int playerID = 0;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState = 0;           // 입력한 Key 의 값
 } CS_PlayerInputPacket;

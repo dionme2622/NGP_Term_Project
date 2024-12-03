@@ -87,6 +87,8 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		GetCursorPos(&cursorPos);
 		ScreenToClient(hWnd, &cursorPos);
 
+		
+
 		if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
 							cursorPos.y > 370 && cursorPos.y < 520 ) {
 
@@ -100,6 +102,17 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 			cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 
+<<<<<<< Updated upstream
+=======
+		if (mapImage && sendPacket.playerID == 0) {
+			if (cursorPos.x > 773 && cursorPos.x < 1055 &&
+				cursorPos.y > 753 && cursorPos.y < 831) {
+				sendLobbyPacket.nextSceneCall = true;
+
+			}
+		}
+		printf("%d, %d\n", cursorPos.x, cursorPos.y);
+>>>>>>> Stashed changes
 		// TODO : ¸Ê ¼±ÅÃ
 		// GetFrameWork()->SetCurMap(Village);
 		break;
@@ -130,11 +143,28 @@ void CLobbyScene::SelectMap()
 		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3) mapImage = mapImages[1];
 		else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapImage = mapImages[2];
 
+
 		showSelectMap = !showSelectMap;
 	}
 
 	if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 		cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 }
+
+void CLobbyScene::SendData(SOCKET sock)
+{
+	sendLobbyPacket.header.packetType = 2;
+	int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
+	
+	if (retval) printf("%d\n", sendLobbyPacket.selectedMap);
+
+}
+
+void CLobbyScene::ReceiveData(SOCKET sock)
+{
+	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
+
+}
+
 
 
