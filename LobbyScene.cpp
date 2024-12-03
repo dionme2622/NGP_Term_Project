@@ -102,8 +102,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		if (cursorPos.x > 975 && cursorPos.x < 1155 &&
 			cursorPos.y > 640 && cursorPos.y < 705) showSelectMap = !showSelectMap;
 
-<<<<<<< Updated upstream
-=======
+
 		if (mapImage && sendPacket.playerID == 0) {
 			if (cursorPos.x > 773 && cursorPos.x < 1055 &&
 				cursorPos.y > 753 && cursorPos.y < 831) {
@@ -112,7 +111,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 			}
 		}
 		printf("%d, %d\n", cursorPos.x, cursorPos.y);
->>>>>>> Stashed changes
+
 		// TODO : ¸Ê ¼±ÅÃ
 		// GetFrameWork()->SetCurMap(Village);
 		break;

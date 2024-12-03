@@ -88,8 +88,7 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		break;
 	}
 }
-<<<<<<< Updated upstream
-=======
+
 
 void CPlayScene::SendData(SOCKET sock)
 {
@@ -105,4 +104,3 @@ void CPlayScene::ReceiveData(SOCKET sock)
 {
 	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
 }
->>>>>>> Stashed changes

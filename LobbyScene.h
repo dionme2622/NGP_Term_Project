@@ -1,9 +1,6 @@
 #pragma once
 #include "Scene.h"
 
-<<<<<<< Updated upstream
-=======
-
 typedef struct PacketHeader {
 	int packetType; // 1=PlayerInput, 2=ReadyPacket
 } PacketHeader;
@@ -19,7 +16,7 @@ struct SRecvLobbyPacket {
 	bool recvNextSceneCall = false;
 };
 
->>>>>>> Stashed changes
+
 class CLobbyScene : public CScene
 {
 public:
