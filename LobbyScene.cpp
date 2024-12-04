@@ -161,7 +161,11 @@ void CLobbyScene::SelectMap()
 void CLobbyScene::SendData(SOCKET sock)
 {
 	sendLobbyPacket.header.packetType = 2;
-	int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
+
+	if (pastData != sendLobbyPacket.selectedMap || sendLobbyPacket.nextSceneCall) {
+		pastData = sendLobbyPacket.selectedMap;
+		int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
+	}
 
 	printf("%d", sendLobbyPacket.header.packetType);
 	printf("%d", sendLobbyPacket.selectedMap);

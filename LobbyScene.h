@@ -50,6 +50,9 @@ private:
 
 	SSendLobbyPacket	 sendLobbyPacket;
 	SRecvLobbyPacket     recvLobbyPacket;
+
+	int pastData = -1;
+
 };
 
 
