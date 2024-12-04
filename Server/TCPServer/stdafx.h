@@ -40,3 +40,4 @@ enum {
 #define KEY_LEFT	0x04
 #define KEY_RIGHT	0x08
 #define KEY_SPACE	0x10
+#define KEY_SHIFT	0x20

@@ -32,6 +32,9 @@ void Initialize();
 void PlayerMeetObstacle(CPlayer* Player);
 void PlayerGetItem(CPlayer* Player);
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed);
+void PlayerMeetBallon(CPlayer* Player);
+void BallonToObstacle(CPlayer* Player);
+void PlayerMeetPlayer(CPlayer* Player1, CPlayer* Player2);
 
 std::default_random_engine dre;
 std::uniform_int_distribution<int> uid{ 3,8 };
@@ -73,7 +76,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 }
 
 static int num = 0;
-
+int count = 0;
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
     while (1) {
@@ -91,6 +94,7 @@ void GameLogicThread() {
                 if (keyState[playerID] & KEY_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
                 if (keyState[playerID] & KEY_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
                 if (keyState[playerID] & KEY_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
+                if (keyState[playerID] & KEY_SHIFT) player[playerID]->SetState(ESCAPE);
                 if (keyState[playerID] & KEY_SPACE) {
                     if (player[playerID]->state == DAMAGE) return;
                     for (int i = 0; i < player[playerID]->ballon_num; i++)
@@ -110,7 +114,7 @@ void GameLogicThread() {
             }
 
             // 캐릭터 이동
-            player[playerID]->Move(m_GameTimer.GetTimeElapsed());
+            player[playerID]->Update(m_GameTimer.GetTimeElapsed());
             PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
             PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
             BallonBoom(player[playerID], 0, m_GameTimer.GetTimeElapsed());
@@ -119,16 +123,21 @@ void GameLogicThread() {
             BallonBoom(player[playerID], 3, m_GameTimer.GetTimeElapsed());
             BallonBoom(player[playerID], 4, m_GameTimer.GetTimeElapsed());
             BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
-                                         
-            // 플레이어 데이터 업데이트
-            playerData[playerID]->LoadFromPlayer(player[playerID]);
+            PlayerMeetBallon(player[playerID]);
+            BallonToObstacle(player[playerID]);
+            /*if (player[playerID]->GetState() == DAMAGE) {
+                count += m_GameTimer.GetTimeElapsed();
+                if (count > 3.0f) count = 0, player[playerID]->SetState(DEAD);
+            }*/
         }
-
+        PlayerMeetPlayer(player[0], player[1]);
+        PlayerMeetPlayer(player[1], player[0]);
+        // 플레이어 데이터 업데이트
+        for(int playerID = 0; playerID < 2; playerID++) playerData[playerID]->LoadFromPlayer(player[playerID]);
         // 모든 플레이어 데이터를 클라이언트들에게 전송
         for (int i = 0; i < 2; ++i) {
             memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
         }
-        //memcpy(&packet.mapData, mapData, sizeof(MapData));                      // Map의 데이터를 클라이언트에게 보낸다.
         
         clientMutex.lock();
         for (SOCKET client_sock : clientSockets) {
@@ -270,7 +279,6 @@ void Initialize() {
     }
     packet.mapData.boardData[10][2].SetState(1); packet.mapData.boardData[10][5].SetState(1); packet.mapData.boardData[10][9].SetState(1); packet.mapData.boardData[10][12].SetState(1);
 }
-
 void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
 {
     if (Player->direction == DIR_LEFT)
@@ -354,7 +362,6 @@ void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
         }
     }
 }
-
 void PlayerGetItem(CPlayer* Player)
 {
     int i = (Player->x + 30 - 30) / 60;
@@ -362,9 +369,9 @@ void PlayerGetItem(CPlayer* Player)
 
     if (packet.mapData.boardData[j][i].state == 6)		// 이동속도 아이템
     {
-        if (Player->speed < 200)
-            Player->speed += 20;
-        printf("Player speed : %d\n", Player->speed);
+        if (Player->temp_speed < 200)
+            Player->temp_speed += 20;
+        printf("Player speed : %d\n", Player->temp_speed);
         packet.mapData.boardData[j][i].state = 1;
 
     }
@@ -381,7 +388,6 @@ void PlayerGetItem(CPlayer* Player)
         packet.mapData.boardData[j][i].state = 1;
     }
 }
-
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
 {
     ////물풍선 놓고 터지기 전
@@ -584,5 +590,42 @@ void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
     		}
     		Player->ballon[num]->startboomcount = 0.0f;
     	}
+    }
+}
+void PlayerMeetBallon(CPlayer* Player)
+{
+    int i = (Player->x + 30 - 30) / 60;
+    int j = (Player->y + 30 - 65) / 60;
+    {
+        if (packet.mapData.boardData[j][i].state == 5)
+        {
+            if (Player->state == LIVE)
+                Player->state = DAMAGE;
+        }
+    }
+}
+void BallonToObstacle(CPlayer* Player)
+{
+    for (int i = 0; i < Player->ballon_num; i++)
+    {
+        int xdis = abs(Player->x + 30 - (Player->ballon[i]->x + 30 + 30));
+        int ydis = abs(Player->y + 30 - (Player->ballon[i]->y + 30 + 65));
+        int dis;
+        if (xdis > ydis)
+            dis = xdis;
+        else
+            dis = ydis;
+        if (Player->ballon[i]->state == 1 && dis >= 60)
+            packet.mapData.boardData[Player->ballon[i]->y / 60][Player->ballon[i]->x / 60].state = 40;
+    }
+}
+void PlayerMeetPlayer(CPlayer* Player1, CPlayer* Player2)
+{
+    if (Player2->state == DAMAGE)
+    {
+        if ((Player1->x < Player2->x + 60) && (Player2->x < Player1->x + 60) && (Player1->y < Player2->y + 60) && (Player2->y < Player1->y + 60))
+        {
+            Player2->state = DEAD;
+        }
     }
 }

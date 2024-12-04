@@ -5,11 +5,12 @@ CPlayer::CPlayer()
 	SetPosition(400, 600);		
 	direction = DIR_DOWN;
 	stop = false;
-	speed = 100;
+	temp_speed = 100;
+	speed = temp_speed;
 	state = LIVE;
 	ballon_length = 2;
 	ballon_num = 1;
-	
+	count = 0.0f;
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon();
 }
 
@@ -19,6 +20,27 @@ CPlayer::~CPlayer()
 
 void CPlayer::Update(float fTimeElapsed)
 {
+	if (state == LIVE) speed = temp_speed, count = 0.0f;
+	else if (state == DAMAGE)
+	{
+		speed = 50;
+		count += fTimeElapsed;
+		printf("count : %f\n", count);
+		if (count > 4.0f) {
+			count = 0; 
+			SetState(DEAD);
+		}
+		printf("STATE: %d\n", state);
+	}
+	else if (state == DEAD) speed = 0;
+	else if (state == ESCAPE) {
+		speed = 0;
+		count += fTimeElapsed;
+		if (count > 0.5f) {
+			count = 0;
+			SetState(LIVE);
+		}
+	}
 	Move(fTimeElapsed);
 }
 
@@ -33,15 +55,6 @@ void CPlayer::SetPosition(float _fx, float _fy)
 
 void CPlayer::Move(float fTimeElapsed)
 {
-	//if (!GetStop())
-	//{
-	//	if (direction == DIR_DOWN) fy += speed * fTimeElapsed;			// down
-	//	else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;		// left
-	//	else if (direction == DIR_UP) fy -= speed * fTimeElapsed;			// up
-	//	else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;		// right
-
-	//	SetPosition(fx, fy);
-	//}
 	if (!GetStop())
 	{
 		if (direction == DIR_DOWN) y += speed * (fTimeElapsed * 1.4);			// down

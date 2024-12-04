@@ -29,12 +29,13 @@ public:
 	float fx, fy;
 
 	int			speed;			// 캐릭터의 이동속도
+	int			temp_speed;		// 캐릭터 속도
 	int			ballon_length;	// 물풍선의 길이
 	int			ballon_num;		// 물풍선의 개수
 	int			direction;		// 캐릭터의 방향
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
-
+	float		count;	
 	CBallon* ballon[6];		// 물풍선
 
 public:
