@@ -111,27 +111,39 @@ void CGameFramework::Render()
 
 void CGameFramework::ProcessInput()
 {
-	m_pScene->ProcessInput();
+	//m_pScene->ProcessInput();
 
-	char pressedKeys = GetPressedKeysAsString();
+	//char pressedKeys = GetPressedKeysAsString();
 
-	if (pressedKeys)
-		sendPacket.keyState = pressedKeys;
+	//if (pressedKeys)
+	//	sendPacket.keyState = pressedKeys;
+	if (GetPressedKeys())
+		sendPacket.keyState = GetPressedKeys();
+	
 }
 
 int CGameFramework::GetPressedKeys()
 {
-	char pressedKey = '0';
-	
-	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-	for (int key = 0x01; key <= 0xFE; ++key) {
-	    // 키가 눌려 있는지 확인
-	    if (GetAsyncKeyState(key) & 0x8000) {
-	        pressedKey = key; // 눌린 키를 추가
-	    }
-	}
-	
-	return pressedKey;
+	//char pressedKey = '0';
+	//
+	//// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
+	//for (int key = 0x01; key <= 0xFE; ++key) {
+	//    // 키가 눌려 있는지 확인
+	//    if (GetAsyncKeyState(key) & 0x8000) {
+	//        pressedKey = key; // 눌린 키를 추가
+	//    }
+	//}
+	//
+	//return pressedKey;
+	int pressedKeys = 0; // 초기화
+
+	if (GetAsyncKeyState(VK_UP) & 0x8000) pressedKeys |= KEY_UP;
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000) pressedKeys |= KEY_DOWN;
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000) pressedKeys |= KEY_LEFT;
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pressedKeys |= KEY_RIGHT;
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000) pressedKeys |= KEY_SPACE;
+
+	return pressedKeys; // 비트 플래그 반환
 }
 
 int CGameFramework::GetPressedKeysAsString()
@@ -201,14 +213,19 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	int tempData = -1;
 
 	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
-	while (1) {
-
+	while(1) {
 		EnterCriticalSection(&pFramework->cs); // 동기화 시작
-		if (tempData != pFramework->sendPacket.keyState) {
-			//if (pFramework->sendPacket.keyState == 48) continue;
-			tempData = pFramework->sendPacket.keyState;
+
+		// 현재 키 입력 상태를 가져오기
+		int currentKeyState = pFramework->GetPressedKeys();
+		pFramework->sendPacket.keyState = currentKeyState;
+
+		// 이전 상태와 현재 상태가 다르면 서버로 전송
+		if (tempData != currentKeyState) {
+			tempData = currentKeyState;
 			printf("SendData - KeyState Sent: %d\r", tempData);
 
+			// 키 상태를 서버로 전송
 			send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
 		}
 		LeaveCriticalSection(&pFramework->cs); // 동기화 종료

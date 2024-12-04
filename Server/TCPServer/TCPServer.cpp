@@ -87,11 +87,11 @@ void GameLogicThread() {
             // 현재 플레이어의 입력 상태에 따라 처리
             {
                 std::lock_guard<std::mutex> lock(clientMutex); // keyState 접근 동기화
-                if (keyState[playerID] == DIR_DOWN) player[playerID]->SetDirection(DIR_DOWN), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
-                else if (keyState[playerID] == SPACE) {
+                if (keyState[playerID] & KEY_DOWN) player[playerID]->SetDirection(DIR_DOWN), player[playerID]->stop = false;
+                if (keyState[playerID] & KEY_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
+                if (keyState[playerID] & KEY_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
+                if (keyState[playerID] & KEY_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
+                if (keyState[playerID] & KEY_SPACE) {
                     if (player[playerID]->state == DAMAGE) return;
                     for (int i = 0; i < player[playerID]->ballon_num; i++)
                     {
