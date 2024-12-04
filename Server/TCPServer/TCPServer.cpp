@@ -29,7 +29,7 @@ std::map<int, int> clientInput;
 SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
 
 
-void Initialize(int);
+void Map_Initialize(int);
 void PlayerMeetObstacle(CPlayer* Player);
 void PlayerGetItem(CPlayer* Player);
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed);
@@ -96,7 +96,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("%d\n", sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
             printf("Ready 패킷 수신: Map=%d, NextScene=%d\n",cs_lobbyPacket.selectedMap, cs_lobbyPacket.nextSceneCall);
             map_num = cs_lobbyPacket.selectedMap;
-            Initialize(1);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
+            Map_Initialize(1);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
             // SC_LobbyPacket 작성 및 브로드캐스트
             SC_LobbyPacket sc_lobbyPacket;
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
@@ -189,7 +189,6 @@ void GameLogicThread() {
         for (int i = 0; i < 2; ++i) {
             memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
         }
-        //memcpy(&packet.mapData, mapData, sizeof(MapData));                      // Map의 데이터를 클라이언트에게 보낸다.
 
         clientMutex.lock();
         for (SOCKET client_sock : clientSockets) {
@@ -256,7 +255,7 @@ int main(int argc, char* argv[]) {
         retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
         ++ID;
         
-        //Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
+        //Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
 
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
@@ -283,7 +282,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void Initialize(int map_num) {             // 맵의 초기화
+void Map_Initialize(int map_num) {             // 맵의 초기화
     if (map_num == 1) // cs_lobbyPacket.selectedMap = 1이면 Village 맵을 초기화 한다.
     {
         for (int i = 0; i < 13; i++) {
@@ -539,6 +538,19 @@ void PlayerGetItem(CPlayer* Player)
     }
 }
 
+void PlayerMeetBallon(CPlayer* Player)
+{
+    int i = (Player->x + 30 - 30) / 60;
+    int j = (Player->y + 30 - 65) / 60;
+    {
+        if (packet.mapData.boardData[j][i].state == 5)
+        {
+            if (Player->state == LIVE)
+                Player->state = DAMAGE;
+        }
+    }
+}
+
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
 {
     ////물풍선 놓고 터지기 전
@@ -741,5 +753,22 @@ void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
             }
             Player->ballon[num]->startboomcount = 0.0f;
         }
+    }
+}
+
+void BallonToObstacle(CPlayer* Player)
+{
+    for (int i = 0; i < Player->ballon_num; i++)
+    {
+        
+        int xdis = abs(Player->x + 30 - (Player->ballon[i]->x + 30 + 30));
+        int ydis = abs(Player->y + 30 - (Player->ballon[i]->y + 30 + 65));
+        int dis;
+        if (xdis > ydis)
+            dis = xdis;
+        else
+            dis = ydis;
+        if (Player->ballon[i]->state == 1 && dis >= 60)
+            packet.mapData.boardData[Player->ballon[i]->y / 60][Player->ballon[i]->x / 60].state = 40;
     }
 }
