@@ -19,6 +19,7 @@ CPlayer* player[2];
 PlayerData* playerData[2];
 MapData* mapData;
 int keyState[2] = {};
+int map_num = 0;
 //CPlayer* player2 = new CPlayer();
 
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
@@ -28,7 +29,7 @@ std::map<int, int> clientInput;
 SC_PlayersInfoPacket packet;       // Client로 보내는 패킷 구조체
 
 
-void Initialize();
+void Initialize(int);
 void PlayerMeetObstacle(CPlayer* Player);
 void PlayerGetItem(CPlayer* Player);
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed);
@@ -94,14 +95,12 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             printf("%d\n", sizeof(CS_LobbyPacket));
             printf("%d\n", sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
             printf("Ready 패킷 수신: Map=%d, NextScene=%d\n",cs_lobbyPacket.selectedMap, cs_lobbyPacket.nextSceneCall);
-
+            map_num = cs_lobbyPacket.selectedMap;
+            Initialize(1);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
             // SC_LobbyPacket 작성 및 브로드캐스트
             SC_LobbyPacket sc_lobbyPacket;
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
             
-
-         
-
 
             // 클라이언트들에게 브로드캐스트
             std::lock_guard<std::mutex> lock(clientMutex);
@@ -118,6 +117,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             }
         }
         else {
+
             printf("알 수 없는 패킷 타입: %d\n", header.packetType);
             break;
         }
@@ -195,8 +195,6 @@ void GameLogicThread() {
         for (SOCKET client_sock : clientSockets) {
             int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
 
-
-
             if (retval == SOCKET_ERROR) {
                 printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                 closesocket(client_sock);
@@ -240,9 +238,9 @@ int main(int argc, char* argv[]) {
     printf("서버가 클라이언트 연결 대기 중입니다...\n");
 
     // 주기적으로 데이터를 전송하는 스레드 실행
-    //std::thread gameLogicThread(GameLogicThread);
+    std::thread gameLogicThread(GameLogicThread);
 
-    //gameLogicThread.detach();
+    gameLogicThread.detach();
 
     while (1) {
         // 클라이언트 연결 수락
@@ -257,8 +255,8 @@ int main(int argc, char* argv[]) {
         static int ID;
         retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
         ++ID;
-
-        Initialize();       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
+        
+        //Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
 
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
@@ -285,54 +283,149 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void Initialize() {
-    for (int i = 0; i < 13; i++) {
-        for (int j = 0; j < 15; j++) {
-            packet.mapData.boardData[i][j].SetState(1);
+void Initialize(int map_num) {             // 맵의 초기화
+    if (map_num == 1) // cs_lobbyPacket.selectedMap = 1이면 Village 맵을 초기화 한다.
+    {
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 15; j++) {
+                packet.mapData.boardData[i][j].SetState(1);
+            }
         }
-    }
+        for (int i = 2; i < 13; i++)
+        {
+            packet.mapData.boardData[0][i].SetState(2);
+            packet.mapData.boardData[12][i].SetState(2);
+        }
+        for (int i = 4; i < 11; i++)
+        {
+            packet.mapData.boardData[1][i].SetState(2);
+            packet.mapData.boardData[11][i].SetState(2);
+        }
+        packet.mapData.boardData[1][1].SetState(3); packet.mapData.boardData[1][3].SetState(3); packet.mapData.boardData[1][11].SetState(3); packet.mapData.boardData[1][13].SetState(3);
+        packet.mapData.boardData[3][1].SetState(3); packet.mapData.boardData[3][3].SetState(3); packet.mapData.boardData[3][11].SetState(3); packet.mapData.boardData[3][13].SetState(3);
+        packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+        packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+        packet.mapData.boardData[7][1].SetState(3); packet.mapData.boardData[7][3].SetState(3); packet.mapData.boardData[7][11].SetState(3); packet.mapData.boardData[7][13].SetState(3);
+        packet.mapData.boardData[6][5].SetState(3); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][9].SetState(3);	packet.mapData.boardData[10][9].SetState(3);
+        packet.mapData.boardData[9][1].SetState(3); packet.mapData.boardData[9][3].SetState(3); packet.mapData.boardData[9][11].SetState(3); packet.mapData.boardData[9][13].SetState(3);
+        packet.mapData.boardData[4][6].SetState(3); packet.mapData.boardData[4][8].SetState(3); packet.mapData.boardData[8][6].SetState(3);	packet.mapData.boardData[8][8].SetState(3);
 
-    for (int i = 2; i < 13; i++)
-    {
-        packet.mapData.boardData[0][i].SetState(2);
-        packet.mapData.boardData[12][i].SetState(2);
+        for (int i = 0; i < 5; i++)
+        {
+            packet.mapData.boardData[2][i].SetState(2);
+            packet.mapData.boardData[4][i].SetState(2);
+            packet.mapData.boardData[8][i].SetState(2);
+            packet.mapData.boardData[10][i].SetState(2);
+        }
+        for (int i = 10; i < 15; i++)
+        {
+            packet.mapData.boardData[2][i].SetState(2);
+            packet.mapData.boardData[4][i].SetState(2);
+            packet.mapData.boardData[8][i].SetState(2);
+            packet.mapData.boardData[10][i].SetState(2);
+        }
+        packet.mapData.boardData[3][0].SetState(2); packet.mapData.boardData[3][5].SetState(2); packet.mapData.boardData[3][9].SetState(2); packet.mapData.boardData[3][14].SetState(2);
+        packet.mapData.boardData[10][0].SetState(2); packet.mapData.boardData[10][5].SetState(2); packet.mapData.boardData[10][9].SetState(2); packet.mapData.boardData[10][14].SetState(2);
+        for (int i = 5; i < 10; i++)
+        {
+            packet.mapData.boardData[5][i].SetState(2);
+            packet.mapData.boardData[7][i].SetState(2);
+        }
+        packet.mapData.boardData[10][2].SetState(1); packet.mapData.boardData[10][5].SetState(1); packet.mapData.boardData[10][9].SetState(1); packet.mapData.boardData[10][12].SetState(1);
     }
-    for (int i = 4; i < 11; i++)
+    else if (map_num == 2)  // cs_lobbyPacket.selectedMap = 2이면 Pirate 맵을 초기화 한다.
     {
-        packet.mapData.boardData[1][i].SetState(2);
-        packet.mapData.boardData[11][i].SetState(2);
-    }
-    packet.mapData.boardData[1][1].SetState(3); packet.mapData.boardData[1][3].SetState(3); packet.mapData.boardData[1][11].SetState(3); packet.mapData.boardData[1][13].SetState(3);
-    packet.mapData.boardData[3][1].SetState(3); packet.mapData.boardData[3][3].SetState(3); packet.mapData.boardData[3][11].SetState(3); packet.mapData.boardData[3][13].SetState(3);
-    packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
-    packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
-    packet.mapData.boardData[7][1].SetState(3); packet.mapData.boardData[7][3].SetState(3); packet.mapData.boardData[7][11].SetState(3); packet.mapData.boardData[7][13].SetState(3);
-    packet.mapData.boardData[6][5].SetState(3); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][9].SetState(3);	packet.mapData.boardData[10][9].SetState(3);
-    packet.mapData.boardData[9][1].SetState(3); packet.mapData.boardData[9][3].SetState(3); packet.mapData.boardData[9][11].SetState(3); packet.mapData.boardData[9][13].SetState(3);
-    packet.mapData.boardData[4][6].SetState(3); packet.mapData.boardData[4][8].SetState(3); packet.mapData.boardData[8][6].SetState(3);	packet.mapData.boardData[8][8].SetState(3);
+        for (int i = 0; i < 4; i++)
+        {
+            packet.mapData.boardData[0][i].SetState(2);
+        }
+        packet.mapData.boardData[0][7].SetState(2);
+        for (int i = 11; i < 15; i++)
+        {
+            packet.mapData.boardData[0][i].SetState(2);
+        }
+        // 1줄
+        packet.mapData.boardData[1][0].SetState(2);
+        packet.mapData.boardData[1][1].SetState(3);
+        packet.mapData.boardData[1][2].SetState(2);
+        for (int i = 4; i < 7; i++)
+        {
+            packet.mapData.boardData[1][i].SetState(2);
+        }
+        for (int i = 8; i < 11; i++)
+        {
+            packet.mapData.boardData[1][i].SetState(2);
+        }
+        packet.mapData.boardData[1][12].SetState(2);
+        packet.mapData.boardData[1][13].SetState(3);
+        packet.mapData.boardData[1][14].SetState(2);
+        // 2줄
+        packet.mapData.boardData[2][0].SetState(2);
+        packet.mapData.boardData[2][1].SetState(2);
+        packet.mapData.boardData[2][3].SetState(2);
+        packet.mapData.boardData[2][5].SetState(2);
+        packet.mapData.boardData[2][7].SetState(2);
+        packet.mapData.boardData[2][9].SetState(2);
+        packet.mapData.boardData[2][11].SetState(2);
+        packet.mapData.boardData[2][13].SetState(2);
+        packet.mapData.boardData[2][14].SetState(2);
+        // 3줄
+        for (int i = 3; i < 13; i++) packet.mapData.boardData[i][0].SetState(2);
+        for (int i = 7; i < 11; i++) packet.mapData.boardData[i][1].SetState(2);
 
-    for (int i = 0; i < 5; i++)
-    {
-        packet.mapData.boardData[2][i].SetState(2);
-        packet.mapData.boardData[4][i].SetState(2);
-        packet.mapData.boardData[8][i].SetState(2);
-        packet.mapData.boardData[10][i].SetState(2);
+        for (int i = 8; i < 10; i++) packet.mapData.boardData[i][2].SetState(2);
+
+        for (int i = 9; i < 13; i++) packet.mapData.boardData[i][3].SetState(2);
+
+        for (int i = 10; i < 13; i++) packet.mapData.boardData[i][4].SetState(2);
+
+        for (int i = 11; i < 13; i++) packet.mapData.boardData[i][5].SetState(2);
+
+        for (int i = 6; i < 12; i++) packet.mapData.boardData[12][i].SetState(2);
+
+        for (int i = 9; i < 12; i++) packet.mapData.boardData[11][i].SetState(2);
+
+        for (int i = 3; i < 13; i++) packet.mapData.boardData[i][14].SetState(2);
+
+        for (int i = 10; i < 12; i++) packet.mapData.boardData[10][i].SetState(2);
+
+        for (int i = 11; i < 14; i++) packet.mapData.boardData[9][i].SetState(2);
+
+        for (int i = 12; i < 14; i++) packet.mapData.boardData[8][i].SetState(2);
+
+        packet.mapData.boardData[7][13].SetState(2);
+        for (int i = 4; i < 11; i++) packet.mapData.boardData[3][i].SetState(2);
+
+        for (int i = 3; i < 12; i++) packet.mapData.boardData[4][i].SetState(2);
+        for (int i = 4; i < 11; i++) packet.mapData.boardData[5][i].SetState(2);
+
+        for (int i = 3; i < 6; i++) packet.mapData.boardData[6][i].SetState(2);
+
+        for (int i = 9; i < 12; i++) packet.mapData.boardData[6][i].SetState(2);
+
+        for (int i = 5; i < 10; i++)
+        {
+            packet.mapData.boardData[7][i].SetState(2);
+            packet.mapData.boardData[8][i].SetState(2);
+        }
+        packet.mapData.boardData[9][7].SetState(2);
+        for (int i = 3; i < 7; i++)
+        {
+            packet.mapData.boardData[i][2].SetState(2);
+            packet.mapData.boardData[i][12].SetState(2);
+        }
+        packet.mapData.boardData[7][3].SetState(2);
+        packet.mapData.boardData[7][11].SetState(2);
+        packet.mapData.boardData[8][4].SetState(2);
+        packet.mapData.boardData[8][10].SetState(2);
+        packet.mapData.boardData[9][5].SetState(2);
+        packet.mapData.boardData[9][9].SetState(2);
+        for (int i = 6; i < 9; i++) packet.mapData.boardData[10][i].SetState(2);
+        packet.mapData.boardData[10][13].SetState(2);
+        packet.mapData.boardData[11][1].SetState(3);
+        packet.mapData.boardData[11][13].SetState(3);
+        packet.mapData.boardData[6][6].SetState(3); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][8].SetState(3);
     }
-    for (int i = 10; i < 15; i++)
-    {
-        packet.mapData.boardData[2][i].SetState(2);
-        packet.mapData.boardData[4][i].SetState(2);
-        packet.mapData.boardData[8][i].SetState(2);
-        packet.mapData.boardData[10][i].SetState(2);
-    }
-    packet.mapData.boardData[3][0].SetState(2); packet.mapData.boardData[3][5].SetState(2); packet.mapData.boardData[3][9].SetState(2); packet.mapData.boardData[3][14].SetState(2);
-    packet.mapData.boardData[10][0].SetState(2); packet.mapData.boardData[10][5].SetState(2); packet.mapData.boardData[10][9].SetState(2); packet.mapData.boardData[10][14].SetState(2);
-    for (int i = 5; i < 10; i++)
-    {
-        packet.mapData.boardData[5][i].SetState(2);
-        packet.mapData.boardData[7][i].SetState(2);
-    }
-    packet.mapData.boardData[10][2].SetState(1); packet.mapData.boardData[10][5].SetState(1); packet.mapData.boardData[10][9].SetState(1); packet.mapData.boardData[10][12].SetState(1);
 }
 
 void PlayerMeetObstacle(CPlayer* Player)         // 수정 후
