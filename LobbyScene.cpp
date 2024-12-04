@@ -43,7 +43,7 @@ void CLobbyScene::ProcessInput()
 void CLobbyScene::Update(float fTimeElapsed)
 {
 	// TODO : Lobby Scene Update
-	if (recvLobbyPacket.recvNextSceneCall) {
+	if (recvLobbyPacket.recvNextSceneCall == 1) {
 		//TODO
 		// ¸Ê ¹ÞÀº°É·Î ¾À ³Ñ±â±â
 		GetFramework()->SetCurScene(PLAYSCENE);

@@ -93,7 +93,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
                 break;
             }
             map_num = cs_lobbyPacket.selectedMap;
-            Map_Initialize(2);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
+            Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
             // SC_LobbyPacket 작성 및 브로드캐스트
             SC_LobbyPacket sc_lobbyPacket;
 
@@ -239,8 +239,8 @@ int main(int argc, char* argv[]) {
     printf("서버가 클라이언트 연결 대기 중입니다...\n");
 
     // 주기적으로 데이터를 전송하는 스레드 실행
-    //std::thread gameLogicThread(GameLogicThread);
-    //gameLogicThread.detach();
+    std::thread gameLogicThread(GameLogicThread);
+    gameLogicThread.detach();
 
     while (1) {
         // 클라이언트 연결 수락
