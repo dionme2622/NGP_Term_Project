@@ -111,30 +111,12 @@ void CGameFramework::Render()
 
 void CGameFramework::ProcessInput()
 {
-	//m_pScene->ProcessInput();
-
-	//char pressedKeys = GetPressedKeysAsString();
-
-	//if (pressedKeys)
-	//	sendPacket.keyState = pressedKeys;
 	if (GetPressedKeys())
 		sendPacket.keyState = GetPressedKeys();
-	
 }
 
 int CGameFramework::GetPressedKeys()
 {
-	//char pressedKey = '0';
-	//
-	//// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-	//for (int key = 0x01; key <= 0xFE; ++key) {
-	//    // 키가 눌려 있는지 확인
-	//    if (GetAsyncKeyState(key) & 0x8000) {
-	//        pressedKey = key; // 눌린 키를 추가
-	//    }
-	//}
-	//
-	//return pressedKey;
 	int pressedKeys = 0; // 초기화
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000) pressedKeys |= KEY_UP;
@@ -144,16 +126,6 @@ int CGameFramework::GetPressedKeys()
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000) pressedKeys |= KEY_SPACE;
 
 	return pressedKeys; // 비트 플래그 반환
-}
-
-int CGameFramework::GetPressedKeysAsString()
-{
-	// 눌려 있는 키 목록을 가져옴
-	char pressedKeys = GetPressedKeys();
-	
-	if (!pressedKeys) pressedKeys = '0';
-	
-	return pressedKeys;
 }
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
