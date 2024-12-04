@@ -21,9 +21,10 @@ public:
 
 	void SelectMap();
 
-	virtual void SendData(SOCKET _sock);
-	virtual void ReceiveData(SOCKET _sock);
+	virtual void SendData();
+	virtual void ReceiveData();
 
+	virtual bool IsServerConnected() { return true; };
 
 private:
 	HBITMAP				 backgroundImage;
@@ -38,6 +39,8 @@ private:
 	SRecvLobbyPacket     recvLobbyPacket;
 
 	int pastData = -1;
+
+
 
 };
 

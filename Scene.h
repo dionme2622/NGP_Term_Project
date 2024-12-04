@@ -24,7 +24,6 @@ public:
 	virtual void Initialize();
 	virtual void ProcessInput() = 0;
 
-
 	virtual void Update(float fTimeElapsed) = 0;
 	virtual void Render() = 0;
 
@@ -33,13 +32,15 @@ public:
 
 	void DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop);
 
-	void SetID(int id);
+	static void SetID(int id);
 
 
-	virtual void SendData(SOCKET _sock) = 0;
-	virtual void ReceiveData(SOCKET _sock) = 0;
+	virtual void SendData() = 0;
+	virtual void ReceiveData() = 0;
 	
-public :
+	virtual bool IsServerConnected() = 0;
+
+public:
 	CGameFramework* GetFramework() { return m_pGameFramework;}
 
 
@@ -56,13 +57,25 @@ protected:
 
 	POINT					cursorPos;
 
-	CS_PlayerInputPacket	sendPacket;
-	SC_PlayersInfoPacket	receivedPacket;
+
+
+	static int				m_ID;
+
 protected:
 	CGameFramework*			m_pGameFramework;
 
+
 public:
-	int*				currentscene;
+	int*					currentscene;
+	bool					m_bServerConnected;
+
+	// 서버 통신 관련
+	WSADATA					wsa;
+	SOCKET					sock;
+	sockaddr_in				remoteAddr;
+	int						retval;
+
+
 };
 
 

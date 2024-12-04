@@ -9,43 +9,8 @@ CGameFramework::CGameFramework()
 
 	m_ppScenes			= new CScene * [4];		// 씬 4개
 	m_ppMaps			= new CMap * [2];		// Map 4개
-	currentscene		= LOBBYSCENE;			// Scene의 인덱스
+	currentscene		= MENUSCENE;			// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
-
-	//서버 통신 관련 변수 초기화
-	//윈속 초기화
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return;
-
-	// 소켓 생성
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET) {
-		printf("socket err");
-	}
-
-	hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	hRecvEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-	// 소켓 주소 구조체 초기화
-	memset(&remoteAddr, 0, sizeof(remoteAddr));
-	remoteAddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
-	remoteAddr.sin_port = htons(SERVERPORT);
-	// 서버 연결
-	if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
-		printf("서버 연결 실패");
-		closesocket(sock);
-		WSACleanup();
-		exit(0);
-	}
-	InitializeCriticalSection();
-
-	int retval;
-	retval = recv(sock, (char*)&sendPacket.playerID, sizeof(sendPacket.playerID), 0); // 방향키 데이터 수신
-
-	CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
-	CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
-
 }
 
 CGameFramework::~CGameFramework()
@@ -68,11 +33,6 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
 	m_pScene = m_ppScenes[currentscene];																									
-
-	m_pScene->SetID(sendPacket.playerID);
-
-	SetEvent(hSelectEvent);
-	WaitForSingleObject(hRecvEvent, INFINITE);
 
 	m_ppScenes[currentscene]->Initialize();
 
@@ -97,6 +57,12 @@ void CGameFramework::Update()
 	size_t nLength = _tcslen(m_pszFrameRate);
 
 	::SetWindowText(hWnd, m_pszFrameRate);
+
+	if (m_pScene->IsServerConnected() && m_bPause == false) {
+		CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
+		CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
+		m_bPause = true;
+	}
 }
 
 void CGameFramework::Tick()
@@ -114,37 +80,7 @@ void CGameFramework::Render()
 void CGameFramework::ProcessInput()
 {
 	m_pScene->ProcessInput();
-
-	/*char pressedKeys = GetPressedKeysAsString();
-
-	if (pressedKeys)
-		sendPacket.keyState = pressedKeys;*/
 }
-
-//int CGameFramework::GetPressedKeys()
-//{
-//	char pressedKey = '0';
-//	
-//	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-//	for (int key = 0x01; key <= 0xFE; ++key) {
-//	    // 키가 눌려 있는지 확인
-//	    if (GetAsyncKeyState(key) & 0x8000) {
-//	        pressedKey = key; // 눌린 키를 추가
-//	    }
-//	}
-//	
-//	return pressedKey;
-//}
-//
-//int CGameFramework::GetPressedKeysAsString()
-//{
-//	// 눌려 있는 키 목록을 가져옴
-//	char pressedKeys = GetPressedKeys();
-//	
-//	if (!pressedKeys) pressedKeys = '0';
-//	
-//	return pressedKeys;
-//}
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
@@ -200,10 +136,10 @@ void CGameFramework::InitializeCriticalSection()
 DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
-	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
+	//WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
 
 	while (1) {
-		pFramework->m_pScene->SendData(pFramework->sock);
+		pFramework->m_pScene->SendData();
 	}
 
 	return 0;
@@ -214,8 +150,8 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 
 	while (1) {
 		if (pFramework->m_pScene) {
-			pFramework->m_pScene->ReceiveData(pFramework->sock);
-			SetEvent(pFramework->hRecvEvent);
+			pFramework->m_pScene->ReceiveData();
+			//SetEvent(pFramework->hRecvEvent);
 		}
 	}
 	return 0;

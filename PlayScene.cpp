@@ -119,7 +119,7 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	}
 }
 
-void CPlayScene::SendData(SOCKET sock)
+void CPlayScene::SendData()
 {
 	sendPacket.header.packetType = 1;
 
@@ -130,7 +130,7 @@ void CPlayScene::SendData(SOCKET sock)
 	}
 }
 
-void CPlayScene::ReceiveData(SOCKET sock)
+void CPlayScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
 }

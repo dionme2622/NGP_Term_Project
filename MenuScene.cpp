@@ -135,7 +135,10 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
         if (IsCursorInButton(Button_Help, cursorPos)) drawTutorial = true;
-        else if (IsCursorInButton(Button_Play, cursorPos)) GetFramework()->SetCurScene(LOBBYSCENE);     // 로비 Scene으로 이동
+        else if (IsCursorInButton(Button_Play, cursorPos)) {
+            Login();
+            GetFramework()->SetCurScene(LOBBYSCENE);     // 로비 Scene으로 이동
+        }
         else if (IsCursorInButton(Button_Quit, cursorPos)) exit(0);
         if (drawTutorial && IsCursorInButton(tutoExitButton, cursorPos)) drawTutorial = false;
         break;
@@ -153,6 +156,35 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 void CMenuScene::Login()
 {
-    //playerData->ID = "TestId";
+    //서버 통신 관련 변수 초기화
+    //윈속 초기화
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+        return;
+
+    // 소켓 생성
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET) {
+        printf("socket err");
+    }
+
+
+    // 소켓 주소 구조체 초기화
+    memset(&remoteAddr, 0, sizeof(remoteAddr));
+    remoteAddr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
+    remoteAddr.sin_port = htons(SERVERPORT);
+
+
+    // 서버 연결
+    if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
+        printf("서버 연결 실패");
+        closesocket(sock);
+        WSACleanup();
+        exit(0);
+    }
+    
+    int id;
+    retval = recv(sock, (char*)&id, sizeof(id), 0); // ID
+    SetID(id);
 }
 

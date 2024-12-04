@@ -56,20 +56,9 @@ private:
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
+	bool					m_serverConnected = false;
+	bool					m_bPause = false;
 
-	// 서버 통신 관련
-	WSADATA wsa;
-	SOCKET sock;
-	sockaddr_in remoteAddr;
-	int retval;
-
-	HANDLE hSelectEvent;
-	HANDLE hRecvEvent;
-
-	CS_PlayerInputPacket sendPacket;  
-	SC_PlayersInfoPacket receivedPacket; 
-
-	CRITICAL_SECTION cs;
 public:
 
 	void SetCurScene(int Scene);				// Scene Set

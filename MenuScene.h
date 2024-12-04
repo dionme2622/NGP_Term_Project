@@ -19,8 +19,10 @@ public:
 
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	virtual void SendData(SOCKET _sock) {};
-	virtual void ReceiveData(SOCKET _sock) {};
+	virtual void SendData() {};
+	virtual void ReceiveData() {};
+
+	virtual bool IsServerConnected() { return m_bServerConnected; };
 
 	void Login();
 private:
@@ -31,4 +33,5 @@ private:
 	bool			 drawTutorial;
 
 	SButton			 tutoExitButton;
+
 };

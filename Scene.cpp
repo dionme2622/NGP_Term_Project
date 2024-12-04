@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include "GameFramework.h"
 
+int CScene::m_ID = 0;
+
 CScene::CScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework)
 {
 	hWnd = _hWnd;
@@ -27,7 +29,7 @@ void CScene::DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop)
 
 void CScene::SetID(int id)
 {
-	sendPacket.playerID = id;
+	m_ID = id;
 }
 	
 
