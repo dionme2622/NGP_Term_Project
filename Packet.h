@@ -65,7 +65,7 @@ struct SSendLobbyPacket {
 
 
 struct SRecvLobbyPacket {
-    //CMap recvMapData;
+    int selectedMap;
     int recvNextSceneCall;
 };
 

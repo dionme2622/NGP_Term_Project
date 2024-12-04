@@ -159,8 +159,7 @@ void CLobbyScene::SendData()
 void CLobbyScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
-	printf("¹ÞÀº : %d\n", recvLobbyPacket.recvNextSceneCall);
+	GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
 }
-
 
 

@@ -51,6 +51,8 @@ int recv_all(SOCKET sock, char* buf, int len) {
 }
 
 
+static int check = 0;
+
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
     int retval;
@@ -102,6 +104,9 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             SC_LobbyPacket sc_lobbyPacket;
 
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
+            sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
+            if(sc_lobbyPacket.nextSceneCall == 1)
+                check = 1;
             printf("%d", sc_lobbyPacket.nextSceneCall);
             
 
@@ -134,6 +139,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         std::lock_guard<std::mutex> lock(clientMutex);
         clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
     }
+    check = 0;
     printf("클라이언트 처리 종료\n");
     return 0;
 }
@@ -143,70 +149,73 @@ DWORD WINAPI ClientThread(LPVOID arg) {
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
     while (1) {
-        m_GameTimer.Tick(120.0f);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 10ms 간격 실행
+        if (check == 1)
+        {
+            m_GameTimer.Tick(120.0f);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 10ms 간격 실행
 
-        // 모든 플레이어 상태 업데이트
-        for (int playerID = 0; playerID < 2; ++playerID) {
-            player[playerID]->stop = true;
+            // 모든 플레이어 상태 업데이트
+            for (int playerID = 0; playerID < 2; ++playerID) {
+                player[playerID]->stop = true;
 
-            // 현재 플레이어의 입력 상태에 따라 처리
-            {
-                std::lock_guard<std::mutex> lock(clientMutex); // keyState 접근 동기화
-                if (keyState[playerID] == DIR_DOWN) player[playerID]->SetDirection(DIR_DOWN), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
-                else if (keyState[playerID] == DIR_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
-                else if (keyState[playerID] == SPACE) {
-                    if (player[playerID]->state == DAMAGE) return;
-                    for (int i = 0; i < player[playerID]->ballon_num; i++)
-                    {
-                        if (player[playerID]->ballon[i]->state == 0)
+                // 현재 플레이어의 입력 상태에 따라 처리
+                {
+                    std::lock_guard<std::mutex> lock(clientMutex); // keyState 접근 동기화
+                    if (keyState[playerID] == DIR_DOWN) player[playerID]->SetDirection(DIR_DOWN), player[playerID]->stop = false;
+                    else if (keyState[playerID] == DIR_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
+                    else if (keyState[playerID] == DIR_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
+                    else if (keyState[playerID] == DIR_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
+                    else if (keyState[playerID] == SPACE) {
+                        if (player[playerID]->state == DAMAGE) return;
+                        for (int i = 0; i < player[playerID]->ballon_num; i++)
                         {
-                            player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
-                            player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
-                            if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
+                            if (player[playerID]->ballon[i]->state == 0)
                             {
-                                player[playerID]->ballon[i]->SetState(1);
-                                packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
+                                player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
+                                player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
+                                if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
+                                {
+                                    player[playerID]->ballon[i]->SetState(1);
+                                    packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
+                                }
                             }
                         }
                     }
                 }
+
+                // 캐릭터 이동
+                player[playerID]->Move(m_GameTimer.GetTimeElapsed());
+                PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
+                PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
+                BallonBoom(player[playerID], 0, m_GameTimer.GetTimeElapsed());
+                BallonBoom(player[playerID], 1, m_GameTimer.GetTimeElapsed());
+                BallonBoom(player[playerID], 2, m_GameTimer.GetTimeElapsed());
+                BallonBoom(player[playerID], 3, m_GameTimer.GetTimeElapsed());
+                BallonBoom(player[playerID], 4, m_GameTimer.GetTimeElapsed());
+                BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
+
+                // 플레이어 데이터 업데이트
+                playerData[playerID]->LoadFromPlayer(player[playerID]);
             }
 
-            // 캐릭터 이동
-            player[playerID]->Move(m_GameTimer.GetTimeElapsed());
-            PlayerMeetObstacle(player[playerID]);       // 플레이어와 장애물 충돌처리
-            PlayerGetItem(player[playerID]);            // 플레이어와 아이템 충돌처리
-            BallonBoom(player[playerID], 0, m_GameTimer.GetTimeElapsed());
-            BallonBoom(player[playerID], 1, m_GameTimer.GetTimeElapsed());
-            BallonBoom(player[playerID], 2, m_GameTimer.GetTimeElapsed());
-            BallonBoom(player[playerID], 3, m_GameTimer.GetTimeElapsed());
-            BallonBoom(player[playerID], 4, m_GameTimer.GetTimeElapsed());
-            BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
-
-            // 플레이어 데이터 업데이트
-            playerData[playerID]->LoadFromPlayer(player[playerID]);
-        }
-
-        // 모든 플레이어 데이터를 클라이언트들에게 전송
-        for (int i = 0; i < 2; ++i) {
-            memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
-        }
-
-        clientMutex.lock();
-        for (SOCKET client_sock : clientSockets) {
-            int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
-
-            if (retval == SOCKET_ERROR) {
-                printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
-                closesocket(client_sock);
-                clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
-
+            // 모든 플레이어 데이터를 클라이언트들에게 전송
+            for (int i = 0; i < 2; ++i) {
+                memcpy(&packet.playerData[i], playerData[i], sizeof(PlayerData));   // Player들의 데이터를 클라이언트에게 보낸다.
             }
+
+            clientMutex.lock();
+            for (SOCKET client_sock : clientSockets) {
+                int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
+
+                if (retval == SOCKET_ERROR) {
+                    printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
+                    closesocket(client_sock);
+                    clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
+
+                }
+            }
+            clientMutex.unlock();
         }
-        clientMutex.unlock();
     }
 }
 
