@@ -144,8 +144,8 @@ void CLobbyScene::SelectMap()
 
 		int mapData;
 
-		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapData = 1;
-		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3)	mapData = 2;
+		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapData = 1, GetFramework()->SetCurMap(VILLAGE);
+		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3)	mapData = 2, GetFramework()->SetCurMap(PIRATE);
 		else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapData = 3;
 
 		mapImage = mapImages[mapData];
@@ -167,17 +167,11 @@ void CLobbyScene::SendData(SOCKET sock)
 		int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
 	}
 
-	printf("%d", sendLobbyPacket.header.packetType);
-	printf("%d", sendLobbyPacket.selectedMap);
-	printf("%d\n", sendLobbyPacket.nextSceneCall);
-	printf("%d\n", sizeof(sendLobbyPacket));
 }
 
 void CLobbyScene::ReceiveData(SOCKET sock)
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
-	printf("-----------%d", recvLobbyPacket.recvNextSceneCall);
-	printf("%d\n", sizeof(recvLobbyPacket.recvNextSceneCall));
 
 }
 

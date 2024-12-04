@@ -2,21 +2,7 @@
 #include "Map.h"
 #include "Scene.h"
 
-typedef struct PacketHeader {
-	int packetType; // 1=PlayerInput, 2=ReadyPacket
-} PacketHeader;
 
-
-struct SSendLobbyPacket {
-	PacketHeader header;
-	int selectedMap;
-	int nextSceneCall;
-};
-
-struct SRecvLobbyPacket {
-	//CMap recvMapData;
-	int recvNextSceneCall;
-};
 
 class CLobbyScene : public CScene
 {

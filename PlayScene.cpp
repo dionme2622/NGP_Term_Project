@@ -97,7 +97,7 @@ void CPlayScene::Render()
 	DeleteDC(MemDC);
 	DeleteDC(MemDCImage);
 	ReleaseDC(hWnd, hdc);
-}
+} 
 
 void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
@@ -121,6 +121,8 @@ void CPlayScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 void CPlayScene::SendData(SOCKET sock)
 {
+	sendPacket.header.packetType = 1;
+
 	if (pastData != sendPacket.keyState) {
 		pastData = sendPacket.keyState;
 		int retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);

@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "GameObject.h"
+
 class PlayerData {
 public:
     int			x, y;			// 캐릭터 x, y 좌표
@@ -51,7 +52,26 @@ public:
 
 };
 
+typedef struct PacketHeader {
+    int packetType; // 1=PlayerInput, 2=ReadyPacket
+} PacketHeader;
+
+
+struct SSendLobbyPacket {
+    PacketHeader header;
+    int selectedMap;
+    int nextSceneCall;
+};
+
+
+struct SRecvLobbyPacket {
+    //CMap recvMapData;
+    int recvNextSceneCall;
+};
+
+
 typedef struct CS_PlayerInputPacket {
+    PacketHeader header;
     int playerID = 0;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
     int keyState = 0;           // 입력한 Key 의 값
 } CS_PlayerInputPacket;
