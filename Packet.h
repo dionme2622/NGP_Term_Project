@@ -66,6 +66,7 @@ struct SSendLobbyPacket {
 
 struct SRecvLobbyPacket {
     int selectedMap;
+    bool playerExist[2];
     int recvNextSceneCall;
 };
 

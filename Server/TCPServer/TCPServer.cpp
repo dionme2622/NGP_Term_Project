@@ -52,6 +52,7 @@ int recv_all(SOCKET sock, char* buf, int len) {
 
 
 static int check = 0;
+SC_LobbyPacket sc_lobbyPacket;
 
 DWORD WINAPI ClientThread(LPVOID arg) {
     SOCKET client_sock = (SOCKET)arg;
@@ -101,7 +102,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             map_num = cs_lobbyPacket.selectedMap;
             Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
             // SC_LobbyPacket 작성 및 브로드캐스트
-            SC_LobbyPacket sc_lobbyPacket;
 
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
             sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
@@ -266,8 +266,12 @@ int main(int argc, char* argv[]) {
 
         static int ID;
         retval = send(client_sock, (char*)&ID, sizeof(ID), 0);
+        sc_lobbyPacket.playerExist[ID] = true;
         ++ID;
         
+
+
+
         //Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
 
         // 접속한 클라이언트 정보 출력

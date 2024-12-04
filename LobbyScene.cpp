@@ -27,6 +27,11 @@ void CLobbyScene::Initialize()
 	mapImages[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
 	mapImages[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
 	mapImages[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+
+
+	playerImage[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+	playerImage[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
+
 }
 
 
@@ -75,6 +80,14 @@ void CLobbyScene::Render()
 		StretchBlt(MemDC, rc.right / 2 - 447, rc.bottom / 2 - 73, 894, 146, MemDCImage, 0, 0, 894, 146, SRCCOPY);
 	}
 
+	if (recvLobbyPacket.playerExist[0]) {
+		OldBit[1] = (HBITMAP)SelectObject(MemDCImage, playerImage[0]); // 배경 이미지	
+		StretchBlt(MemDC, 43, 150, rc.right, rc.bottom, MemDCImage, 0, 0, 1220, 950, SRCCOPY);
+	}
+	if (recvLobbyPacket.playerExist[1]) {
+		OldBit[1] = (HBITMAP)SelectObject(MemDCImage, playerImage[1]); // 배경 이미지	
+		StretchBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 1220, 950, SRCCOPY);
+	}
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
 	// 자원 해제

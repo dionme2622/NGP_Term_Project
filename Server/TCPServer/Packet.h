@@ -73,5 +73,6 @@ typedef struct CS_LobbyPacket {
 
 typedef struct SC_LobbyPacket {
     int selectedMap;
+    bool playerExist[2];
     int nextSceneCall;
 }SC_LobbyPacket;

@@ -35,6 +35,9 @@ private:
 	HBITMAP				 mapImage;
 	HBITMAP*			 mapImages;
 
+	HBITMAP				 playerImage[2];
+
+
 	SSendLobbyPacket	 sendLobbyPacket;
 	SRecvLobbyPacket     recvLobbyPacket;
 
