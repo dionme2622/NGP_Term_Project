@@ -172,7 +172,7 @@ void CLobbyScene::SendData(SOCKET sock)
 void CLobbyScene::ReceiveData(SOCKET sock)
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
-
+	GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
 }
 
 

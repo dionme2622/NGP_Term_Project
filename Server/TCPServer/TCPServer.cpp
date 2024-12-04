@@ -100,6 +100,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             SC_LobbyPacket sc_lobbyPacket;
 
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
+            sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
             if(sc_lobbyPacket.nextSceneCall == 1)
                 check = 1;
             printf("%d", sc_lobbyPacket.nextSceneCall);
@@ -135,6 +136,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         std::lock_guard<std::mutex> lock(clientMutex);
         clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), client_sock), clientSockets.end());
     }
+    check = 0;
     printf("클라이언트 처리 종료\n");
     return 0;
 }

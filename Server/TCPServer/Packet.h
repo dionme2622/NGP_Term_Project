@@ -72,6 +72,6 @@ typedef struct CS_LobbyPacket {
 }CS_LobbyPacket;
 
 typedef struct SC_LobbyPacket {
-    //MapData mapData;
+    int selectedMap;
     int nextSceneCall;
 }SC_LobbyPacket;
