@@ -42,6 +42,7 @@ private:
 	SRecvLobbyPacket     recvLobbyPacket;
 
 	int pastData = -1;
+	int pastCallData = -1;
 
 
 

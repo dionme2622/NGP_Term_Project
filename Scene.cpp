@@ -2,6 +2,7 @@
 #include "GameFramework.h"
 
 int CScene::m_ID = 0;
+SOCKET CScene::sock;
 
 CScene::CScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework)
 {

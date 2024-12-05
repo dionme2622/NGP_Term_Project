@@ -61,21 +61,21 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     while (1) {
         // 1. 헤더만 읽기
         PacketHeader header;
-        CS_LobbyPacket a;
+        //CS_LobbyPacket a;
 
-        retval = recv(client_sock, (char*)&a, sizeof(a), 0);
-        if (retval <= 0 || retval != sizeof(PacketHeader)) {
+        retval = recv(client_sock, (char*)&header, sizeof(header), 0);
+        /*if (retval <= 0 || retval != sizeof(PacketHeader)) {
             printf("클라이언트 연결 종료 또는 헤더 수신 실패\n");
             break;
-        }
+        }*/
 
-        printf("%d\n", a.header.packetType);
+        //printf("%d\n", a.header.packetType);
 
         // 2. 패킷 타입 확인
         //printf("수신된 패킷 타입: %d\n", header.packetType);
 
         // 3. 패킷 타입에 따라 처리
-        if (a.header.packetType == 1) { // PlayerInputPacket
+        if (header.packetType == 1) { // PlayerInputPacket
             CS_PlayerInputPacket inputPacket;
             retval = recv(client_sock, (char*)&inputPacket + sizeof(PacketHeader),
                 sizeof(CS_PlayerInputPacket) - sizeof(PacketHeader), 0);
@@ -91,7 +91,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             }
             printf("ID[%d], 키 입력: %d\n", inputPacket.playerID, inputPacket.keyState);
         }
-        else if (a.header.packetType == 2) { // LobbyPacket
+        else if (header.packetType == 2) { // LobbyPacket
             CS_LobbyPacket cs_lobbyPacket;
             retval = recv_all(client_sock, (char*)&cs_lobbyPacket + sizeof(PacketHeader),
                 sizeof(CS_LobbyPacket) - sizeof(PacketHeader));
@@ -115,7 +115,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             for (SOCKET sock : clientSockets) {
                 retval = send(sock, (char*)&sc_lobbyPacket, sizeof(SC_LobbyPacket), 0);
 
-                printf("send %d\n", sc_lobbyPacket.nextSceneCall);
+                printf("\n\nsend %d\n", sc_lobbyPacket.nextSceneCall);
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);

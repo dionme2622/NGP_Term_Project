@@ -115,7 +115,7 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 				sendLobbyPacket.nextSceneCall = true;
 			}
 		}
-		printf("%d, %d\n", cursorPos.x, cursorPos.y);
+		//printf("%d, %d\n", cursorPos.x, cursorPos.y);
 		// TODO : ¸Ê ¼±ÅÃ
 		// GetFrameWork()->SetCurMap(Village);
 		break;
@@ -162,17 +162,20 @@ void CLobbyScene::SendData()
 {
 	sendLobbyPacket.header.packetType = 2;
 
-	if (pastData != sendLobbyPacket.selectedMap || sendLobbyPacket.nextSceneCall) {
+	if (pastData != sendLobbyPacket.selectedMap || sendLobbyPacket.nextSceneCall != pastCallData) {
 		pastData = sendLobbyPacket.selectedMap;
+		pastCallData = sendLobbyPacket.nextSceneCall;
 		int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
 	}
-	printf("º¸³½ : %d\t", sendLobbyPacket.nextSceneCall);
 }
 
 void CLobbyScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
-	GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
+	if (recvLobbyPacket.recvNextSceneCall == true) {
+		GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
+	}
+
 }
 
 

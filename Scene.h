@@ -14,6 +14,7 @@ struct SButton
 class CGameFramework;
 
 
+
 class CScene
 {
 public:
@@ -71,7 +72,7 @@ public:
 
 	// 서버 통신 관련
 	WSADATA					wsa;
-	SOCKET					sock;
+	static	SOCKET			sock;
 	sockaddr_in				remoteAddr;
 	int						retval;
 
