@@ -18,7 +18,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, playerData의 데이터를 Initialize 한다.
 	
-	MAP->Initialize(hInst, receivedPacket, ClientID);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst, receivedPacket, m_ID);		// 선택된 Map의 Initialize
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
@@ -29,41 +29,22 @@ void CPlayScene::Initialize()
 
 void CPlayScene::ProcessInput()
 {
-	char pressedKeys = GetPressedKeysAsChar();
-	if (pressedKeys)
-		sendPacket.keyState = pressedKeys;
-
-
-	static UCHAR pKeysBuffer[256];
-	bool bProcessedByScene = false;
-	GetKeyboardState(pKeysBuffer);
-
-
+	if (GetPressedKey())
+		sendPacket.keyState = GetPressedKey();
 }
 
-int CPlayScene::GetPressedKeysAsChar()
-{
-	// 눌려 있는 키 목록을 가져옴
-	char pressedKeys = GetPressedKey();
-
-	if (!pressedKeys) pressedKeys = '0';
-
-	return pressedKeys;
-}
 
 int CPlayScene::GetPressedKey()
 {
-	char pressedKey = '0';
+	int pressedKeys = 0; // 초기화
 
-	// 모든 가상 키 코드(0x01부터 0xFE까지)를 반복
-	for (int key = 0x01; key <= 0xFE; ++key) {
-		// 키가 눌려 있는지 확인
-		if (GetAsyncKeyState(key) & 0x8000) {
-			pressedKey = key; // 눌린 키를 추가
-		}
-	}
-
-	return pressedKey;
+	if (GetAsyncKeyState(VK_UP) & 0x8000) pressedKeys |= KEY_UP;
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000) pressedKeys |= KEY_DOWN;
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000) pressedKeys |= KEY_LEFT;
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pressedKeys |= KEY_RIGHT;
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000) pressedKeys |= KEY_SPACE;
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000) pressedKeys |= KEY_SHIFT;
+	return pressedKeys; // 비트 플래그 반환
 }
 
 void CPlayScene::Update(float fTimeElapsed)
