@@ -22,6 +22,8 @@ void CPlayScene::Initialize()
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
+
+	sendPacket.playerID = m_ID;
 }
 
 
