@@ -39,6 +39,9 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		//
 
 void CMap::Render(HDC MemDC, HDC MemDCImage)
 {
+	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
+
+
 	(HBITMAP)SelectObject(MemDCImage, BallonBitmap[0]);      // ¹°Ç³¼±
 	for (int i = 0; i < 13; i++)
 	{
@@ -281,7 +284,6 @@ void CVillage::Render(HDC MemDC, HDC MemDCImage)
 	if (Board[10][9].GetState() == 1) TransparentBlt(MemDC, Board[10][9].x, Board[10][9].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 	if (Board[10][12].GetState() == 1) TransparentBlt(MemDC, Board[10][12].x, Board[10][12].y - 13, 60, 73, MemDCImage, 0, 0, 40, 57, RGB(255, 0, 255));
 
-	for(int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 	CMap::Render(MemDC, MemDCImage);
 
 }
