@@ -29,8 +29,8 @@ void CPlayScene::Initialize()
 
 void CPlayScene::ProcessInput()
 {
-	if (GetPressedKey())
-		sendPacket.keyState = GetPressedKey();
+	int currentKeyState = GetPressedKey();
+	sendPacket.keyState = currentKeyState; // 매번 갱신
 }
 
 
@@ -69,7 +69,6 @@ void CPlayScene::Render()
 	OldBit[1] = (HBITMAP)SelectObject(MemDCImage, backgroundImage); //--- 배경 이미지	
 	TransparentBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 800, 600, RGB(255, 0, 255));
 	MAP->Render(MemDC, MemDCImage);			// 선택된 Map을 Render 한다.
-	//playerData->Render(MemDC, MemDCImage);		// playerData Render
 
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
@@ -105,57 +104,20 @@ void CPlayScene::SendData()
 {
 	sendPacket.header.packetType = 1;
 
-	int tempData = -1;
-
-	int currentKeyState = GetPressedKey();
-	sendPacket.keyState = currentKeyState;
-
-	// 이전 상태와 현재 상태가 다르면 서버로 전송
-	if (tempData != currentKeyState) {
-		tempData = currentKeyState;
-		printf("SendData - KeyState Sent: %d\r", tempData);
-
-		// 키 상태를 서버로 전송
-		send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
-	}
-
-
-	/*if (pastData != sendPacket.keyState) {
-		pastData = sendPacket.keyState;
+	// 키 상태가 이전 값과 다르면 전송
+	if (pastData != sendPacket.keyState) {
+		pastData = sendPacket.keyState; // 이전 데이터 업데이트
 		int retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
-		printf("%d, ID : %d\n", sendPacket.keyState, sendPacket.playerID);
-	}*/
+		if (retval == SOCKET_ERROR) {
+			printf("Send failed: %d\n", WSAGetLastError());
+		}
+		else {
+			printf("KeyState Sent: %d, ID: %d\n", sendPacket.keyState, sendPacket.playerID);
+		}
+	}
 }
 
 void CPlayScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
 }
-
-
-//DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
-//	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
-//
-//	int tempData = -1;
-//
-//	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
-//	while (1) {
-//		EnterCriticalSection(&pFramework->cs); // 동기화 시작
-//
-//		// 현재 키 입력 상태를 가져오기
-//		int currentKeyState = pFramework->GetPressedKeys();
-//		pFramework->sendPacket.keyState = currentKeyState;
-//
-//		// 이전 상태와 현재 상태가 다르면 서버로 전송
-//		if (tempData != currentKeyState) {
-//			tempData = currentKeyState;
-//			printf("SendData - KeyState Sent: %d\r", tempData);
-//
-//			// 키 상태를 서버로 전송
-//			send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
-//		}
-//		LeaveCriticalSection(&pFramework->cs); // 동기화 종료
-//	}
-//
-//	return 0;
-//}
