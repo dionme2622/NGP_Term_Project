@@ -40,6 +40,7 @@ public:
 	virtual void ReceiveData() = 0;
 	
 	virtual bool IsServerConnected() = 0;
+	//virtual void ReceiveData(SC_PlayersInfoPacket, int _ClientID);
 
 public:
 	CGameFramework* GetFramework() { return m_pGameFramework;}
@@ -62,6 +63,7 @@ protected:
 
 	static int				m_ID;
 
+	//int						ClientID;
 protected:
 	CGameFramework*			m_pGameFramework;
 

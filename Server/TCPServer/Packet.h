@@ -9,6 +9,7 @@ public:
     int			direction;		// 캐릭터의 방향
     int			state;			// 캐릭터의 상태
     bool		stop;			// 캐릭터 정지 유무
+    bool        needle;         // 바늘 보유 유무
     //CBallon* ballon[6];		    // 물풍선
 
 
@@ -22,6 +23,7 @@ public:
         direction = player->direction;
         state = player->state;
         stop = player->stop;
+        needle = player->needle;
     }
     void ApplyToPlayer(CPlayer* player)
     {
@@ -33,6 +35,7 @@ public:
         player->direction = direction;
         player->state = state;
         player->stop = stop;
+        player->needle = needle;
     }
 };
 

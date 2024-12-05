@@ -34,8 +34,11 @@ void CScene::SetID(int id)
 }
 	
 
-
-
+//void CScene::ReceiveData(SC_PlayersInfoPacket _receivedPacket, int _ClientID)
+//{
+//	receivedPacket = _receivedPacket;
+//	ClientID = _ClientID;
+//}
 
 
 

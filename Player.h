@@ -1,7 +1,19 @@
 #pragma once
 #include "GameObject.h"
 
+
 struct SC_PlayersInfoPacket;
+struct POS {
+	float fx, fy;
+	int x, y;
+};
+struct BITMAP_POS
+{
+	POS live;
+	POS damage;
+	POS dead;
+	POS escape;
+};
 class CMap;
 
 class CPlayer
@@ -15,6 +27,7 @@ public:
 	void Render(HDC MemDC, HDC MemDCImage, CMap* Map);
 
 public :
+	BITMAP_POS  bitmap_pos;
 	int			x, y;			// 캐릭터 x, y 좌표
 	float		fx, fy;
 public:
@@ -25,6 +38,7 @@ public:
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
 	CBallon*	ballon[6];		// 물풍선
+	bool		needle;			// 바늘 보유 유무
 
 	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표

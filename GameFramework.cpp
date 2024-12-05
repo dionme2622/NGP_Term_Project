@@ -25,7 +25,7 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 
 	m_ppMaps[0] = new CVillage();
 	m_ppMaps[1] = new CPirate();
-	m_pMap = m_ppMaps[1];
+	m_pMap = m_ppMaps[0];
 
 	m_ppScenes[0] = new CStartScene(hWnd, hInst, this);
 	m_ppScenes[1] = new CMenuScene(hWnd, hInst, this);
@@ -79,8 +79,23 @@ void CGameFramework::Render()
 
 void CGameFramework::ProcessInput()
 {
+	/*if (GetPressedKeys())
+		sendPacket.keyState = GetPressedKeys();*/
 	m_pScene->ProcessInput();
 }
+
+//int CGameFramework::GetPressedKeys()
+//{
+//	int pressedKeys = 0; // 초기화
+//
+//	if (GetAsyncKeyState(VK_UP) & 0x8000) pressedKeys |= KEY_UP;
+//	if (GetAsyncKeyState(VK_DOWN) & 0x8000) pressedKeys |= KEY_DOWN;
+//	if (GetAsyncKeyState(VK_LEFT) & 0x8000) pressedKeys |= KEY_LEFT;
+//	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pressedKeys |= KEY_RIGHT;
+//	if (GetAsyncKeyState(VK_SPACE) & 0x8000) pressedKeys |= KEY_SPACE;
+//	if (GetAsyncKeyState(VK_SHIFT) & 0x8000) pressedKeys |= KEY_SHIFT;
+//	return pressedKeys; // 비트 플래그 반환
+//}
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {

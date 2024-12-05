@@ -18,7 +18,7 @@ void CPlayScene::Initialize()
 {
 	// TODO : Bitmap, Map, playerData의 데이터를 Initialize 한다.
 	
-	MAP->Initialize(hInst, receivedPacket);		// 선택된 Map의 Initialize
+	MAP->Initialize(hInst, receivedPacket, ClientID);		// 선택된 Map의 Initialize
 
 	// Resource
 	backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_STAGEFRAME));
