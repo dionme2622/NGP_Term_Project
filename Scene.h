@@ -32,7 +32,7 @@ public:
 
 
 	void DrawImage(HDC hdcDest, RECT pos, HDC hdcSrc, RECT rc, DWORD rop);
-	virtual void ReceiveData(SC_PlayersInfoPacket);
+	virtual void ReceiveData(SC_PlayersInfoPacket, int _ClientID);
 
 public :
 	CGameFramework* GetFramework() { return m_pGameFramework;}
@@ -50,7 +50,7 @@ protected:
 	HBITMAP					OldBit[3];
 
 	POINT					cursorPos;
-
+	int						ClientID;
 protected:
 	CGameFramework*			m_pGameFramework;
 	SC_PlayersInfoPacket	receivedPacket;

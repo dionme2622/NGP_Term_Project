@@ -1,9 +1,6 @@
 #include "Map.h"
 
 
-std::default_random_engine dre;
-std::uniform_int_distribution<int> uid{ 1,9 };
-
 int ObstacleBreak[13][15];
 
 
@@ -16,10 +13,10 @@ CMap::CMap()
 	Item_xPosF = 0.0f;
 }
 
-void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)		// 매개변수로 패킷 구조체를 받는다.
+void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int _ClientID)		// 매개변수로 패킷 구조체를 받는다.
 {
 	hInst = _hInst;
-
+	ClientID = _ClientID;
 	for (int i = 0; i < 13; i++)			
 	{
 		for (int j = 0; j < 15; j++)
@@ -84,8 +81,13 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 			{
 				TransparentBlt(MemDC, Board[i][j].x + 10, Board[i][j].y + 10, 40, 40, MemDCImage, Item_xPos, 0, 42, 45, RGB(255, 0, 255));		// 물풍선 갯수
 			}
+			else if (Board[i][j].GetState() == 9)
+			{
+				TransparentBlt(MemDC, Board[i][j].x + 10, Board[i][j].y + 10, 40, 40, MemDCImage, Item_xPos, 270, 42, 45, RGB(255, 0, 255));		// 바늘
+			}
 		}
 	}
+	if(player[ClientID]->needle) TransparentBlt(MemDC, 1000, 735, 80, 80, MemDCImage, 0, 270, 42, 45, RGB(255, 0, 255));			// TODO : 클라이언트 ID를 인덱스로 받아서 해당 플레이어가 바늘을 가지고 있다면 바늘 아이템을 보유하고 있다고 아이템 창에 그린다
 }
 
 void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
@@ -111,10 +113,10 @@ void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 /// Village Map
 /// </summary>
 
-void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
+void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int _ClientID)
 {
 	// TODO : Map이 Village일 때 초기화
-	CMap::Initialize(_hInst, receivedPacket);
+	CMap::Initialize(_hInst, receivedPacket, _ClientID);
 
 	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
 	{
@@ -307,10 +309,10 @@ void CVillage::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 /// Pirate Map
 /// </summary>
 
-void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket)
+void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int _ClientID)
 {
 	// TODO : Map이 Pirate일 때 초기화
-	CMap::Initialize(_hInst, receivedPacket);
+	CMap::Initialize(_hInst, receivedPacket, _ClientID);
 
 
 	for (int i = 0; i < 4; i++)

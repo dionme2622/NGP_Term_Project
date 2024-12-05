@@ -38,6 +38,7 @@ public:
 	int			state;			// 캐릭터의 상태
 	bool		stop;			// 캐릭터 정지 유무
 	CBallon*	ballon[6];		// 물풍선
+	bool		needle;			// 바늘 보유 유무
 
 	int			ID;
 	int			xPos, yPos;		// 이미지 x, y 좌표

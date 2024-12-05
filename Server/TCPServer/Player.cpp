@@ -11,6 +11,7 @@ CPlayer::CPlayer()
 	ballon_length = 2;
 	ballon_num = 1;
 	count = 0.0f;
+	needle = false;
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon();
 }
 
@@ -51,6 +52,11 @@ void CPlayer::SetPosition(float _fx, float _fy)
 	fy = _fy;
 	x = static_cast<int>(fx);  // 부동소수점 좌표를 정수로 변환
 	y = static_cast<int>(fy);
+}
+
+void CPlayer::EscapeBallon()
+{
+	if (needle) SetState(ESCAPE), needle = false;		// 바늘아이템을 소유하고 있다면 물풍선을 탈출하고 false로 만든다.
 }
 
 void CPlayer::Move(float fTimeElapsed)

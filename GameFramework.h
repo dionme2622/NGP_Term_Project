@@ -53,7 +53,7 @@ private:
 	CMap*			m_pMap;				// Map
 	CMap**			m_ppMaps;			// Map 배열
 
-
+	int				ClientID;			// 클라이언트 ID
 	HDC hdc, MemDC, MemDCImage;
 	PAINTSTRUCT ps;
 
@@ -77,7 +77,7 @@ public:
 	
 	CMap* GetCurMap() { return m_pMap; }		// Map 변수를 Get
 	void SetCurMap(int _map);					// Map 변수를 Set
-
+	int GetClientID() { return ClientID; }
 
 
 

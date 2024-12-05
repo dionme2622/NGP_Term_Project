@@ -37,7 +37,7 @@ void BallonToObstacle(CPlayer* Player);
 void PlayerMeetPlayer(CPlayer* Player1, CPlayer* Player2);
 
 std::default_random_engine dre;
-std::uniform_int_distribution<int> uid{ 3,8 };
+std::uniform_int_distribution<int> uid{ 8,10 };
 
 int ObstacleBreak[13][15];
 
@@ -94,7 +94,7 @@ void GameLogicThread() {
                 if (keyState[playerID] & KEY_LEFT) player[playerID]->SetDirection(DIR_LEFT), player[playerID]->stop = false;
                 if (keyState[playerID] & KEY_RIGHT) player[playerID]->SetDirection(DIR_RIGHT), player[playerID]->stop = false;
                 if (keyState[playerID] & KEY_UP) player[playerID]->SetDirection(DIR_UP), player[playerID]->stop = false;
-                if (keyState[playerID] & KEY_SHIFT) player[playerID]->SetState(ESCAPE);
+                if (keyState[playerID] & KEY_SHIFT) player[playerID]->EscapeBallon();
                 if (keyState[playerID] & KEY_SPACE) {
                     if (player[playerID]->state == DAMAGE) return;
                     for (int i = 0; i < player[playerID]->ballon_num; i++)
@@ -387,6 +387,11 @@ void PlayerGetItem(CPlayer* Player)
             Player->ballon_num += 1;
         packet.mapData.boardData[j][i].state = 1;
     }
+    else if (packet.mapData.boardData[j][i].state == 9)		// ¹Ù´Ã ¾ÆÀÌÅÛ
+    {
+        Player->needle = true;
+        packet.mapData.boardData[j][i].state = 1;
+    }
 }
 void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
 {
@@ -535,6 +540,8 @@ void BallonBoom(CPlayer* Player, int num, float fTimeElapsed)
     						packet.mapData.boardData[j][i].SetState(7);
     					else if (n == 8)
     						packet.mapData.boardData[j][i].SetState(8);
+                        else if (n == 9)
+                            packet.mapData.boardData[j][i].SetState(9);
     					else
     						packet.mapData.boardData[j][i].SetState(1);
     				}

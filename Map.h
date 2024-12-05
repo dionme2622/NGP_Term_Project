@@ -10,7 +10,7 @@ public:
 	CMap();
 	~CMap() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int ClientID);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 	
@@ -30,6 +30,7 @@ private:
 	int Item_xPos;
 	float Item_xPosF;
 
+	int ClientID; 
 	// Resource
 	HBITMAP BallonBitmap[2];
 	HBITMAP ItemBitmap;
@@ -41,7 +42,7 @@ public :
 	CVillage() {};
 	~CVillage() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int ClientID);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 
@@ -56,7 +57,7 @@ public:
 	CPirate() {};
 	~CPirate() {};
 
-	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket);
+	virtual void Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int ClientID);
 	virtual void Render(HDC MemDC, HDC MemDCImage);
 	virtual void Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed);
 

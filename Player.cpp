@@ -6,7 +6,6 @@
 CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int playerID)
 {
 	
-	//printf("테스트 초기화 : %d\n", 테스트);
 	ID = playerID;
 
 	// Player Initialize
@@ -22,10 +21,7 @@ CPlayer::CPlayer(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int play
 		bitmap_pos = {};
 		bitmap_pos.live.y = 76, bitmap_pos.damage.y = 144, bitmap_pos.dead.y = 144, bitmap_pos.escape.y = 144;
 	}
-	/* Bitmap Animation을 위한 텍스쳐 좌표 값*/
-
-	/*--------------------------------------*/
-	//for (int i = 0; i < 6; i++) ballon[i] = new CBallon(_hInst);
+	
 
 	// Resource
 	MainBitmap[0] = LoadBitmap(_hInst, MAKEINTRESOURCE(IDB_DOWN));			// 캐릭터 아래 모습

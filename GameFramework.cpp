@@ -42,6 +42,7 @@ CGameFramework::CGameFramework()
 
 	int retval;
 	retval = recv(sock, (char*)&sendPacket.playerID, sizeof(sendPacket.playerID), 0); // 방향키 데이터 수신
+	ClientID = sendPacket.playerID;
 
 	CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
 	CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
@@ -221,7 +222,7 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 			}
 
 			if (pFramework->m_pScene) {
-				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket);
+				pFramework->m_pScene->ReceiveData(pFramework->receivedPacket, pFramework->GetClientID());
 				//printf("p1 : %d, p2 : %d\r", pFramework->receivedPacket.playerData[0].x, pFramework->receivedPacket.playerData[1].x); // DEBUG
 				//printf("board state: %d\n", pFramework->receivedPacket.mapData.boardData[10][0].state);		// DEBUG
 				SetEvent(pFramework->hRecvEvent);
