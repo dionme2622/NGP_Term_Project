@@ -105,14 +105,57 @@ void CPlayScene::SendData()
 {
 	sendPacket.header.packetType = 1;
 
-	if (pastData != sendPacket.keyState) {
+	int tempData = -1;
+
+	int currentKeyState = GetPressedKey();
+	sendPacket.keyState = currentKeyState;
+
+	// 이전 상태와 현재 상태가 다르면 서버로 전송
+	if (tempData != currentKeyState) {
+		tempData = currentKeyState;
+		printf("SendData - KeyState Sent: %d\r", tempData);
+
+		// 키 상태를 서버로 전송
+		send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
+	}
+
+
+	/*if (pastData != sendPacket.keyState) {
 		pastData = sendPacket.keyState;
 		int retval = send(sock, (char*)&sendPacket, sizeof(sendPacket), 0);
 		printf("%d, ID : %d\n", sendPacket.keyState, sendPacket.playerID);
-	}
+	}*/
 }
 
 void CPlayScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&receivedPacket, sizeof(receivedPacket), 0);
 }
+
+
+//DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
+//	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
+//
+//	int tempData = -1;
+//
+//	WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
+//	while (1) {
+//		EnterCriticalSection(&pFramework->cs); // 동기화 시작
+//
+//		// 현재 키 입력 상태를 가져오기
+//		int currentKeyState = pFramework->GetPressedKeys();
+//		pFramework->sendPacket.keyState = currentKeyState;
+//
+//		// 이전 상태와 현재 상태가 다르면 서버로 전송
+//		if (tempData != currentKeyState) {
+//			tempData = currentKeyState;
+//			printf("SendData - KeyState Sent: %d\r", tempData);
+//
+//			// 키 상태를 서버로 전송
+//			send(pFramework->sock, (char*)&pFramework->sendPacket, sizeof(pFramework->sendPacket), 0);
+//		}
+//		LeaveCriticalSection(&pFramework->cs); // 동기화 종료
+//	}
+//
+//	return 0;
+//}
