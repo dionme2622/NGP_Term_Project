@@ -24,7 +24,7 @@ public:
 
 	virtual bool IsServerConnected() { return m_bServerConnected; };
 
-	void Login();
+	bool Login();
 private:
 	HBITMAP			 backgroundImage;
 	SButton			 Button_Help, Button_Play, Button_Quit;
