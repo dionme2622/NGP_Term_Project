@@ -100,22 +100,22 @@ DWORD WINAPI ClientThread(LPVOID arg) {
                 break;
             }
             map_num = cs_lobbyPacket.selectedMap;
+            sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
+            sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
+
             Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
             // SC_LobbyPacket 작성 및 브로드캐스트
 
-            sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
-            sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
+            
             if(sc_lobbyPacket.nextSceneCall == 1)
                 check = 1;
-            printf("%d", sc_lobbyPacket.nextSceneCall);
             
 
             // 클라이언트들에게 브로드캐스트
             std::lock_guard<std::mutex> lock(clientMutex);
             for (SOCKET sock : clientSockets) {
-                retval = send(sock, (char*)&sc_lobbyPacket, sizeof(SC_LobbyPacket), 0);
+                retval = send(sock, (char*)&sc_lobbyPacket, sizeof(sc_lobbyPacket), 0);
 
-                printf("\n\nsend %d\n", sc_lobbyPacket.nextSceneCall);
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);
