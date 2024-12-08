@@ -160,7 +160,6 @@ INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 
 bool CMenuScene::Login()
 {
-    // 서버 통신 관련 변수 초기화
     // 윈속 초기화
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
         printf("WSAStartup 실패\n");
@@ -175,72 +174,61 @@ bool CMenuScene::Login()
         return false;
     }
 
-    char ipAddress[16] = "127.0.0.1";  // 기본값으로 로컬 IP 설정
-    int response = DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_IP_DIALOG), hWnd, (DLGPROC)IpInputDialogProc, reinterpret_cast<LPARAM>(ipAddress));
+    // IP 주소 버퍼
+    char ipAddress[20] = "127.0.0.1";
+    printf("DialogBoxParam 호출 전 ipAddress 값: %s, 주소: %p\n", ipAddress, &ipAddress);
 
-    printf("사용자가 입력한 IP 주소: %s\n", ipAddress);  // IP 주소 확인용 출력
+    int response = DialogBoxParam(
+        hInst,
+        MAKEINTRESOURCE(IDD_DIALOG1),
+        hWnd,
+        IpInputDialogProc,
+        reinterpret_cast<LPARAM>(ipAddress)  // lParam에 ipAddress 전달
+    );
 
-    // 사용자가 대화상자에서 취소를 누르면 함수 종료
+    if (response == 0) {
+        printf("DialogBoxParam 호출 실패. 오류 코드: %d\n", GetLastError());
+        closesocket(sock);
+        WSACleanup();
+        return false;
+    }
+
     if (response == IDCANCEL) {
         closesocket(sock);
         WSACleanup();
         return false;
     }
 
-    // IP 주소 유효성 검사 및 소켓 주소 구조체 초기화
-    memset(&remoteAddr, 0, sizeof(remoteAddr));
-    remoteAddr.sin_family = AF_INET;
-    if (inet_pton(AF_INET, ipAddress, &remoteAddr.sin_addr) <= 0) {
-        printf("잘못된 IP 주소 형식입니다: %s\n", ipAddress);
-        closesocket(sock);
-        WSACleanup();
-        return false; // 잘못된 IP 주소 형식일 경우 종료
-    }
-    remoteAddr.sin_port = htons(SERVERPORT);
-
-    // 서버 연결
-    if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
-        printf("서버 연결 실패\n");
-        closesocket(sock);
-        WSACleanup();
-        return false; // 서버 연결 실패 시 종료
-    }
-
-    int id;
-    retval = recv(sock, (char*)&id, sizeof(id), 0); // ID 수신
-    if (retval == SOCKET_ERROR) {
-        printf("데이터 수신 실패\n");
-        closesocket(sock);
-        WSACleanup();
-        return false; // 데이터 수신 실패 시 종료
-    }
-
-    SetID(id);
-    return true; // 로그인 성공
+    // 나머지 코드...
+    return true;
 }
 
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    // IP 주소를 저장할 버퍼
-    char* ipAddressBuffer = reinterpret_cast<char*>(lParam);  // 전달받은 lParam을 char*로 캐스팅합니다.
+
+    printf("IpInputDialogProc - 전달받은 lParam 주소: %p\n", lParam);
+
+    char* ipAddressBuffer = reinterpret_cast<char*>(lParam);
+    if (ipAddressBuffer == nullptr) {
+        printf("lParam이 nullptr입니다.\n");
+        return (INT_PTR)FALSE;
+    }
 
     switch (message)
     {
     case WM_INITDIALOG:
-        // 초기화 시 대화상자에 기본값 설정
-        SetDlgItemTextA(hDlg, IDC_ID_EDIT, ipAddressBuffer);  // 대화상자에 기본 IP 주소 설정
+        printf("SetDlgItemTextA 호출 전 ipAddressBuffer 값: %s\n", ipAddressBuffer);
+        SetDlgItemTextA(hDlg, IDC_EDIT1, ipAddressBuffer);
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK)
-        {
-            // 사용자가 입력한 IP 주소 가져오기
-            GetDlgItemTextA(hDlg, IDC_ID_EDIT, ipAddressBuffer, 16);  // 전달받은 lParam을 그대로 수정합니다.
+        if (LOWORD(wParam) == IDOK) {
+            GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddressBuffer, 20);
+            printf("사용자가 입력한 IP 주소: %s\n", ipAddressBuffer);
             EndDialog(hDlg, IDOK);
             return (INT_PTR)TRUE;
         }
-        else if (LOWORD(wParam) == IDCANCEL)
-        {
+        else if (LOWORD(wParam) == IDCANCEL) {
             EndDialog(hDlg, IDCANCEL);
             return (INT_PTR)TRUE;
         }
@@ -248,6 +236,8 @@ INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     }
     return (INT_PTR)FALSE;
 }
+
+
 
 
 
