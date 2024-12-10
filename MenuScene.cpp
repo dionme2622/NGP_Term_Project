@@ -158,6 +158,8 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
+char ipAddress[20] = "127.0.0.1";
+
 bool CMenuScene::Login()
 {
     // 윈속 초기화
@@ -175,56 +177,39 @@ bool CMenuScene::Login()
     }
 
     // IP 주소 버퍼
-    char ipAddress[20] = "127.0.0.1";
-    printf("DialogBoxParam 호출 전 ipAddress 값: %s, 주소: %p\n", ipAddress, &ipAddress);
+    printf("DialogBoxParam 호출 전 ipAddress 값: %s, 주소: %p\n", ipAddress, &IpInputDialogProc);
 
-    int response = DialogBoxParam(
-        hInst,
-        MAKEINTRESOURCE(IDD_DIALOG1),
-        hWnd,
-        IpInputDialogProc,
-        reinterpret_cast<LPARAM>(ipAddress)  // lParam에 ipAddress 전달
-    );
+    int response = DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), NULL, IpInputDialogProc);
 
-    if (response == 0) {
-        printf("DialogBoxParam 호출 실패. 오류 코드: %d\n", GetLastError());
-        closesocket(sock);
-        WSACleanup();
-        return false;
+
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    inet_pton(AF_INET, ipAddress, &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+    retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+    if (retval == SOCKET_ERROR) {
+        printf("connect()");
+        exit(0);
     }
 
-    if (response == IDCANCEL) {
-        closesocket(sock);
-        WSACleanup();
-        return false;
-    }
-
-    // 나머지 코드...
     return true;
 }
 
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
-    printf("IpInputDialogProc - 전달받은 lParam 주소: %p\n", lParam);
-
-    char* ipAddressBuffer = reinterpret_cast<char*>(lParam);
-    if (ipAddressBuffer == nullptr) {
-        printf("lParam이 nullptr입니다.\n");
-        return (INT_PTR)FALSE;
-    }
-
     switch (message)
     {
     case WM_INITDIALOG:
-        printf("SetDlgItemTextA 호출 전 ipAddressBuffer 값: %s\n", ipAddressBuffer);
-        SetDlgItemTextA(hDlg, IDC_EDIT1, ipAddressBuffer);
+        //printf("SetDlgItemTextA 호출 전 ipAddressBuffer 값: %s\n", ipAddressBuffer);
+        SetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress);
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK) {
-            GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddressBuffer, 20);
-            printf("사용자가 입력한 IP 주소: %s\n", ipAddressBuffer);
+            GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress, 20);
+            printf("사용자가 입력한 IP 주소: %s\n", ipAddress);
             EndDialog(hDlg, IDOK);
             return (INT_PTR)TRUE;
         }
