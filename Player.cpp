@@ -95,7 +95,7 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 			bitmap_pos.dead.fx = 0.0f;  // 64만큼 넘으면 빼고
 			bitmap_pos.dead.x += 88;       // xPos는 64씩 증가
 			if (bitmap_pos.dead.x >= 968)   // 한 주기를 넘어가면 초기화
-				bitmap_pos.dead.x = 0;
+				return;
 		}
 	}
 	else if (state == ESCAPE)

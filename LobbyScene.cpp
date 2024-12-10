@@ -28,10 +28,7 @@ void CLobbyScene::Initialize()
 	mapImages[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PIRATEMAP));
 	mapImages[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
 
-
-	playerImage[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
-	playerImage[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_VILLAGEMAP));
-
+	ReadyImage		= LoadBitmap(hInst, MAKEINTRESOURCE(IDB_READY));
 }
 
 
@@ -50,11 +47,20 @@ void CLobbyScene::ProcessInput()
 void CLobbyScene::Update(float fTimeElapsed)
 {
 	// TODO : Lobby Scene Update
+	xPosF += 64 * 8 * fTimeElapsed;
+	while (xPosF >= 44.0f) {
+		xPosF = 0;
+		xPos += 64;
+		if (xPos >= 1152)
+			xPos = 0;
+	}
+
 	if (recvLobbyPacket.recvNextSceneCall == 1) {
 		//TODO
 		// 맵 받은걸로 씬 넘기기
 		GetFramework()->SetCurScene(PLAYSCENE);
 	}
+
 }
 
 void CLobbyScene::Render()
@@ -72,7 +78,7 @@ void CLobbyScene::Render()
 
 	if (mapImage) {
 		OldBit[1] = (HBITMAP)SelectObject(MemDCImage, mapImage);
-		StretchBlt(MemDC, 733, 515, 227, 195, MemDCImage, 0, 0, 225, 195, SRCCOPY);
+		StretchBlt(MemDC, 733, 530, 227, 210, MemDCImage, 0, 0, 225, 195, SRCCOPY);
 	}
 
 	if (showSelectMap) {
@@ -81,12 +87,12 @@ void CLobbyScene::Render()
 	}
 
 	if (recvLobbyPacket.playerExist[0]) {
-		OldBit[1] = (HBITMAP)SelectObject(MemDCImage, playerImage[0]); // 배경 이미지	
-		StretchBlt(MemDC, 43, 150, rc.right, rc.bottom, MemDCImage, 0, 0, 1220, 950, SRCCOPY);
+		(HBITMAP)SelectObject(MemDCImage, ReadyImage);		// Player1 Ready
+		TransparentBlt(MemDC, 65, 200, 100, 100, MemDCImage, xPos, 0, 64, 86, RGB(255, 0, 255));
 	}
 	if (recvLobbyPacket.playerExist[1]) {
-		OldBit[1] = (HBITMAP)SelectObject(MemDCImage, playerImage[1]); // 배경 이미지	
-		StretchBlt(MemDC, 0, 0, rc.right, rc.bottom, MemDCImage, 0, 0, 1220, 950, SRCCOPY);
+		(HBITMAP)SelectObject(MemDCImage, ReadyImage);		// Player2 Ready
+		TransparentBlt(MemDC, 225, 200, 100, 100, MemDCImage, xPos, 86, 64, 86, RGB(255, 0, 255));
 	}
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
@@ -142,13 +148,13 @@ void CLobbyScene::SelectMap()
 	if (showSelectMap && cursorPos.x > 150 && cursorPos.x < 1050 &&
 		cursorPos.y > 370 && cursorPos.y < 520) {
 
-		int mapData;
+		
 
-		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapData = 1, GetFramework()->SetCurMap(VILLAGE);
-		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3)	mapData = 2, GetFramework()->SetCurMap(PIRATE);
+		if (cursorPos.x > 150 && cursorPos.x < 1200 / 3) mapData = 1;
+		else if (cursorPos.x >= 1200 / 3 && cursorPos.x < 1200 * 2 / 3)	mapData = 2;
 		else if (cursorPos.x >= 1200 * 2 / 3 && cursorPos.x < 1200) mapData = 3;
 
-		mapImage = mapImages[mapData];
+		mapImage = mapImages[mapData - 1];
 		sendLobbyPacket.selectedMap = mapData;
 
 		showSelectMap = !showSelectMap;

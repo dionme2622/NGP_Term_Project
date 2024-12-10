@@ -19,7 +19,7 @@ CPlayer* player[2];
 PlayerData* playerData[2];
 MapData* mapData;
 int keyState[2] = {};
-int map_num = 0;
+int map_num;
 //CPlayer* player2 = new CPlayer();
 
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
@@ -128,6 +128,8 @@ DWORD WINAPI ClientThread(LPVOID arg) {
                     printf("클라이언트로 SC_LobbyPacket 전송 완료.\n");
                 }
             }
+            player[0] = new CPlayer(map_num, 0);
+            player[1] = new CPlayer(map_num, 1);
         }
         else {
 
@@ -175,12 +177,21 @@ void GameLogicThread() {
                         {
                             if (player[playerID]->ballon[i]->state == 0)
                             {
+
                                 player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
                                 player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
+                                printf("물풍선설치!\n");
+
+                                player[playerID]->ballon[i]->SetState(1);
+                                packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
+                                printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
                                 {
+                                    printf("물풍선설치!\n");
+
                                     player[playerID]->ballon[i]->SetState(1);
                                     packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
+                                    printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 }
                             }
                         }
@@ -228,8 +239,7 @@ void GameLogicThread() {
 }
 int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
-    player[0] = new CPlayer();
-    player[1] = new CPlayer();
+    
     playerData[0] = new PlayerData();
     playerData[1] = new PlayerData();
     mapData = new MapData();

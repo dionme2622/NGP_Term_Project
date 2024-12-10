@@ -35,7 +35,7 @@ private:
 	HBITMAP				 mapImage;
 	HBITMAP*			 mapImages;
 
-	HBITMAP				 playerImage[2];
+	HBITMAP				 ReadyImage;
 
 
 	SSendLobbyPacket	 sendLobbyPacket;
@@ -44,8 +44,10 @@ private:
 	int pastData = -1;
 	int pastCallData = -1;
 
+	int mapData;
 
-
+	float xPosF = 0.0f;
+	int xPos	= 0;
 };
 
 

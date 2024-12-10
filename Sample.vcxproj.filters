@@ -252,5 +252,14 @@
     <Image Include="Image\item\Item.bmp">
       <Filter>Resource</Filter>
     </Image>
+    <Image Include="Image\ui\player1_win.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Image\ui\player2_win.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Image\character\bazzi\bazzi_ready.bmp">
+      <Filter>Resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>

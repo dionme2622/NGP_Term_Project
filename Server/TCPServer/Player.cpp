@@ -1,8 +1,34 @@
 #include "Player.h"
 
-CPlayer::CPlayer()
+CPlayer::CPlayer(int map_num, int playerID)
 {
-	SetPosition(400, 600);		
+	// 맵에 따라 나뉨
+	if (map_num == 1)		// Map 이 빌리지 라면
+	{
+		// Player1 초기화
+		if (playerID == 1) {
+			// TODO : Player1 초기화
+			SetPosition(810, 725);
+		}
+
+		else {
+			// TODO : Player2 초기화
+			SetPosition(90, 725);
+		}
+	}
+	else					// Map 이 Pirate 라면
+	{
+		// Player1 초기화
+		if (playerID == 1) {
+			// TODO : Player1 초기화
+			SetPosition(750, 725);
+		}
+
+		else {
+			// TODO : Player2 초기화
+			SetPosition(150, 725);
+		}
+	}
 	direction = DIR_DOWN;
 	stop = false;
 	temp_speed = 100;
@@ -11,7 +37,7 @@ CPlayer::CPlayer()
 	ballon_length = 2;
 	ballon_num = 1;
 	count = 0.0f;
-	needle = true;
+	needle = false;
 	for (int i = 0; i < 6; i++) ballon[i] = new CBallon();
 }
 
@@ -66,10 +92,17 @@ void CPlayer::Move(float fTimeElapsed)
 {
 	if (!GetStop())
 	{
-		if (direction == DIR_DOWN) y += speed * (fTimeElapsed * 1.4);			// down
-		else if (direction == DIR_LEFT) x -= speed * fTimeElapsed;		// left
-		else if (direction == DIR_UP) y -= speed * fTimeElapsed;			// up
-		else if (direction == DIR_RIGHT) x += speed * (fTimeElapsed * 1.4);		// right
+		// 임시 좌표 변수로 이동 후의 좌표를 계산
+		float newX = x;
+		float newY = y;
 
+		if (direction == DIR_DOWN) newY += speed * (fTimeElapsed * 1.4); // down
+		else if (direction == DIR_LEFT) newX -= speed * fTimeElapsed;   // left
+		else if (direction == DIR_UP) newY -= speed * fTimeElapsed;    // up
+		else if (direction == DIR_RIGHT) newX += speed * (fTimeElapsed * 1.4); // right
+
+		// 새로운 좌표를 검사하고 범위를 벗어나지 않도록 제한
+		if (newX >= 30 && newX <= 870) x = newX; // X축 범위 검사
+		if (newY >= 65 && newY <= 785) y = newY; // Y축 범위 검사
 	}
 }

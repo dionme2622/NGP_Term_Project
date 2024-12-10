@@ -56,7 +56,6 @@ protected:
 	HDC						MemDC;
 	HDC						MemDCImage;
 	HBITMAP					OldBit[3];
-
 	POINT					cursorPos;
 
 
