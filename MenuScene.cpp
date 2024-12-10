@@ -176,11 +176,10 @@ bool CMenuScene::Login()
         return false;
     }
 
-    // IP 주소 버퍼
-    printf("DialogBoxParam 호출 전 ipAddress 값: %s, 주소: %p\n", ipAddress, &IpInputDialogProc);
-
+    
     int response = DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), NULL, IpInputDialogProc);
 
+    if (response == IDCANCEL) return false;
 
     struct sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
@@ -190,7 +189,7 @@ bool CMenuScene::Login()
     retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR) {
         printf("connect()");
-        exit(0);
+        return false;
     }
 
     return true;
@@ -209,7 +208,6 @@ INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK) {
             GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress, 20);
-            printf("사용자가 입력한 IP 주소: %s\n", ipAddress);
             EndDialog(hDlg, IDOK);
             return (INT_PTR)TRUE;
         }
