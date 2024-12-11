@@ -18,24 +18,15 @@
     <ClCompile Include="TCPServer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateThread.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UpdateThread.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
@@ -45,9 +36,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Packet.h">

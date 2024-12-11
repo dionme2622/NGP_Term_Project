@@ -12,7 +12,6 @@ public:
     int			state;			// 캐릭터의 상태
     bool		stop;			// 캐릭터 정지 유무
     bool        needle;         // 바늘 보유 유무
-    //CBallon*    ballon[6];		// 물풍선
 
     void LoadFromPlayer(const CPlayer* playerData)
     {
@@ -50,9 +49,7 @@ public:
 
 class MapData {
 public:
-    int mapIndex;
     BoardData boardData[13][15];
-
 };
 
 typedef struct PacketHeader {
@@ -83,9 +80,7 @@ typedef struct CS_PlayerInputPacket {
 
 typedef struct SC_PlayersInfoPacket {
     PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다. TODO : Player2의 정보도 추후에 같이 보내야 함
-    // TODO : 보드와 풍선에 대한 정보도 보내야 한다
     MapData mapData;
-    // Ballon Info
 } SC_PlayersInfoPacket;
 
 

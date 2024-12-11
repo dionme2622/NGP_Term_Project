@@ -55,7 +55,7 @@ void CLobbyScene::Update(float fTimeElapsed)
 			xPos = 0;
 	}
 
-	if (recvLobbyPacket.recvNextSceneCall == 1) {
+	if (recvLobbyPacket.recvNextSceneCall == 100) {
 		//TODO
 		// 맵 받은걸로 씬 넘기기
 		GetFramework()->SetCurScene(PLAYSCENE);
@@ -173,16 +173,22 @@ void CLobbyScene::SendData()
 {
 	sendLobbyPacket.header.packetType = 2;
 
-	if (pastData != sendLobbyPacket.selectedMap || sendLobbyPacket.nextSceneCall != pastCallData) {
+	if (pause == false || pastData != sendLobbyPacket.selectedMap || sendLobbyPacket.nextSceneCall != pastCallData) {
 		pastData = sendLobbyPacket.selectedMap;
 		pastCallData = sendLobbyPacket.nextSceneCall;
 		int retval = send(sock, (char*)&sendLobbyPacket, sizeof(sendLobbyPacket), 0);
+		printf("send\n");
+		pause = true;
 	}
 }
 
 void CLobbyScene::ReceiveData()
 {
 	int retval = recv(sock, (char*)&recvLobbyPacket, sizeof(recvLobbyPacket), 0);
+	printf("recv\n");
+	printf("recv데이터 : playerExist : %d recvNextSceneCall : %d selectedMap : %d\n", recvLobbyPacket.playerExist, recvLobbyPacket.recvNextSceneCall, recvLobbyPacket.selectedMap);;
+
+
 	if (recvLobbyPacket.recvNextSceneCall == true) {
 		GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
 	}

@@ -20,7 +20,6 @@ PlayerData* playerData[2];
 MapData* mapData;
 int keyState[2] = {};
 int map_num;
-//CPlayer* player2 = new CPlayer();
 
 std::vector<SOCKET> clientSockets; // 클라이언트 소켓 목록
 std::mutex clientMutex;            // 클라이언트 리스트 보호용 mutex
@@ -38,7 +37,7 @@ void BallonToObstacle(CPlayer* Player);
 void PlayerMeetPlayer(CPlayer* Player1, CPlayer* Player2);
 
 std::default_random_engine dre;
-std::uniform_int_distribution<int> uid{ 8,10 };
+std::uniform_int_distribution<int> uid{ 3,9 };
 
 int ObstacleBreak[13][15];
 
@@ -64,18 +63,15 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     while (1) {
         // 1. 헤더만 읽기
         PacketHeader header;
-        //CS_LobbyPacket a;
-
+   
         retval = recv(client_sock, (char*)&header, sizeof(header), 0);
-        /*if (retval <= 0 || retval != sizeof(PacketHeader)) {
+        if (retval <= 0 || retval != sizeof(PacketHeader)) {
             printf("클라이언트 연결 종료 또는 헤더 수신 실패\n");
             break;
-        }*/
-
-        //printf("%d\n", a.header.packetType);
+        }
 
         // 2. 패킷 타입 확인
-        //printf("수신된 패킷 타입: %d\n", header.packetType);
+        
 
         // 3. 패킷 타입에 따라 처리
         if (header.packetType == 1) { // PlayerInputPacket
@@ -106,19 +102,17 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             sc_lobbyPacket.selectedMap = cs_lobbyPacket.selectedMap;
             sc_lobbyPacket.nextSceneCall = cs_lobbyPacket.nextSceneCall;
 
-            Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
-            // SC_LobbyPacket 작성 및 브로드캐스트
-
-            
+            Map_Initialize(map_num);                
+                   
             if(sc_lobbyPacket.nextSceneCall == 1)
                 check = 1;
             
 
             // 클라이언트들에게 브로드캐스트
-            std::lock_guard<std::mutex> lock(clientMutex);
+            std::lock_guard<std::mutex> lock(clientMutex);          // 클라이언트에게 데이터를 보내는 동안 데이터가 바뀌지 않게 하기 위해서
             for (SOCKET sock : clientSockets) {
                 retval = send(sock, (char*)&sc_lobbyPacket, sizeof(sc_lobbyPacket), 0);
-
+                printf("로비패킷 보냄\n");
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);
@@ -133,7 +127,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
         }
         else {
 
-            //printf("알 수 없는 패킷 타입: %d\n", header.packetType);
             break;
         }
     }
@@ -148,8 +141,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
     printf("클라이언트 처리 종료\n");
     return 0;
 }
-
-static int num = 0;
 
 // 모든 클라이언트에게 주기적으로 데이터 전송하는 스레드
 void GameLogicThread() {
@@ -210,13 +201,10 @@ void GameLogicThread() {
                 BallonBoom(player[playerID], 5, m_GameTimer.GetTimeElapsed());
                 PlayerMeetBallon(player[playerID]);
                 BallonToObstacle(player[playerID]);
-                /*if (player[playerID]->GetState() == DAMAGE) {
-                    count += m_GameTimer.GetTimeElapsed();
-                    if (count > 3.0f) count = 0, player[playerID]->SetState(DEAD);
-                }*/
+                PlayerMeetPlayer(player[0], player[1]);
+                PlayerMeetPlayer(player[1], player[0]);
             }
-            PlayerMeetPlayer(player[0], player[1]);
-            PlayerMeetPlayer(player[1], player[0]);
+            
             // 플레이어 데이터 업데이트
             for (int playerID = 0; playerID < 2; playerID++) playerData[playerID]->LoadFromPlayer(player[playerID]);
             // 모든 플레이어 데이터를 클라이언트들에게 전송
@@ -227,6 +215,8 @@ void GameLogicThread() {
             clientMutex.lock();
             for (SOCKET client_sock : clientSockets) {
                 int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
+                printf("패킷 보냄\n");
+
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(client_sock);
@@ -269,7 +259,7 @@ int main(int argc, char* argv[]) {
 
     // 주기적으로 데이터를 전송하는 스레드 실행
     std::thread gameLogicThread(GameLogicThread);
-    gameLogicThread.detach();
+    //gameLogicThread.detach();
 
     while (1) {
         // 클라이언트 연결 수락
@@ -287,17 +277,13 @@ int main(int argc, char* argv[]) {
         ++ID;
         
 
-
-
-        //Map_Initialize(map_num);       // 맵 초기화 TODO : 좀 이쁘게 수정하기 (임시로 해둔 것)
-
         // 접속한 클라이언트 정보 출력
         char addr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
         printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
         // 접속한 클라이언트 소켓 추가
         clientMutex.lock();
-        clientSockets.push_back(client_sock);
+        clientSockets.push_back(client_sock);       // 뮤텍스는 스레드가 많을 때?? 
         clientMutex.unlock();
 
         // 클라이언트 처리 스레드 생성
@@ -334,14 +320,14 @@ void Map_Initialize(int map_num) {             // 맵의 초기화
             packet.mapData.boardData[1][i].SetState(2);
             packet.mapData.boardData[11][i].SetState(2);
         }
-        packet.mapData.boardData[1][1].SetState(9); packet.mapData.boardData[1][3].SetState(3); packet.mapData.boardData[1][11].SetState(3); packet.mapData.boardData[1][13].SetState(3);
-        packet.mapData.boardData[3][1].SetState(9); packet.mapData.boardData[3][3].SetState(3); packet.mapData.boardData[3][11].SetState(3); packet.mapData.boardData[3][13].SetState(3);
-        packet.mapData.boardData[5][1].SetState(9); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
-        packet.mapData.boardData[5][1].SetState(9); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
-        packet.mapData.boardData[7][1].SetState(9); packet.mapData.boardData[7][3].SetState(3); packet.mapData.boardData[7][11].SetState(3); packet.mapData.boardData[7][13].SetState(3);
-        packet.mapData.boardData[6][5].SetState(9); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][9].SetState(3);	packet.mapData.boardData[10][9].SetState(3);
-        packet.mapData.boardData[9][1].SetState(9); packet.mapData.boardData[9][3].SetState(3); packet.mapData.boardData[9][11].SetState(3); packet.mapData.boardData[9][13].SetState(3);
-        packet.mapData.boardData[4][6].SetState(9); packet.mapData.boardData[4][8].SetState(3); packet.mapData.boardData[8][6].SetState(3);	packet.mapData.boardData[8][8].SetState(3);
+        packet.mapData.boardData[1][1].SetState(3); packet.mapData.boardData[1][3].SetState(3); packet.mapData.boardData[1][11].SetState(3); packet.mapData.boardData[1][13].SetState(3);
+        packet.mapData.boardData[3][1].SetState(3); packet.mapData.boardData[3][3].SetState(3); packet.mapData.boardData[3][11].SetState(3); packet.mapData.boardData[3][13].SetState(3);
+        packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+        packet.mapData.boardData[5][1].SetState(3); packet.mapData.boardData[5][3].SetState(3); packet.mapData.boardData[5][11].SetState(3); packet.mapData.boardData[5][13].SetState(3);
+        packet.mapData.boardData[7][1].SetState(3); packet.mapData.boardData[7][3].SetState(3); packet.mapData.boardData[7][11].SetState(3); packet.mapData.boardData[7][13].SetState(3);
+        packet.mapData.boardData[6][5].SetState(3); packet.mapData.boardData[6][7].SetState(3); packet.mapData.boardData[6][9].SetState(3);	packet.mapData.boardData[10][9].SetState(3);
+        packet.mapData.boardData[9][1].SetState(3); packet.mapData.boardData[9][3].SetState(3); packet.mapData.boardData[9][11].SetState(3); packet.mapData.boardData[9][13].SetState(3);
+        packet.mapData.boardData[4][6].SetState(3); packet.mapData.boardData[4][8].SetState(3); packet.mapData.boardData[8][6].SetState(3);	packet.mapData.boardData[8][8].SetState(3);
 
         for (int i = 0; i < 5; i++)
         {

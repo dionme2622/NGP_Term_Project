@@ -48,6 +48,8 @@ private:
 
 	float xPosF = 0.0f;
 	int xPos	= 0;
+
+	bool pause;
 };
 
 

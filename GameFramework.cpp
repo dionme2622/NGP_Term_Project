@@ -1,7 +1,7 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-CRITICAL_SECTION cs;
+//HANDLE	hSelectEvent;
 
 CGameFramework::CGameFramework()
 {
@@ -11,6 +11,8 @@ CGameFramework::CGameFramework()
 	m_ppMaps			= new CMap * [2];		// Map 4개
 	currentscene		= MENUSCENE;			// Scene의 인덱스
 	_tcscpy_s(m_pszFrameRate, _T("("));
+
+	//hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 CGameFramework::~CGameFramework()
@@ -32,9 +34,11 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	m_pScene = m_ppScenes[currentscene];																									
+	//WaitForSingleObject(hSelectEvent, INFINITE);
 
+	m_pScene = m_ppScenes[currentscene];	
 	m_ppScenes[currentscene]->Initialize();
+
 
 	m_GameTimer.Reset();				// 타이머 초기화
 }
@@ -61,6 +65,8 @@ void CGameFramework::Update()
 	if (m_pScene->IsServerConnected() && m_bPause == false) {
 		CreateThread(NULL, 0, CGameFramework::SendData, this, 0, NULL);
 		CreateThread(NULL, 0, CGameFramework::ReceiveData, this, 0, NULL);
+		
+
 		m_bPause = true;
 	}
 }
@@ -127,17 +133,9 @@ void CGameFramework::SetCurMap(int Map)
 }
 
 
-void CGameFramework::InitializeCriticalSection()
-{
-	::InitializeCriticalSection(&cs);
-}
-
 
 DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
-
-	//WaitForSingleObject(pFramework->hSelectEvent, INFINITE);
-
 	while (1) {
 		pFramework->m_pScene->SendData();
 	}
@@ -148,10 +146,14 @@ DWORD __stdcall CGameFramework::SendData(LPVOID arg) {
 DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
+	static bool pause;
+
+	//if(pause == false) SetEvent(hSelectEvent);
+
 	while (1) {
 		if (pFramework->m_pScene) {
 			pFramework->m_pScene->ReceiveData();
-			//SetEvent(pFramework->hRecvEvent);
+
 		}
 	}
 	return 0;

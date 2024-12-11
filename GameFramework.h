@@ -35,7 +35,6 @@ public:
 	LRESULT OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 
-	void InitializeCriticalSection();
 	static DWORD __stdcall SendData(LPVOID arg);
 	static DWORD __stdcall ReceiveData(LPVOID arg);
 

@@ -10,7 +10,6 @@ public:
     int			state;			// 캐릭터의 상태
     bool		stop;			// 캐릭터 정지 유무
     bool        needle;         // 바늘 보유 유무
-    //CBallon* ballon[6];		    // 물풍선
 
 
     void LoadFromPlayer(const CPlayer* player)
@@ -49,7 +48,6 @@ public:
 
 class MapData {
 public:
-    int mapIndex;
     BoardData boardData[13][15];
 };
 

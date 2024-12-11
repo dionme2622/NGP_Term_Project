@@ -1,6 +1,9 @@
 #include "MenuScene.h"
 #include "GameFramework.h"
 
+HANDLE	hSelectEvent;
+
+
 CMenuScene::CMenuScene(HWND _hWnd, HINSTANCE _hInst, CGameFramework* GameFramework) : CScene(_hWnd, _hInst, GameFramework)
 {
 }
@@ -11,8 +14,6 @@ CMenuScene::~CMenuScene()
 
 void CMenuScene::Initialize()
 {
-    
-
     drawTutorial = false;
 
     backgroundImage = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MENU));
@@ -40,6 +41,8 @@ void CMenuScene::Initialize()
     tutoExitButton.size = { 0, 0, 135, 40 };
     tutoExitButton.ButtonImage = NULL;
 
+
+    hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
     
 
@@ -179,11 +182,14 @@ bool CMenuScene::Login()
     
     int response = DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), NULL, IpInputDialogProc);
 
+    WaitForSingleObject(hSelectEvent, INFINITE);
+
     if (response == IDCANCEL) return false;
 
     struct sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
+
     inet_pton(AF_INET, ipAddress, &serveraddr.sin_addr);
     serveraddr.sin_port = htons(SERVERPORT);
     retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
@@ -197,6 +203,7 @@ bool CMenuScene::Login()
 
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    SetEvent(hSelectEvent);
 
     switch (message)
     {
@@ -208,6 +215,7 @@ INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK) {
             GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress, 20);
+            CloseHandle(hSelectEvent);
             EndDialog(hDlg, IDOK);
             return (INT_PTR)TRUE;
         }
