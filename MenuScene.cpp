@@ -206,6 +206,8 @@ bool CMenuScene::Login()
         return false;
     }
 
+    recv(sock, (char*)&m_ID, sizeof(m_ID), 0);
+
     ResetEvent(hSelectEvent); // 이벤트 초기화
     return true;
 }

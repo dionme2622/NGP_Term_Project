@@ -1,7 +1,6 @@
 #include "GameFramework.h"
 #include "stdafx.h"
 
-//HANDLE	hSelectEvent;
 
 CGameFramework::CGameFramework()
 {
@@ -12,7 +11,6 @@ CGameFramework::CGameFramework()
 	currentscene		= MENUSCENE;			// SceneÀÇ ÀÎµ¦½º
 	_tcscpy_s(m_pszFrameRate, _T("("));
 
-	//hSelectEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 CGameFramework::~CGameFramework()
@@ -34,7 +32,6 @@ void CGameFramework::Initialize(HWND hMainWnd, HINSTANCE g_hInst)
 	m_ppScenes[2] = new CLobbyScene(hWnd, hInst, this);
 	m_ppScenes[3] = new CPlayScene(hWnd, hInst, this);
 
-	//WaitForSingleObject(hSelectEvent, INFINITE);
 
 	m_pScene = m_ppScenes[currentscene];	
 	m_ppScenes[currentscene]->Initialize();
@@ -147,8 +144,6 @@ DWORD __stdcall CGameFramework::ReceiveData(LPVOID arg) {
 	CGameFramework* pFramework = reinterpret_cast<CGameFramework*>(arg);
 
 	static bool pause;
-
-	//if(pause == false) SetEvent(hSelectEvent);
 
 	while (1) {
 		if (pFramework->m_pScene) {
