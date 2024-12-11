@@ -179,47 +179,56 @@ bool CMenuScene::Login()
         return false;
     }
 
-    
+    // 다이얼로그 생성 및 응답 확인
     int response = DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), NULL, IpInputDialogProc);
 
+    // 이벤트 대기
     WaitForSingleObject(hSelectEvent, INFINITE);
 
-    if (response == IDCANCEL) return false;
-
-    struct sockaddr_in serveraddr;
-    memset(&serveraddr, 0, sizeof(serveraddr));
-    serveraddr.sin_family = AF_INET;
-
-    inet_pton(AF_INET, ipAddress, &serveraddr.sin_addr);
-    serveraddr.sin_port = htons(SERVERPORT);
-    retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-    if (retval == SOCKET_ERROR) {
-        printf("connect()");
+    if (response == IDCANCEL) {
+        ResetEvent(hSelectEvent);
         return false;
     }
 
+    // 서버 연결
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    inet_pton(AF_INET, ipAddress, &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+
+    retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+    if (retval == SOCKET_ERROR) {
+        printf("connect() 실패\n");
+        closesocket(sock);
+        WSACleanup();
+        ResetEvent(hSelectEvent);
+        return false;
+    }
+
+    ResetEvent(hSelectEvent); // 이벤트 초기화
     return true;
 }
 
+
+
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    SetEvent(hSelectEvent);
-
     switch (message)
     {
     case WM_INITDIALOG:
-        //printf("SetDlgItemTextA 호출 전 ipAddressBuffer 값: %s\n", ipAddressBuffer);
         SetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress);
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK) {
             GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress, 20);
-            CloseHandle(hSelectEvent);
+            SetEvent(hSelectEvent); // 이벤트 설정
             EndDialog(hDlg, IDOK);
             return (INT_PTR)TRUE;
         }
         else if (LOWORD(wParam) == IDCANCEL) {
+            SetEvent(hSelectEvent); // 이벤트 설정
             EndDialog(hDlg, IDCANCEL);
             return (INT_PTR)TRUE;
         }
@@ -227,6 +236,7 @@ INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
     }
     return (INT_PTR)FALSE;
 }
+
 
 
 
