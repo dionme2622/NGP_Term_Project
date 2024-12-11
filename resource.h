@@ -51,6 +51,10 @@
 #define IDB_Win1                        172
 #define IDB_Win2                        173
 #define IDB_READY                       174
+#define IDD_IP_DIALOG                   175
+#define IDD_DIALOG1                     176
+#define IDC_IP_EDIT                     1000
+#define IDC_EDIT1                       1001
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -60,7 +64,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        175
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

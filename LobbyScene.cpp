@@ -86,6 +86,8 @@ void CLobbyScene::Render()
 		StretchBlt(MemDC, rc.right / 2 - 447, rc.bottom / 2 - 73, 894, 146, MemDCImage, 0, 0, 894, 146, SRCCOPY);
 	}
 
+
+
 	if (recvLobbyPacket.playerExist[0]) {
 		(HBITMAP)SelectObject(MemDCImage, ReadyImage);		// Player1 Ready
 		TransparentBlt(MemDC, 65, 200, 100, 100, MemDCImage, xPos, 0, 64, 86, RGB(255, 0, 255));
@@ -94,6 +96,8 @@ void CLobbyScene::Render()
 		(HBITMAP)SelectObject(MemDCImage, ReadyImage);		// Player2 Ready
 		TransparentBlt(MemDC, 225, 200, 100, 100, MemDCImage, xPos, 86, 64, 86, RGB(255, 0, 255));
 	}
+
+
 
 	BitBlt(hdc, 0, 0, rc.right, rc.bottom, MemDC, 0, 0, SRCCOPY);
 	// 자원 해제
@@ -113,7 +117,6 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 		GetCursorPos(&cursorPos);
 		ScreenToClient(hWnd, &cursorPos);
 
-		SelectMap();
 
 		if (mapImage && m_ID == 0) {
 			if (cursorPos.x > 773 && cursorPos.x < 1055 &&
@@ -121,9 +124,10 @@ void CLobbyScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wP
 				sendLobbyPacket.nextSceneCall = true;
 			}
 		}
-		//printf("%d, %d\n", cursorPos.x, cursorPos.y);
-		// TODO : 맵 선택
-		// GetFrameWork()->SetCurMap(Village);
+		if (m_ID == 0) SelectMap();
+
+
+
 		break;
 	case WM_RBUTTONDOWN:
 		break;
@@ -158,6 +162,7 @@ void CLobbyScene::SelectMap()
 		sendLobbyPacket.selectedMap = mapData;
 
 		showSelectMap = !showSelectMap;
+
 	}
 
 	if (cursorPos.x > 975 && cursorPos.x < 1155 &&
@@ -181,7 +186,8 @@ void CLobbyScene::ReceiveData()
 	if (recvLobbyPacket.recvNextSceneCall == true) {
 		GetFramework()->SetCurMap(recvLobbyPacket.selectedMap - 1);
 	}
-
+	if(recvLobbyPacket.selectedMap != 0)
+		mapImage = mapImages[recvLobbyPacket.selectedMap - 1];
 }
 
 

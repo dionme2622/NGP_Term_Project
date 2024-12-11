@@ -122,69 +122,107 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
     switch (nMessageID)
     {
     case WM_LBUTTONDOWN:
-        
-
         break;
     case WM_RBUTTONDOWN:
-
-            
-
         break;
     case WM_LBUTTONUP:
         SetCapture(hWnd);
         GetCursorPos(&cursorPos);
         ScreenToClient(hWnd, &cursorPos);
-        if (IsCursorInButton(Button_Help, cursorPos)) drawTutorial = true;
-        else if (IsCursorInButton(Button_Play, cursorPos)) {
-            Login();
-            GetFramework()->SetCurScene(LOBBYSCENE);     // 로비 Scene으로 이동
+
+        if (IsCursorInButton(Button_Help, cursorPos)) {
+            drawTutorial = true;
         }
-        else if (IsCursorInButton(Button_Quit, cursorPos)) exit(0);
-        if (drawTutorial && IsCursorInButton(tutoExitButton, cursorPos)) drawTutorial = false;
+        else if (IsCursorInButton(Button_Play, cursorPos)) {
+            if (Login()) {  // Login 성공 시에만 다음 씬으로 이동
+                GetFramework()->SetCurScene(LOBBYSCENE);
+            }
+        }
+        else if (IsCursorInButton(Button_Quit, cursorPos)) {
+            exit(0);
+        }
+
+        if (drawTutorial && IsCursorInButton(tutoExitButton, cursorPos)) {
+            drawTutorial = false;
+        }
         break;
     case WM_RBUTTONUP:
         ::ReleaseCapture();
         break;
     case WM_MOUSEMOVE:
-
-
         break;
     default:
         break;
     }
 }
 
-void CMenuScene::Login()
+INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+char ipAddress[20] = "127.0.0.1";
+
+bool CMenuScene::Login()
 {
-    //서버 통신 관련 변수 초기화
-    //윈속 초기화
-    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-        return;
+    // 윈속 초기화
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        printf("WSAStartup 실패\n");
+        return false;
+    }
 
     // 소켓 생성
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET) {
-        printf("socket err");
-    }
-
-
-    // 소켓 주소 구조체 초기화
-    memset(&remoteAddr, 0, sizeof(remoteAddr));
-    remoteAddr.sin_family = AF_INET;
-    inet_pton(AF_INET, "127.0.0.1", &remoteAddr.sin_addr);
-    remoteAddr.sin_port = htons(SERVERPORT);
-
-
-    // 서버 연결
-    if (connect(sock, (struct sockaddr*)&remoteAddr, sizeof(remoteAddr)) == SOCKET_ERROR) {
-        printf("서버 연결 실패");
-        closesocket(sock);
+        printf("소켓 생성 실패\n");
         WSACleanup();
-        exit(0);
+        return false;
     }
+
     
-    int id;
-    retval = recv(sock, (char*)&id, sizeof(id), 0); // ID
-    SetID(id);
+    int response = DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), NULL, IpInputDialogProc);
+
+    if (response == IDCANCEL) return false;
+
+    struct sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    inet_pton(AF_INET, ipAddress, &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+    retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+    if (retval == SOCKET_ERROR) {
+        printf("connect()");
+        return false;
+    }
+
+    return true;
 }
+
+INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        //printf("SetDlgItemTextA 호출 전 ipAddressBuffer 값: %s\n", ipAddressBuffer);
+        SetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress);
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK) {
+            GetDlgItemTextA(hDlg, IDC_EDIT1, ipAddress, 20);
+            EndDialog(hDlg, IDOK);
+            return (INT_PTR)TRUE;
+        }
+        else if (LOWORD(wParam) == IDCANCEL) {
+            EndDialog(hDlg, IDCANCEL);
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+
+
+
+
+
 
