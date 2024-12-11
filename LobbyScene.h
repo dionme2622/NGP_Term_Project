@@ -35,7 +35,7 @@ private:
 	HBITMAP				 mapImage;
 	HBITMAP*			 mapImages;
 
-	HBITMAP				 ReadyImage;
+	HBITMAP				 playerImage[2];
 
 
 	SSendLobbyPacket	 sendLobbyPacket;
@@ -44,12 +44,15 @@ private:
 	int pastData = -1;
 	int pastCallData = -1;
 
-	int mapData;
 
+<<<<<<< HEAD
 	float xPosF = 0.0f;
 	int xPos	= 0;
 
 	bool pause;
+=======
+
+>>>>>>> parent of 44d4b8a (수정)
 };
 
 

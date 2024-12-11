@@ -174,7 +174,6 @@
     <Image Include="Image\character\bazzi\bazzi_down.bmp" />
     <Image Include="Image\character\bazzi\bazzi_left.bmp" />
     <Image Include="Image\character\bazzi\bazzi_live.bmp" />
-    <Image Include="Image\character\bazzi\bazzi_ready.bmp" />
     <Image Include="Image\character\bazzi\bazzi_right.bmp" />
     <Image Include="Image\character\bazzi\bazzi_trap.bmp" />
     <Image Include="Image\character\bazzi\bazzi_up.bmp" />
@@ -198,8 +197,6 @@
     <Image Include="Image\ui\map_select_button.bmp" />
     <Image Include="Image\ui\map_test.bmp" />
     <Image Include="Image\ui\map_village.bmp" />
-    <Image Include="Image\ui\player1_win.bmp" />
-    <Image Include="Image\ui\player2_win.bmp" />
     <Image Include="Image\ui\pop_up_help.bmp" />
     <Image Include="Image\ui\room.bmp" />
     <Image Include="Image\ui\StageFrame.bmp" />

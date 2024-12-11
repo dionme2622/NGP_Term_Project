@@ -40,7 +40,7 @@ public:
 	CBallon* ballon[6];		// ¹°Ç³¼±
 
 public:
-	CPlayer(int map_num, int playerID);
+	CPlayer();
 	~CPlayer();
 	
 	void Update(float fTimeElapsed);

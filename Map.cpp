@@ -31,8 +31,6 @@ void CMap::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, int
 	BallonBitmap[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Bubble));
 	BallonBitmap[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Explosion));
 	ItemBitmap		= LoadBitmap(hInst, MAKEINTRESOURCE(IDB_ITEM));
-	WinBitmap[0]	= LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Win1));
-	WinBitmap[1]	= LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Win2));
 
 }
 
@@ -90,17 +88,6 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 		}
 	}
 	if(player[ClientID]->needle) TransparentBlt(MemDC, 1000, 735, 80, 80, MemDCImage, 0, 270, 42, 45, RGB(255, 0, 255));			// TODO : 클라이언트 ID를 인덱스로 받아서 해당 플레이어가 바늘을 가지고 있다면 바늘 아이템을 보유하고 있다고 아이템 창에 그린다
-
-	if (player[0]->state == DEAD) {
-		(HBITMAP)SelectObject(MemDCImage, WinBitmap[1]);		
-		TransparentBlt(MemDC, 350, 400, 258, 88, MemDCImage, 0, 0, 258, 88, RGB(255, 0, 255));
-
-	}
-	else if (player[1]->state == DEAD) {
-		(HBITMAP)SelectObject(MemDCImage, WinBitmap[0]);
-		TransparentBlt(MemDC, 350, 400, 258, 88, MemDCImage, 0, 0, 258, 88, RGB(255, 0, 255));
-
-	}
 }
 
 void CMap::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
@@ -138,7 +125,7 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket,
 			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
 		}
 	}
-	printf("block stat: %d\n", Board[12][3].GetState());
+
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Village_Tile));
 	Block[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Red_Block));
@@ -327,14 +314,98 @@ void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, 
 	// TODO : Map이 Pirate일 때 초기화
 	CMap::Initialize(_hInst, receivedPacket, _ClientID);
 
-	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
+
+	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < 15; j++)
-		{
-			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
-		}
+		Board[0][i].SetState(2);
 	}
-	printf("block stat: %d\n", Board[1][0].GetState());
+	Board[0][7].SetState(2);
+	for (int i = 11; i < 15; i++)
+	{
+		Board[0][i].SetState(2);
+	}
+	// 1줄
+	Board[1][0].SetState(2);
+	Board[1][1].SetState(3);
+	Board[1][2].SetState(2);
+	for (int i = 4; i < 7; i++)
+	{
+		Board[1][i].SetState(2);
+	}
+	for (int i = 8; i < 11; i++)
+	{
+		Board[1][i].SetState(2);
+	}
+	Board[1][12].SetState(2);
+	Board[1][13].SetState(3);
+	Board[1][14].SetState(2);
+	// 2줄
+	Board[2][0].SetState(2);
+	Board[2][1].SetState(2);
+	Board[2][3].SetState(2);
+	Board[2][5].SetState(2);
+	Board[2][7].SetState(2);
+	Board[2][9].SetState(2);
+	Board[2][11].SetState(2);
+	Board[2][13].SetState(2);
+	Board[2][14].SetState(2);
+	// 3줄
+	for (int i = 3; i < 13; i++) Board[i][0].SetState(2);
+	for (int i = 7; i < 11; i++) Board[i][1].SetState(2);
+	
+	for (int i = 8; i < 10; i++) Board[i][2].SetState(2);
+	
+	for (int i = 9; i < 13; i++) Board[i][3].SetState(2);
+
+	for (int i = 10; i < 13; i++) Board[i][4].SetState(2);
+	
+	for (int i = 11; i < 13; i++) Board[i][5].SetState(2);
+	
+	for (int i = 6; i < 12; i++) Board[12][i].SetState(2);
+
+	for (int i = 9; i < 12; i++) Board[11][i].SetState(2);
+
+	for (int i = 3; i < 13; i++) Board[i][14].SetState(2);
+
+	for (int i = 10; i < 12; i++) Board[10][i].SetState(2);
+
+	for (int i = 11; i < 14; i++) Board[9][i].SetState(2);
+	
+	for (int i = 12; i < 14; i++) Board[8][i].SetState(2);
+	
+	Board[7][13].SetState(2);
+	for (int i = 4; i < 11; i++) Board[3][i].SetState(2);
+	
+	for (int i = 3; i < 12; i++) Board[4][i].SetState(2);
+	for (int i = 4; i < 11; i++) Board[5][i].SetState(2);
+	
+	for (int i = 3; i < 6; i++) Board[6][i].SetState(2);
+	
+	for (int i = 9; i < 12; i++) Board[6][i].SetState(2);
+	
+	for (int i = 5; i < 10; i++)
+	{
+		Board[7][i].SetState(2);
+		Board[8][i].SetState(2);
+	}
+	Board[9][7].SetState(2);
+	for (int i = 3; i < 7; i++)
+	{
+		Board[i][2].SetState(2);
+		Board[i][12].SetState(2);
+	}
+	Board[7][3].SetState(2);
+	Board[7][11].SetState(2);
+	Board[8][4].SetState(2);
+	Board[8][10].SetState(2);
+	Board[9][5].SetState(2);
+	Board[9][9].SetState(2);
+	for (int i = 6; i < 9; i++) Board[10][i].SetState(2);
+	Board[10][13].SetState(2);
+	Board[11][1].SetState(3);
+	Board[11][13].SetState(3);
+	Board[6][6].SetState(3); Board[6][7].SetState(3); Board[6][8].SetState(3);
+
 
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Pirate_Tile));
@@ -491,21 +562,11 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
 
 	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
-	CMap::Render(MemDC, MemDCImage);
-
 }
 
 void CPirate::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 {
 	CMap::Update(receivedPacket, fTimeElapsed);
-
-	for (int i = 0; i < 13; i++)		// TODO : 보드의 State를 가져온다.
-	{
-		for (int j = 0; j < 15; j++)
-		{
-			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
-		}
-	}
 	for (int i = 0; i < 2; i++) player[i]->Update(receivedPacket, fTimeElapsed);
 }
 

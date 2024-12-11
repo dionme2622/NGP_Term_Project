@@ -19,7 +19,12 @@ CPlayer* player[2];
 PlayerData* playerData[2];
 MapData* mapData;
 int keyState[2] = {};
+<<<<<<< HEAD
 int map_num;
+=======
+int map_num = 0;
+//CPlayer* player2 = new CPlayer();
+>>>>>>> parent of 44d4b8a (ìˆ˜ì •)
 
 std::vector<SOCKET> clientSockets; // Å¬¶óÀÌ¾ðÆ® ¼ÒÄÏ ¸ñ·Ï
 std::mutex clientMutex;            // Å¬¶óÀÌ¾ðÆ® ¸®½ºÆ® º¸È£¿ë mutex
@@ -122,8 +127,6 @@ DWORD WINAPI ClientThread(LPVOID arg) {
                     printf("Å¬¶óÀÌ¾ðÆ®·Î SC_LobbyPacket Àü¼Û ¿Ï·á.\n");
                 }
             }
-            player[0] = new CPlayer(map_num, 0);
-            player[1] = new CPlayer(map_num, 1);
         }
         else {
 
@@ -168,21 +171,12 @@ void GameLogicThread() {
                         {
                             if (player[playerID]->ballon[i]->state == 0)
                             {
-
                                 player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
                                 player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
-                                printf("¹°Ç³¼±¼³Ä¡!\n");
-
-                                player[playerID]->ballon[i]->SetState(1);
-                                packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
-                                printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
                                 {
-                                    printf("¹°Ç³¼±¼³Ä¡!\n");
-
                                     player[playerID]->ballon[i]->SetState(1);
                                     packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
-                                    printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 }
                             }
                         }
@@ -229,7 +223,8 @@ void GameLogicThread() {
 }
 int main(int argc, char* argv[]) {
     m_GameTimer.Reset();
-    
+    player[0] = new CPlayer();
+    player[1] = new CPlayer();
     playerData[0] = new PlayerData();
     playerData[1] = new PlayerData();
     mapData = new MapData();

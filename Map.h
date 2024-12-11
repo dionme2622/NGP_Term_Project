@@ -34,7 +34,6 @@ private:
 	// Resource
 	HBITMAP BallonBitmap[2];
 	HBITMAP ItemBitmap;
-	HBITMAP WinBitmap[2];
 };
 
 class CVillage : public CMap
