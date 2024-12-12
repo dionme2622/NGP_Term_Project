@@ -37,7 +37,7 @@ void BallonToObstacle(CPlayer* Player);
 void PlayerMeetPlayer(CPlayer* Player1, CPlayer* Player2);
 
 std::default_random_engine dre;
-std::uniform_int_distribution<int> uid{ 3,9 };
+std::uniform_int_distribution<int> uid{ 6,9 };
 
 int ObstacleBreak[13][15];
 
@@ -166,23 +166,23 @@ void GameLogicThread() {
                         if (player[playerID]->state == DAMAGE) return;
                         for (int i = 0; i < player[playerID]->ballon_num; i++)
                         {
+                            //printf("state %d\n", player[0]->ballon[i]->state);
                             if (player[playerID]->ballon[i]->state == 0)
                             {
 
                                 player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
                                 player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
-                                printf("물풍선설치!\n");
 
-                                player[playerID]->ballon[i]->SetState(1);
-                                packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
-                                printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
+                                //printf("보드 스테이트 x %d\n", player[playerID]->ballon[i]->x / 60);
+
+                                //printf("보드 스테이트 y %d\n", player[playerID]->ballon[i]->y / 60);
+                                //
+                                //printf("보드 스테이트 %d\n", packet.mapData.boardData[0][7].state);
+                                //printf("보드 스테이트 %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
                                 {
-                                    printf("물풍선설치!\n");
-
                                     player[playerID]->ballon[i]->SetState(1);
                                     packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].SetState(4);
-                                    printf("blockstate : %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
                                 }
                             }
                         }
@@ -215,7 +215,6 @@ void GameLogicThread() {
             clientMutex.lock();
             for (SOCKET client_sock : clientSockets) {
                 int retval = send(client_sock, (char*)&packet, sizeof(packet), 0);
-                printf("패킷 보냄\n");
 
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
@@ -259,7 +258,7 @@ int main(int argc, char* argv[]) {
 
     // 주기적으로 데이터를 전송하는 스레드 실행
     std::thread gameLogicThread(GameLogicThread);
-    //gameLogicThread.detach();
+    gameLogicThread.detach();
 
     while (1) {
         // 클라이언트 연결 수락
@@ -354,6 +353,12 @@ void Map_Initialize(int map_num) {             // 맵의 초기화
     }
     else if (map_num == 2)  // cs_lobbyPacket.selectedMap = 2이면 Pirate 맵을 초기화 한다.
     {
+
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 15; j++) {
+                packet.mapData.boardData[i][j].SetState(1);
+            }
+        }
         for (int i = 0; i < 4; i++)
         {
             packet.mapData.boardData[0][i].SetState(2);

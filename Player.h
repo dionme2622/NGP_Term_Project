@@ -51,15 +51,12 @@ public:
 	void SetPosition(float _fx, float _fy);
 	void SetState(int _state) { state = _state; }
 	void SetStop(bool _stop) { stop = _stop; }
-	void SetBallon(CMap* Map);
 
 	bool GetStop() { return stop; }
 	int GetState() { return state; }
 	int GetBallonNum() { return ballon_num; }
 	int GetBallonLength() { return ballon_length; }
-	//CBallon* GetBallon(int i) { return ballon[i]; }
 
-	void Move(float fTimeElapsed);
 	
 };
 

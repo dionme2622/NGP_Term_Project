@@ -334,7 +334,6 @@ void CPirate::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket, 
 			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
 		}
 	}
-	printf("block stat: %d\n", Board[1][0].GetState());
 
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Pirate_Tile));
@@ -490,7 +489,6 @@ void CPirate::Render(HDC MemDC, HDC MemDCImage)
 	(HBITMAP)SelectObject(MemDCImage, obstacle_pirate); // Àå¾Ö¹°
 	if (Board[6][6].GetState() == 3 && Board[6][7].GetState() == 3 && Board[6][8].GetState() == 3) TransparentBlt(MemDC, Board[6][6].x, Board[6][6].y - 180, 180, 240, MemDCImage, 160, 0, 120, 160, RGB(255, 255, 255));
 
-	for (int i = 0; i < 2; i++) player[i]->Render(MemDC, MemDCImage, this);
 	CMap::Render(MemDC, MemDCImage);
 
 }

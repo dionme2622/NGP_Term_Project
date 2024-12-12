@@ -109,7 +109,7 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 		}
 	}
 	receivedPacket.playerData[ID].ApplyToPlayer(this);		// Player Update
-
+	printf("Player1의 풍선개수: %d\n", receivedPacket.playerData[0].ballon_num);
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)
@@ -184,41 +184,3 @@ void CPlayer::SetPosition(float _fx, float _fy) {
 	y = static_cast<int>(fy);
 }
 
-void CPlayer::SetBallon(CMap* Map)
-{
-	//for (int i = 0; i < ballon_num; i++)
-	//{
-	//	if (ballon[i]->GetState() == 0)
-	//	{
-
-	//		ballon[i]->x = (x + 30 - 30) / 60 * 60;
-	//		ballon[i]->y = (y + 30 - 65) / 60 * 60;
-	//		//printf("물풍선 설치! x: %d, y: %d\n", ballon[i]->x / 60, ballon[i]->y / 60);		// DEBUG
-
-	//		if (Map->GetBoard((ballon[i]->y / 60), (ballon[i]->x / 60)).GetState() == 1)
-	//		{
-	//			//printf("전 %d \n", Map->GetBoard((ballon[i]->y / 60) - 1, (ballon[i]->x / 60) - 1).GetState());		// DEBUG
-
-	//			ballon[i]->SetState(1);
-	//			Map->GetBoard(11, 13).SetState(4);
-	//			//printf("후 %d \n", Map->GetBoard(11,13).GetState());		// DEBUG
-	//			//if(Map->GetBoard(11, 13).GetState() == 4) printf("%d\n", ballon[0]->GetState());
-
-	//		}
-	//	}
-	//}
-}
-
-void CPlayer::Move(float fTimeElapsed)
-{
-	/*if (!GetStop())
-	{
-		if (direction == DIR_DOWN) fy += speed * fTimeElapsed;
-		else if (direction == DIR_LEFT) fx -= speed * fTimeElapsed;
-		else if (direction == DIR_UP) fy -= speed * fTimeElapsed;
-		else if (direction == DIR_RIGHT) fx += speed * fTimeElapsed;
-
-		SetPosition(fx, fy);
-	}*/
-
-}
