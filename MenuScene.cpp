@@ -161,7 +161,7 @@ void CMenuScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 INT_PTR CALLBACK IpInputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-char ipAddress[20] = "127.0.0.1";
+char ipAddress[20] = "172.30.1.86";
 
 bool CMenuScene::Login()
 {

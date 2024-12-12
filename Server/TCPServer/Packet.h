@@ -51,29 +51,29 @@ public:
     BoardData boardData[13][15];
 };
 
-typedef struct PacketHeader {
-    int packetType; // 1=PlayerInput, 2=ReadyPacket
+typedef struct PacketHeader {           // 어떤 Scene에서 어떤 패킷을 사용해야 하는지 알려주기 위한 패킷 헤더
+    int packetType;                     // 1=PlayerInput, 2=ReadyPacket
 } PacketHeader;
 
 typedef struct CS_PlayerInputPacket {
-    PacketHeader header;
-    int playerID;           // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
-    int keyState;           // 입력한 Key 의 값
+    PacketHeader header;                // 1: SC_PlayersInfoPacket 사용 2 : CS_LobbyPacket 사용
+    int playerID;                       // 어떤 클라이언트에서 Key를 입력했는지 알려주기 위한 ID값
+    int keyState;                       // 입력한 Key 의 값
 } CS_PlayerInputPacket;
 
-typedef struct SC_PlayersInfoPacket {
+typedef struct SC_PlayersInfoPacket {   // PlayScene에서 사용할 패킷
     PlayerData playerData[2];           // 클라이언트에게 Player의 데이터를 보낸다.
     MapData mapData;                    // 클라이언트에게 Map의 데이터를 보낸다.
 } SC_PlayersInfoPacket;
 
-typedef struct CS_LobbyPacket {
-    PacketHeader header;
-    int selectedMap;
-    int nextSceneCall;
+typedef struct CS_LobbyPacket {         // LobbyScene에서 사용할 패킷
+    PacketHeader header;                // 1: PlayScene 2 : LobbyScene
+    int selectedMap;                    // 1: PlayScene 2 : LobbyScene
+    int nextSceneCall;                  // 1이 되면 LobbyScene에서 PlayScene으로 넘어간다.
 }CS_LobbyPacket;
 
-typedef struct SC_LobbyPacket {
-    int selectedMap;
-    bool playerExist[2];
-    int nextSceneCall;
+typedef struct SC_LobbyPacket {         // 서버로 부터 받는 LobbyPacket
+    int selectedMap;                    // 맵 선택 시 send한 맵 변수를 다시 recv한다.
+    bool playerExist[2];                // 플레이어가 connect 한다면 true로 변경되어 LobbyScene에 플레이어 이미지를 출력한다.
+    int nextSceneCall;                  // 1이 되면 LobbyScene에서 PlayScene으로 넘어간다.
 }SC_LobbyPacket;
