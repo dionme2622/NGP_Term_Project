@@ -88,7 +88,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
                 std::lock_guard<std::mutex> lock(clientMutex);
                 keyState[inputPacket.playerID] = inputPacket.keyState;
             }
-            printf("ID[%d], 키 입력: %d\n", inputPacket.playerID, inputPacket.keyState);
+            //printf("ID[%d], 키 입력: %d\n", inputPacket.playerID, inputPacket.keyState);
         }
         else if (header.packetType == 2) { // LobbyPacket
             CS_LobbyPacket cs_lobbyPacket;
@@ -112,7 +112,7 @@ DWORD WINAPI ClientThread(LPVOID arg) {
             std::lock_guard<std::mutex> lock(clientMutex);          // 클라이언트에게 데이터를 보내는 동안 데이터가 바뀌지 않게 하기 위해서
             for (SOCKET sock : clientSockets) {
                 retval = send(sock, (char*)&sc_lobbyPacket, sizeof(sc_lobbyPacket), 0);
-                printf("로비패킷 보냄\n");
+                //printf("로비패킷 보냄\n");
                 if (retval == SOCKET_ERROR) {
                     printf("클라이언트로 데이터 전송 실패. 소켓 제거.\n");
                     closesocket(sock);
@@ -166,19 +166,13 @@ void GameLogicThread() {
                         if (player[playerID]->state == DAMAGE) return;
                         for (int i = 0; i < player[playerID]->ballon_num; i++)
                         {
-                            //printf("state %d\n", player[0]->ballon[i]->state);
                             if (player[playerID]->ballon[i]->state == 0)
                             {
 
                                 player[playerID]->ballon[i]->x = (player[playerID]->x + 30 - 30) / 60 * 60;
                                 player[playerID]->ballon[i]->y = (player[playerID]->y + 30 - 65) / 60 * 60;
 
-                                //printf("보드 스테이트 x %d\n", player[playerID]->ballon[i]->x / 60);
-
-                                //printf("보드 스테이트 y %d\n", player[playerID]->ballon[i]->y / 60);
-                                //
-                                //printf("보드 스테이트 %d\n", packet.mapData.boardData[0][7].state);
-                                //printf("보드 스테이트 %d\n", packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state);
+                               
                                 if (packet.mapData.boardData[player[playerID]->ballon[i]->y / 60][player[playerID]->ballon[i]->x / 60].state == 1)
                                 {
                                     player[playerID]->ballon[i]->SetState(1);
@@ -544,7 +538,6 @@ void PlayerGetItem(CPlayer* Player)
     {
         if (Player->temp_speed < 200)
             Player->temp_speed += 20;
-        printf("Player speed : %d\n", Player->temp_speed);
         packet.mapData.boardData[j][i].state = 1;
 
     }

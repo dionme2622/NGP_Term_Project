@@ -100,7 +100,6 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 	}
 	else if (state == ESCAPE)
 	{
-		printf("현재 ESCAPE 상태입니다\n");
 		bitmap_pos.escape.fx += 88.0f * 10.0f * fTimeElapsed;
 		while (bitmap_pos.escape.fx >= 88.0f) {  //88보다 크면 한 칸씩 이동
 			bitmap_pos.escape.fx = 0.0f;  // 64만큼 넘으면 빼고
@@ -109,7 +108,6 @@ void CPlayer::Update(SC_PlayersInfoPacket receivedPacket, float fTimeElapsed)
 		}
 	}
 	receivedPacket.playerData[ID].ApplyToPlayer(this);		// Player Update
-	printf("Player1의 풍선개수: %d\n", receivedPacket.playerData[0].ballon_num);
 }
 
 void CPlayer::Render(HDC MemDC, HDC MemDCImage, CMap* Map)

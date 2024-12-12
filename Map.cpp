@@ -48,7 +48,6 @@ void CMap::Render(HDC MemDC, HDC MemDCImage)
 		{
 			if (Board[i][j].GetState() == 4 || Board[i][j].GetState() == 40)
 			{
-				//printf("Ç³¼± »ý¼º!\n");
 				TransparentBlt(MemDC, j * 60 + 30, i * 60 + 65, 60, 60, MemDCImage, xPos, 0, 44, 41, RGB(255, 0, 255));   // ¹°Ç³¼± ¼³Ä¡
 			}
 		}
@@ -138,7 +137,6 @@ void CVillage::Initialize(HINSTANCE _hInst, SC_PlayersInfoPacket receivedPacket,
 			Board[i][j].SetState(receivedPacket.mapData.boardData[i][j].state);
 		}
 	}
-	printf("block stat: %d\n", Board[12][3].GetState());
 	// Resource
 	TileBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Village_Tile));
 	Block[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Red_Block));
